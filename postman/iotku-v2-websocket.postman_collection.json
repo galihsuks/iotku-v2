@@ -1,0 +1,46 @@
+{
+  "info": {
+    "_postman_id": "f8797a77-31c8-446d-9083-10a05a6395d4",
+    "name": "Iotku V2 WebSocket",
+    "description": "Minimal WebSocket-only collection for Iotku V2. Import this collection and the `Iotku V2 WebSocket Local` environment. If your Postman version imports these as normal GET requests, create a new WebSocket request manually and copy the URL/message examples from each request description.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Sensor Device - Send Raw Value",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{ws_url}}?idsensor={{sensor_code}}&is_device=1",
+        "description": "Open this URL as a WebSocket request.\n\nSend raw message:\n\n```text\n27.5\n```\n\nExpected behavior: backend stores a sensor reading for `{{sensor_code}}` and broadcasts the update to clients in the same sensor room."
+      }
+    },
+    {
+      "name": "Sensor Device - Send JSON Reading",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{ws_url}}?idsensor={{sensor_code}}&is_device=1",
+        "description": "Open this URL as a WebSocket request.\n\nSend JSON message:\n\n```json\n{\n  \"value\": \"27.5\",\n  \"recorded_at_ms\": 1760000000000\n}\n```\n\nYou can also use legacy field names:\n\n```json\n{\n  \"nilai\": \"27.5\",\n  \"waktu\": 1760000000000\n}\n```"
+      }
+    },
+    {
+      "name": "Sensor Device - Device Info",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{ws_url}}?idsensor={{sensor_code}}&is_device=1",
+        "description": "Open this URL as a WebSocket request.\n\nSend JSON message:\n\n```json\n{\n  \"type\": \"device_info\"\n}\n```\n\nExpected behavior: backend responds with connection status, IP device, and connected timestamp."
+      }
+    },
+    {
+      "name": "Admin Monitor Socket",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{ws_url}}?idsensor=ADMIN&is_device=0",
+        "description": "Open this URL as a WebSocket request.\n\nSend admin handshake:\n\n```json\n{\n  \"isAdmin\": true,\n  \"key\": \"{{ws_admin_key}}\"\n}\n```\n\n`ws_admin_key` must match `WS_ADMIN_KEY` in backend `.env`.\n\nExpected behavior: backend responds with connected clients and sensor rooms. New sensor events are also sent to this admin socket."
+      }
+    }
+  ]
+}

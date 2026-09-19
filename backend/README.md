@@ -10,6 +10,13 @@ npm run dev
 npm run build
 ```
 
+## API Docs
+
+When the backend is running:
+
+- Swagger UI: `http://localhost:8082/docs`
+- OpenAPI JSON: `http://localhost:8082/openapi.json`
+
 ## Database
 
 Use the migration app in `../migration` for database migration and seeders.
