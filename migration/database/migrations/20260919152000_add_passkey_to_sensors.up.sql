@@ -1,0 +1,2 @@
+ALTER TABLE sensors
+  ADD COLUMN passkey VARCHAR(120) NOT NULL DEFAULT '' AFTER label;

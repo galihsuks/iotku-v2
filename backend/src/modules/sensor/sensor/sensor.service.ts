@@ -24,7 +24,7 @@ export const listSensors = async (query: SensorKeywordQuery, userId: string) => 
     : "";
   const values = keywords ? [like(keywords), like(keywords), like(keywords), like(keywords)] : [];
   const rows = await queryRows(
-    `SELECT DISTINCT s.id, s.code, s.label, s.owner_user_id, s.unit_id,
+    `SELECT DISTINCT s.id, s.code, s.label, s.passkey, s.owner_user_id, s.unit_id,
             u.name AS unit_name, u.unit, u.value_type, owner.full_name AS owner_name,
             s.created_at, s.updated_at
      FROM sensors s
@@ -69,7 +69,13 @@ export const getSensorDetail = async (id: string, userId: string) => {
 };
 
 export const saveSensor = async (
-  payload: { label: string; unit_id: string; owner_user_id?: string; shared_user_ids?: string[] },
+  payload: {
+    label: string;
+    passkey?: string;
+    unit_id: string;
+    owner_user_id?: string;
+    shared_user_ids?: string[];
+  },
   currentUserId: string,
   id?: string,
 ) => {
@@ -78,8 +84,8 @@ export const saveSensor = async (
   if (id) {
     await withTransaction(async (conn) => {
       await execute(
-        `UPDATE sensors SET label = ?, unit_id = ?, owner_user_id = ?, updated_at = ? WHERE id = ?`,
-        [payload.label, payload.unit_id, ownerId, now, id],
+        `UPDATE sensors SET label = ?, passkey = COALESCE(?, passkey), unit_id = ?, owner_user_id = ?, updated_at = ? WHERE id = ?`,
+        [payload.label, payload.passkey ?? null, payload.unit_id, ownerId, now, id],
         conn,
       );
       await execute(`DELETE FROM sensor_shared_users WHERE sensor_id = ?`, [id], conn);
@@ -97,8 +103,8 @@ export const saveSensor = async (
   const code = await createSensorCode();
   await withTransaction(async (conn) => {
     await execute(
-      `INSERT INTO sensors (id, code, label, unit_id, owner_user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [newId, code, payload.label, payload.unit_id, ownerId, now, now],
+      `INSERT INTO sensors (id, code, label, passkey, unit_id, owner_user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [newId, code, payload.label, payload.passkey ?? "", payload.unit_id, ownerId, now, now],
       conn,
     );
     for (const sharedUserId of payload.shared_user_ids ?? []) {

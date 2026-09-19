@@ -8,6 +8,7 @@ export const sensorUnitSchema = z.object({
 
 export const sensorSchema = z.object({
   label: z.string().trim().min(1).max(150),
+  passkey: z.string().trim().min(1).max(120).optional(),
   unit_id: z.string().trim().min(1),
   owner_user_id: z.string().trim().min(1).optional(),
   shared_user_ids: z.array(z.string().trim().min(1)).optional(),

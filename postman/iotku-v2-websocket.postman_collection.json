@@ -11,8 +11,8 @@
       "request": {
         "method": "GET",
         "header": [],
-        "url": "{{ws_url}}?idsensor={{sensor_code}}&is_device=1",
-        "description": "Open this URL as a WebSocket request.\n\nSend raw message:\n\n```text\n27.5\n```\n\nExpected behavior: backend stores a sensor reading for `{{sensor_code}}` and broadcasts the update to clients in the same sensor room."
+        "url": "{{ws_url}}?idsensor={{sensor_code}}&passkey={{sensor_passkey}}&is_device=1",
+        "description": "Open this URL as a WebSocket request.\n\nThe `passkey` must match the passkey stored on the sensor.\n\nSend raw message:\n\n```text\n27.5\n```\n\nExpected behavior: backend stores a sensor reading for `{{sensor_code}}` and broadcasts this message to clients subscribed to the same sensor room:\n\n```json\n{\n  \"type\": \"sensor_reading\",\n  \"success\": true,\n  \"message\": \"Sensor data updated.\",\n  \"data\": {\n    \"sensor_code\": \"00001\",\n    \"reading\": {}\n  }\n}\n```"
       }
     },
     {
@@ -20,7 +20,7 @@
       "request": {
         "method": "GET",
         "header": [],
-        "url": "{{ws_url}}?idsensor={{sensor_code}}&is_device=1",
+        "url": "{{ws_url}}?idsensor={{sensor_code}}&passkey={{sensor_passkey}}&is_device=1",
         "description": "Open this URL as a WebSocket request.\n\nSend JSON message:\n\n```json\n{\n  \"value\": \"27.5\",\n  \"recorded_at_ms\": 1760000000000\n}\n```\n\nYou can also use legacy field names:\n\n```json\n{\n  \"nilai\": \"27.5\",\n  \"waktu\": 1760000000000\n}\n```"
       }
     },
@@ -29,8 +29,26 @@
       "request": {
         "method": "GET",
         "header": [],
-        "url": "{{ws_url}}?idsensor={{sensor_code}}&is_device=1",
-        "description": "Open this URL as a WebSocket request.\n\nSend JSON message:\n\n```json\n{\n  \"type\": \"device_info\"\n}\n```\n\nExpected behavior: backend responds with connection status, IP device, and connected timestamp."
+        "url": "{{ws_url}}?idsensor={{sensor_code}}&passkey={{sensor_passkey}}&is_device=1",
+        "description": "Open this URL as a WebSocket request.\n\nSend JSON message:\n\n```json\n{\n  \"type\": \"device_info\"\n}\n```\n\nExpected behavior: backend responds with active connection status, IP device, and connected timestamp for this sensor. Only one device socket is allowed for each sensor."
+      }
+    },
+    {
+      "name": "Frontend Client - Subscribe Sensors",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{ws_url}}",
+        "description": "Open this URL as a WebSocket request.\n\nSend JSON message to subscribe to one or more sensors without reconnecting:\n\n```json\n{\n  \"type\": \"subscribe\",\n  \"idsensor\": [\"{{sensor_code}}\", \"{{sensor_code_2}}\"]\n}\n```\n\nExpected response:\n\n```json\n{\n  \"type\": \"subscribe\",\n  \"success\": true,\n  \"message\": \"Subscribed to sensor room.\",\n  \"data\": {\n    \"rooms\": [\"00001\", \"00002\"]\n  }\n}\n```\n\nWhen a device socket connects or disconnects, subscribed clients receive:\n\n```json\n{\n  \"type\": \"device_info\",\n  \"success\": true,\n  \"message\": \"Device info updated.\",\n  \"data\": [\n    {\n      \"sensor_code\": \"00001\",\n      \"connection_status\": false,\n      \"ip_device\": null,\n      \"connected_at\": null\n    }\n  ]\n}\n```"
+      }
+    },
+    {
+      "name": "Frontend Client - Unsubscribe Sensors",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{ws_url}}",
+        "description": "Open this URL as a WebSocket request.\n\nSend JSON message to unsubscribe from one or more sensors without disconnecting:\n\n```json\n{\n  \"type\": \"unsubscribe\",\n  \"idsensor\": [\"{{sensor_code}}\"]\n}\n```\n\nExpected response:\n\n```json\n{\n  \"type\": \"unsubscribe\",\n  \"success\": true,\n  \"message\": \"Unsubscribed from sensor room.\",\n  \"data\": {\n    \"rooms\": []\n  }\n}\n```"
       }
     },
     {
@@ -38,8 +56,8 @@
       "request": {
         "method": "GET",
         "header": [],
-        "url": "{{ws_url}}?idsensor=ADMIN&is_device=0",
-        "description": "Open this URL as a WebSocket request.\n\nSend admin handshake:\n\n```json\n{\n  \"isAdmin\": true,\n  \"key\": \"{{ws_admin_key}}\"\n}\n```\n\n`ws_admin_key` must match `WS_ADMIN_KEY` in backend `.env`.\n\nExpected behavior: backend responds with connected clients and sensor rooms. New sensor events are also sent to this admin socket."
+        "url": "{{ws_url}}",
+        "description": "Open this URL as a WebSocket request.\n\nSend admin handshake:\n\n```json\n{\n  \"isAdmin\": true,\n  \"key\": \"{{ws_admin_key}}\"\n}\n```\n\n`ws_admin_key` must match `WS_ADMIN_KEY` in backend `.env`.\n\nExpected behavior: backend responds with connected clients and sensor rooms. New sensor events are also sent to this admin socket. Only one active admin socket is allowed; another admin handshake while one is active returns an error."
       }
     }
   ]
