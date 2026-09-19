@@ -1,0 +1,14 @@
+DROP TABLE IF EXISTS websocket_logs;
+DROP TABLE IF EXISTS sensor_readings;
+DROP TABLE IF EXISTS sensor_shared_users;
+DROP TABLE IF EXISTS sensors;
+DROP TABLE IF EXISTS sensor_units;
+DROP TABLE IF EXISTS app_logs;
+DROP TABLE IF EXISTS app_parameters;
+DROP TABLE IF EXISTS app_role_menu_controls;
+DROP TABLE IF EXISTS app_menu_controls;
+DROP TABLE IF EXISTS app_menus;
+DROP TABLE IF EXISTS app_tokens;
+DROP TABLE IF EXISTS app_user_roles;
+DROP TABLE IF EXISTS app_roles;
+DROP TABLE IF EXISTS app_users;

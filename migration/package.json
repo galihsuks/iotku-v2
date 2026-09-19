@@ -1,0 +1,26 @@
+{
+  "name": "iotku-v2-migration",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "migrate:up": "tsx src/cli.ts migrate:up",
+    "migrate:down": "tsx src/cli.ts migrate:down",
+    "migrate:status": "tsx src/cli.ts migrate:status",
+    "migrate:create": "tsx src/cli.ts migrate:create",
+    "seed": "tsx src/cli.ts seed",
+    "build": "tsc -p tsconfig.json",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "mysql2": "^3.15.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.4",
+    "prettier": "^3.7.4",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

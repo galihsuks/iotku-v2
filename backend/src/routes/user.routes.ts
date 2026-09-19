@@ -1,0 +1,11 @@
+import { Router } from "express";
+import { authenticate } from "../middleware/authenticate.js";
+import * as controller from "../modules/system/user/user.controller.js";
+export const userRouter = Router();
+userRouter.use(authenticate);
+userRouter.get("/", controller.listUsers);
+userRouter.post("/", controller.createUser);
+userRouter.get("/:id", controller.getUser);
+userRouter.put("/:id", controller.updateUser);
+userRouter.delete("/:id", controller.deleteUser);
+userRouter.put("/password/:id", controller.changeUserPassword);

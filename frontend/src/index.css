@@ -1,0 +1,301 @@
+@import url("https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Brittany Signature";
+  src: url("./assets/fonts/BrittanySignature.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Poppins", sans-serif;
+  --font-serif: "Bodoni Moda", serif;
+  --font-handwrite: "Brittany Signature", cursive;
+
+  --color-primary-50: var(--color-slate-50);
+  --color-primary-100: var(--color-slate-100);
+  --color-primary-200: var(--color-slate-200);
+  --color-primary-300: var(--color-slate-300);
+  --color-primary-400: var(--color-slate-400);
+  --color-primary-500: var(--color-slate-500);
+  --color-primary-600: var(--color-slate-600);
+  --color-primary-700: var(--color-slate-700);
+  --color-primary-800: var(--color-slate-800);
+  --color-primary-900: var(--color-slate-900);
+  --color-primary-950: var(--color-slate-950);
+
+  --color-secondary-50: var(--color-emerald-50);
+  --color-secondary-100: var(--color-emerald-100);
+  --color-secondary-200: var(--color-emerald-200);
+  --color-secondary-300: var(--color-emerald-300);
+  --color-secondary-400: var(--color-emerald-400);
+  --color-secondary-500: var(--color-emerald-500);
+  --color-secondary-600: var(--color-emerald-600);
+  --color-secondary-700: var(--color-emerald-700);
+  --color-secondary-800: var(--color-emerald-800);
+  --color-secondary-900: var(--color-emerald-900);
+  --color-secondary-950: var(--color-emerald-950);
+
+  --color-success-50: var(--color-green-50);
+  --color-success-100: var(--color-green-100);
+  --color-success-200: var(--color-green-200);
+  --color-success-300: var(--color-green-300);
+  --color-success-400: var(--color-green-400);
+  --color-success-500: var(--color-green-500);
+  --color-success-600: var(--color-green-600);
+  --color-success-700: var(--color-green-700);
+  --color-success-800: var(--color-green-800);
+  --color-success-900: var(--color-green-900);
+  --color-success-950: var(--color-green-950);
+
+  --color-info-50: var(--color-teal-50);
+  --color-info-100: var(--color-teal-100);
+  --color-info-200: var(--color-teal-200);
+  --color-info-300: var(--color-teal-300);
+  --color-info-400: var(--color-teal-400);
+  --color-info-500: var(--color-teal-500);
+  --color-info-600: var(--color-teal-600);
+  --color-info-700: var(--color-teal-700);
+  --color-info-800: var(--color-teal-800);
+  --color-info-900: var(--color-teal-900);
+  --color-info-950: var(--color-teal-950);
+
+  --color-warning-50: var(--color-amber-50);
+  --color-warning-100: var(--color-amber-100);
+  --color-warning-200: var(--color-amber-200);
+  --color-warning-300: var(--color-amber-300);
+  --color-warning-400: var(--color-amber-400);
+  --color-warning-500: var(--color-amber-500);
+  --color-warning-600: var(--color-amber-600);
+  --color-warning-700: var(--color-amber-700);
+  --color-warning-800: var(--color-amber-800);
+  --color-warning-900: var(--color-amber-900);
+  --color-warning-950: var(--color-amber-950);
+
+  --color-danger-50: var(--color-rose-50);
+  --color-danger-100: var(--color-rose-100);
+  --color-danger-200: var(--color-rose-200);
+  --color-danger-300: var(--color-rose-300);
+  --color-danger-400: var(--color-rose-400);
+  --color-danger-500: var(--color-rose-500);
+  --color-danger-600: var(--color-rose-600);
+  --color-danger-700: var(--color-rose-700);
+  --color-danger-800: var(--color-rose-800);
+  --color-danger-900: var(--color-rose-900);
+  --color-danger-950: var(--color-rose-950);
+
+  --color-light-50: var(--color-zinc-50);
+  --color-light-100: var(--color-zinc-100);
+  --color-light-200: var(--color-zinc-200);
+  --color-light-300: var(--color-zinc-300);
+  --color-light-400: var(--color-zinc-400);
+  --color-light-500: var(--color-zinc-500);
+  --color-light-600: var(--color-zinc-600);
+  --color-light-700: var(--color-zinc-700);
+  --color-light-800: var(--color-zinc-800);
+  --color-light-900: var(--color-zinc-900);
+  --color-light-950: var(--color-zinc-950);
+
+  --color-dark-50: var(--color-slate-50);
+  --color-dark-100: var(--color-slate-100);
+  --color-dark-200: var(--color-slate-200);
+  --color-dark-300: var(--color-slate-300);
+  --color-dark-400: var(--color-slate-400);
+  --color-dark-500: var(--color-slate-500);
+  --color-dark-600: var(--color-slate-600);
+  --color-dark-700: var(--color-slate-700);
+  --color-dark-800: var(--color-slate-800);
+  --color-dark-900: var(--color-slate-900);
+  --color-dark-950: var(--color-slate-950);
+}
+
+:root {
+  font-family: var(--font-sans);
+  scrollbar-color: color-mix(in srgb, var(--color-dark-400) 42%, transparent)
+    color-mix(in srgb, var(--color-light-200) 88%, transparent);
+  scrollbar-width: thin;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+.font-handwrite {
+  font-family: var(--font-handwrite);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-dark-400) 42%, transparent)
+    color-mix(in srgb, var(--color-light-200) 88%, transparent);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-light-200) 82%, transparent);
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 9999px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-dark-300) 78%, white),
+    color-mix(in srgb, var(--color-dark-500) 72%, white)
+  );
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-dark-400) 84%, white),
+    color-mix(in srgb, var(--color-dark-600) 78%, white)
+  );
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+html.public-invitation-scrollbar-hidden,
+html.public-invitation-scrollbar-hidden *,
+body.public-invitation-scrollbar-hidden,
+body.public-invitation-scrollbar-hidden * {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html.public-invitation-scrollbar-hidden::-webkit-scrollbar,
+html.public-invitation-scrollbar-hidden *::-webkit-scrollbar,
+body.public-invitation-scrollbar-hidden::-webkit-scrollbar,
+body.public-invitation-scrollbar-hidden *::-webkit-scrollbar,
+.public-invitation-page::-webkit-scrollbar,
+.public-invitation-page *::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+@keyframes invitationCoverLeave {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-110vh) scale(0.98);
+  }
+}
+
+@keyframes invitationElementEnter {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(28px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+.invitation-cover-leaving {
+  animation: invitationCoverLeave 820ms cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+/* .invitation-reveal-section {
+  opacity: 0;
+  transform: translateY(42px);
+  transition:
+    opacity 720ms ease,
+    transform 820ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.invitation-reveal-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+} */
+
+.invitation-reveal-section
+  :where([data-invitation-reveal-item], h1, h2, h3, p, img, a, button, form, article, li) {
+  opacity: 0;
+}
+
+.invitation-reveal-section.is-visible
+  :where([data-invitation-reveal-item], h1, h2, h3, p, img, a, button, form, article, li) {
+  animation: invitationElementEnter 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--inv-reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invitation-cover-leaving,
+  .invitation-reveal-section.is-visible
+    :where([data-invitation-reveal-item], h1, h2, h3, p, img, a, button, form, article, li) {
+    animation: none;
+  }
+
+  .invitation-reveal-section,
+  .invitation-reveal-section
+    :where([data-invitation-reveal-item], h1, h2, h3, p, img, a, button, form, article, li) {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  display: grid;
+}
+.loader::before,
+.loader::after {
+  content: "";
+  grid-area: 1/1;
+  --c: no-repeat radial-gradient(farthest-side, #252525 92%, #0000);
+  background:
+    var(--c) 50% 0,
+    var(--c) 50% 100%,
+    var(--c) 100% 50%,
+    var(--c) 0 50%;
+  background-size: 12px 12px;
+  animation: l12 1s infinite;
+}
+.loader::before {
+  margin: 4px;
+  filter: hue-rotate(45deg);
+  background-size: 8px 8px;
+  animation-timing-function: linear;
+}
+@keyframes l12 {
+  100% {
+    transform: rotate(0.5turn);
+  }
+}

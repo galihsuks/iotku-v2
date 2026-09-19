@@ -1,0 +1,10 @@
+import { Router } from "express";
+import { authenticate } from "../middleware/authenticate.js";
+import * as controller from "../modules/system/parameter/parameter.controller.js";
+export const parameterRouter = Router();
+parameterRouter.use(authenticate);
+parameterRouter.get("/", controller.listParameters);
+parameterRouter.post("/", controller.createParameter);
+parameterRouter.get("/:id", controller.getParameter);
+parameterRouter.put("/:id", controller.updateParameter);
+parameterRouter.delete("/:id", controller.deleteParameter);

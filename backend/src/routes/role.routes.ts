@@ -1,0 +1,10 @@
+import { Router } from "express";
+import { authenticate } from "../middleware/authenticate.js";
+import * as controller from "../modules/system/role/role.controller.js";
+export const roleRouter = Router();
+roleRouter.use(authenticate);
+roleRouter.get("/", controller.listRoles);
+roleRouter.post("/", controller.createRole);
+roleRouter.get("/:id", controller.getRole);
+roleRouter.put("/:id", controller.updateRole);
+roleRouter.delete("/:id", controller.deleteRole);

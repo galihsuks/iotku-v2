@@ -1,0 +1,10 @@
+import { Router } from "express";
+import { authenticate } from "../middleware/authenticate.js";
+import * as controller from "../modules/system/menu/menu.controller.js";
+export const menuRouter = Router();
+menuRouter.use(authenticate);
+menuRouter.get("/", controller.listMenus);
+menuRouter.post("/", controller.createMenu);
+menuRouter.get("/:id", controller.getMenu);
+menuRouter.put("/:id", controller.updateMenu);
+menuRouter.delete("/:id", controller.deleteMenu);
