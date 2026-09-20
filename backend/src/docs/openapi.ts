@@ -466,6 +466,24 @@ export const openApiDocument = {
         responses: { 200: ok() },
       },
     },
+    "/api/dropdown/sensor": {
+      get: {
+        tags: ["Dropdown"],
+        summary: "Sensor dropdown",
+        security: [{ cookieAuth: [] }],
+        parameters: [{ name: "keywords", in: "query", schema: { type: "string" } }],
+        responses: { 200: ok() },
+      },
+    },
+    "/api/dropdown/sensor-unit": {
+      get: {
+        tags: ["Dropdown"],
+        summary: "Sensor unit dropdown",
+        security: [{ cookieAuth: [] }],
+        parameters: [{ name: "keywords", in: "query", schema: { type: "string" } }],
+        responses: { 200: ok() },
+      },
+    },
     "/api/dropdown/user": {
       get: {
         tags: ["Dropdown"],
