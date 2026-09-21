@@ -1,5 +1,43 @@
 import { lazy } from "react";
 
+export const LoginPage = lazy(() =>
+  import("../pages/auth/LoginPage").then((module) => ({ default: module.LoginPage })),
+);
+
+export const DashboardPage = lazy(() =>
+  import("../pages/main/DashboardPage").then((module) => ({ default: module.DashboardPage })),
+);
+
+export const SensorAddPage = lazy(() =>
+  import("../pages/main/SensorAddPage").then((module) => ({ default: module.SensorAddPage })),
+);
+
+export const SensorDetailPage = lazy(() =>
+  import("../pages/main/SensorDetailPage").then((module) => ({
+    default: module.SensorDetailPage,
+  })),
+);
+
+export const SensorEditPage = lazy(() =>
+  import("../pages/main/SensorEditPage").then((module) => ({ default: module.SensorEditPage })),
+);
+
+export const AdminDashboardPage = lazy(() =>
+  import("../pages/admin/AdminDashboardPage").then((module) => ({
+    default: module.AdminDashboardPage,
+  })),
+);
+
+export const AdminSensorPage = lazy(() =>
+  import("../pages/admin/AdminSensorPage").then((module) => ({ default: module.AdminSensorPage })),
+);
+
+export const AdminSensorUnitPage = lazy(() =>
+  import("../pages/admin/AdminSensorUnitPage").then((module) => ({
+    default: module.AdminSensorUnitPage,
+  })),
+);
+
 export const MenuPage = lazy(() =>
   import("../pages/system/menu/MenuPage").then((module) => ({ default: module.MenuPage })),
 );
@@ -20,4 +58,14 @@ export const ParameterPage = lazy(() =>
 
 export const LogPage = lazy(() =>
   import("../pages/system/log/LogPage").then((module) => ({ default: module.LogPage })),
+);
+
+export const ProfilePage = lazy(() =>
+  import("../pages/system/profile/ProfilePage").then((module) => ({ default: module.ProfilePage })),
+);
+
+export const WebSocketLogPage = lazy(() =>
+  import("../pages/system/websocket-log/WebSocketLogPage").then((module) => ({
+    default: module.WebSocketLogPage,
+  })),
 );

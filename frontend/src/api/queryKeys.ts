@@ -8,7 +8,17 @@ export const queryKeys = {
   },
   dropdown: {
     role: (keywords = "") => ["dropdown", "role", keywords] as const,
+    sensor: (keywords = "") => ["dropdown", "sensor", keywords] as const,
+    sensorUnit: (keywords = "") => ["dropdown", "sensor-unit", keywords] as const,
     user: (keywords = "") => ["dropdown", "user", keywords] as const,
+  },
+  sensor: {
+    list: (params?: unknown) => ["sensor", "list", params ?? {}] as const,
+    detail: (id: string) => ["sensor", "detail", id] as const,
+    readings: (id: string, params?: unknown) => ["sensor", "readings", id, params ?? {}] as const,
+  },
+  sensorUnit: {
+    list: (params?: unknown) => ["sensor-unit", "list", params ?? {}] as const,
   },
   user: {
     list: (params?: unknown) => ["user", "list", params ?? {}] as const,

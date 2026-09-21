@@ -23,21 +23,26 @@ export const listUnits = async (query: SensorKeywordQuery) => {
 };
 
 export const saveUnit = async (
-  payload: { name: string; unit: string; value_type: "number" | "string" },
+  payload: {
+    name: string;
+    unit: string;
+    value_type: "number" | "string";
+    widget_type: "numeric_card" | "chart" | "gauge" | "switch" | "status";
+  },
   id?: string,
 ) => {
   const now = nowSql();
   if (id) {
     await execute(
-      `UPDATE sensor_units SET name = ?, unit = ?, value_type = ?, updated_at = ? WHERE id = ?`,
-      [payload.name, payload.unit, payload.value_type, now, id],
+      `UPDATE sensor_units SET name = ?, unit = ?, value_type = ?, widget_type = ?, updated_at = ? WHERE id = ?`,
+      [payload.name, payload.unit, payload.value_type, payload.widget_type, now, id],
     );
     return queryOne(`SELECT * FROM sensor_units WHERE id = ?`, [id]);
   }
   const newId = uuidv4();
   await execute(
-    `INSERT INTO sensor_units (id, name, unit, value_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
-    [newId, payload.name, payload.unit, payload.value_type, now, now],
+    `INSERT INTO sensor_units (id, name, unit, value_type, widget_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [newId, payload.name, payload.unit, payload.value_type, payload.widget_type, now, now],
   );
   return queryOne(`SELECT * FROM sensor_units WHERE id = ?`, [newId]);
 };

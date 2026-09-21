@@ -7,8 +7,8 @@ const normalizeRoute = (route: string) => {
 
 export const toLoginRedirectValue = (route: string) => {
   if (!route) {
-    return "/login";
+    return "/auth/login";
   }
   const normalizedRedirect = normalizeRoute(route);
-  return `/login?redirect=${encodeURIComponent(normalizedRedirect)}`;
+  return `/auth/login?redirect=${encodeURIComponent(normalizedRedirect)}`;
 };

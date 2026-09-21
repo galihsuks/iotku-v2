@@ -32,6 +32,8 @@ export const baseAppSeeder: Seeder = {
       SELECT CONCAT('ctrl-', id, '-U'), id, 'U', 'Update', @now, @now FROM app_menus;
       INSERT IGNORE INTO app_menu_controls (id, menu_id, code, name, created_at, updated_at)
       SELECT CONCAT('ctrl-', id, '-D'), id, 'D', 'Delete', @now, @now FROM app_menus;
+      INSERT IGNORE INTO app_menu_controls (id, menu_id, code, name, created_at, updated_at) VALUES
+      ('ctrl-menu-system-role-AC', 'menu-system-role', 'AC', 'Access Control', @now, @now);
 
       INSERT IGNORE INTO app_role_menu_controls (id, role_id, menu_id, menu_control_id, created_at, updated_at)
       SELECT CONCAT('rmc-super-', mc.id), 'role-super-admin', mc.menu_id, mc.id, @now, @now

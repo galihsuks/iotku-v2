@@ -25,7 +25,7 @@ export const listSensors = async (query: SensorKeywordQuery, userId: string) => 
   const values = keywords ? [like(keywords), like(keywords), like(keywords), like(keywords)] : [];
   const rows = await queryRows(
     `SELECT DISTINCT s.id, s.code, s.label, s.passkey, s.owner_user_id, s.unit_id,
-            u.name AS unit_name, u.unit, u.value_type, owner.full_name AS owner_name,
+            u.name AS unit_name, u.unit, u.value_type, u.widget_type, owner.full_name AS owner_name,
             s.created_at, s.updated_at
      FROM sensors s
      JOIN sensor_units u ON u.id = s.unit_id
@@ -49,7 +49,7 @@ export const listSensors = async (query: SensorKeywordQuery, userId: string) => 
 export const getSensorDetail = async (id: string, userId: string) => {
   await assertCanReadSensor(id, userId);
   const sensor = await queryOne(
-    `SELECT s.*, u.name AS unit_name, u.unit, u.value_type, owner.full_name AS owner_name
+    `SELECT s.*, u.name AS unit_name, u.unit, u.value_type, u.widget_type, owner.full_name AS owner_name
      FROM sensors s
      JOIN sensor_units u ON u.id = s.unit_id
      JOIN app_users owner ON owner.id = s.owner_user_id

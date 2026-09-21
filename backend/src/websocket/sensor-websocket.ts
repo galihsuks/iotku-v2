@@ -1,5 +1,7 @@
 import { WebSocketServer } from "ws";
+import { onSensorReadingCreated } from "../events/sensor-reading.events.js";
 import { handleConnection } from "./sensor-websocket.connection.js";
+import { broadcastSensorReading } from "./sensor-websocket.notifications.js";
 import type { SensorWebSocketState } from "./sensor-websocket.types.js";
 
 export const startSensorWebSocketServer = (port: number) => {
@@ -8,6 +10,10 @@ export const startSensorWebSocketServer = (port: number) => {
 
   server.on("connection", (socket, req) => {
     void handleConnection(socket, req, state);
+  });
+
+  onSensorReadingCreated((event) => {
+    broadcastSensorReading(event);
   });
 
   const interval = setInterval(() => {

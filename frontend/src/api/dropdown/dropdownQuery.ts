@@ -10,6 +10,22 @@ export const useRoleDropdownQuery = (keywords = "", enabled = true) => {
   });
 };
 
+export const useSensorDropdownQuery = (keywords = "", enabled = true) => {
+  return useQuery({
+    queryKey: queryKeys.dropdown.sensor(keywords),
+    queryFn: () => dropdownApi.sensor(keywords),
+    enabled,
+  });
+};
+
+export const useSensorUnitDropdownQuery = (keywords = "", enabled = true) => {
+  return useQuery({
+    queryKey: queryKeys.dropdown.sensorUnit(keywords),
+    queryFn: () => dropdownApi.sensorUnit(keywords),
+    enabled,
+  });
+};
+
 export const useUserDropdownQuery = (keywords = "", enabled = true) => {
   return useQuery({
     queryKey: queryKeys.dropdown.user(keywords),

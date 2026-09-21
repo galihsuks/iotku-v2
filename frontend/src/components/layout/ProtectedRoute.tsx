@@ -8,14 +8,7 @@ import { useHttpErrorActions } from "../../store/httpErrorStore";
 import Forbidden from "../templates/Forbidden";
 import InternalServerError from "../templates/InternalServerError";
 import { findMenuByPath } from "../../utils/accessControl";
-
-const ExternalLoginRedirect = ({ redirect }: { redirect: string }) => {
-  useEffect(() => {
-    window.location.replace(redirect);
-  }, [redirect]);
-
-  return null;
-};
+import { toLoginRedirectValue } from "../../utils/appRoutes";
 
 export const PrivateRoute = () => {
   const location = useLocation();
@@ -87,8 +80,7 @@ export const PrivateRoute = () => {
   }
 
   if (!isAuth) {
-    const redirect = `${location.pathname}${location.search}`;
-    return <ExternalLoginRedirect redirect={redirect} />;
+    return <Navigate to={toLoginRedirectValue(`${location.pathname}${location.search}`)} replace />;
   }
 
   if (meError && !user) {
@@ -123,7 +115,5 @@ export const GuestRoute = () => {
     return <Navigate to={nextRoute} replace />;
   }
 
-  const redirect = new URLSearchParams(location.search).get("redirect") ?? "/";
-
-  return <ExternalLoginRedirect redirect={redirect} />;
+  return <Outlet />;
 };

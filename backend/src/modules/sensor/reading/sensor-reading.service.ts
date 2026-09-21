@@ -1,6 +1,7 @@
 import type { RowDataPacket } from "mysql2";
 import { v4 as uuidv4 } from "uuid";
 import { execute, queryOne, queryRows } from "../../../repositories/base.repository.js";
+import { emitSensorReadingCreated } from "../../../events/sensor-reading.events.js";
 import { badRequest, notFound } from "../../../utils/app-error.js";
 import { nowSql } from "../../../utils/date.js";
 import { buildPagination, getPagination } from "../../../utils/pagination.js";
@@ -23,8 +24,8 @@ export const createReading = async (
   sensorIdOrCode: string,
   payload: { recorded_at_ms?: number; value: unknown },
 ) => {
-  const sensor = await queryOne<{ id: string } & RowDataPacket>(
-    `SELECT id FROM sensors WHERE id = ? OR code = ?`,
+  const sensor = await queryOne<{ id: string; code: string } & RowDataPacket>(
+    `SELECT id, code FROM sensors WHERE id = ? OR code = ?`,
     [sensorIdOrCode, sensorIdOrCode],
   );
   if (!sensor) throw notFound("Sensor not found.");
@@ -34,7 +35,18 @@ export const createReading = async (
     `INSERT INTO sensor_readings (id, sensor_id, recorded_at_ms, value, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
     [id, sensor.id, payload.recorded_at_ms ?? Date.now(), value, nowSql(), nowSql()],
   );
-  return queryOne(`SELECT * FROM sensor_readings WHERE id = ?`, [id]);
+  const reading = await queryOne(`SELECT * FROM sensor_readings WHERE id = ?`, [id]);
+  emitSensorReadingCreated({ sensor_code: sensor.code, reading });
+  return reading;
+};
+
+export const createReadingForUser = async (
+  sensorIdOrCode: string,
+  payload: { recorded_at_ms?: number; value: unknown },
+  userId: string,
+) => {
+  await assertCanReadSensor(sensorIdOrCode, userId);
+  return createReading(sensorIdOrCode, payload);
 };
 
 export const listReadings = async (

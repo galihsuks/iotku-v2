@@ -8,7 +8,6 @@ import {
   clientSnapshot,
   getActiveDeviceInfo,
   getClient,
-  getRoomSockets,
   joinRoom,
   leaveRoom,
   roomSnapshot,
@@ -146,24 +145,10 @@ export const handleSensorReading = async (
     throw new Error("Device can only write to the handshake sensor.");
   }
 
-  const reading = await createReading(info.writeSensorCode, {
+  await createReading(info.writeSensorCode, {
     value: payload.value ?? payload.nilai,
     recorded_at_ms: Number(payload.recorded_at_ms ?? payload.waktu ?? Date.now()),
   });
-
-  const message = {
-    type: "sensor_reading",
-    success: true,
-    message: "Sensor data updated.",
-    data: {
-      sensor_code: info.writeSensorCode,
-      reading,
-    },
-  };
-
-  for (const client of getRoomSockets(info.writeSensorCode)) {
-    sendJson(client, message);
-  }
 
   notifyAdminLog(state, true, "INFO", info.ip, `Sensor ${info.writeSensorCode} data updated.`);
 };

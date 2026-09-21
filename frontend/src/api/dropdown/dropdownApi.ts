@@ -14,6 +14,26 @@ export const dropdownApi = {
       throw toApiError(error);
     }
   },
+  sensor: async (keywords = ""): Promise<ApiResponse<DropdownOption[]>> => {
+    try {
+      const response = await api.get<ApiResponse<DropdownOption[]>>("/api/dropdown/sensor", {
+        params: { keywords },
+      });
+      return response.data;
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
+  sensorUnit: async (keywords = ""): Promise<ApiResponse<DropdownOption[]>> => {
+    try {
+      const response = await api.get<ApiResponse<DropdownOption[]>>("/api/dropdown/sensor-unit", {
+        params: { keywords },
+      });
+      return response.data;
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
   user: async (keywords = ""): Promise<ApiResponse<DropdownOption[]>> => {
     try {
       const response = await api.get<ApiResponse<DropdownOption[]>>("/api/dropdown/user", {

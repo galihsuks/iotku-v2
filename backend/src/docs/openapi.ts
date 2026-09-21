@@ -530,7 +530,12 @@ export const openApiDocument = {
         tags: ["Sensor Unit"],
         summary: "Create sensor unit",
         security: [{ cookieAuth: [] }],
-        requestBody: jsonBody({ name: "Voltage", unit: "V", value_type: "number" }),
+        requestBody: jsonBody({
+          name: "Voltage",
+          unit: "V",
+          value_type: "number",
+          widget_type: "numeric_card",
+        }),
         responses: { 200: ok() },
       },
     },
@@ -540,7 +545,12 @@ export const openApiDocument = {
         summary: "Update sensor unit",
         security: [{ cookieAuth: [] }],
         parameters: [idParam()],
-        requestBody: jsonBody({ name: "Temperature", unit: "C", value_type: "number" }),
+        requestBody: jsonBody({
+          name: "Temperature",
+          unit: "C",
+          value_type: "number",
+          widget_type: "gauge",
+        }),
         responses: { 200: ok() },
       },
       delete: {

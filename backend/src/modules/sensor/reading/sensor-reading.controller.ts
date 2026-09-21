@@ -18,6 +18,15 @@ export const createReading = asyncHandler(async (req, res) =>
   success(
     res,
     "Sensor reading created successfully.",
-    await sensorReadingService.createReading(param(req, "id"), validate(readingSchema, req.body)),
+    req.user?.id
+      ? await sensorReadingService.createReadingForUser(
+          param(req, "id"),
+          validate(readingSchema, req.body),
+          req.user.id,
+        )
+      : await sensorReadingService.createReading(
+          param(req, "id"),
+          validate(readingSchema, req.body),
+        ),
   ),
 );

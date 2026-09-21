@@ -94,7 +94,7 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
       onSettled: () => {
         queryClient.clear();
         logout();
-        window.location.replace("/login");
+        window.location.replace("/auth/login");
       },
     });
   };

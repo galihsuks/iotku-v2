@@ -43,3 +43,14 @@ export const broadcastDeviceInfo = (sensorCode: string) => {
     });
   }
 };
+
+export const broadcastSensorReading = (event: { sensor_code: string; reading: unknown }) => {
+  for (const socket of getRoomSockets(event.sensor_code)) {
+    sendJson(socket, {
+      type: "sensor_reading",
+      success: true,
+      message: "Sensor data updated.",
+      data: event,
+    });
+  }
+};

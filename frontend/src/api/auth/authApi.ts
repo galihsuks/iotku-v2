@@ -1,11 +1,19 @@
 import type { ApiResponse } from "../../interfaces/api";
-import type { User } from "../../interfaces/auth";
+import type { LoginPayload, User } from "../../interfaces/auth";
 import type { ID } from "../../interfaces/common";
 import type { ChangeOwnPasswordPayload } from "../../interfaces/user";
 import api from "../axios";
 import { toApiError } from "../apiError";
 
 export const authApi = {
+  login: async (payload: LoginPayload): Promise<ApiResponse<User>> => {
+    try {
+      const response = await api.post<ApiResponse<User>>("/api/auth/login", payload);
+      return response.data;
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
   logout: async (): Promise<ApiResponse<null>> => {
     try {
       const response = await api.post<ApiResponse<null>>("/api/auth/logout");

@@ -25,12 +25,19 @@ export const dropdownUsers = async (keywords: string) =>
 
 export const dropdownSensorUnits = async (keywords: string) =>
   queryRows<
-    { value: string; label: string; unit: string; value_type: "number" | "string" } & RowDataPacket
+    {
+      value: string;
+      label: string;
+      unit: string;
+      value_type: "number" | "string";
+      widget_type: "numeric_card" | "chart" | "gauge" | "switch" | "status";
+    } & RowDataPacket
   >(
     `SELECT id AS value,
             CONCAT(name, ' (', unit, ')') AS label,
             unit,
-            value_type
+            value_type,
+            widget_type
      FROM sensor_units
      WHERE name LIKE ? OR unit LIKE ? OR value_type LIKE ?
      ORDER BY name
@@ -39,11 +46,20 @@ export const dropdownSensorUnits = async (keywords: string) =>
   );
 
 export const dropdownSensors = async (keywords: string, userId: string) =>
-  queryRows<{ value: string; label: string; code: string; unit: string } & RowDataPacket>(
+  queryRows<
+    {
+      value: string;
+      label: string;
+      code: string;
+      unit: string;
+      widget_type: "numeric_card" | "chart" | "gauge" | "switch" | "status";
+    } & RowDataPacket
+  >(
     `SELECT DISTINCT s.id AS value,
             CONCAT(s.code, ' - ', s.label) AS label,
             s.code,
-            u.unit
+            u.unit,
+            u.widget_type
      FROM sensors s
      JOIN sensor_units u ON u.id = s.unit_id
      LEFT JOIN sensor_shared_users su ON su.sensor_id = s.id
