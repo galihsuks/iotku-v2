@@ -15,6 +15,11 @@ export const sensorSchema = z.object({
   shared_user_ids: z.array(z.string().trim().min(1)).optional(),
 });
 
+export const sensorJoinSchema = z.object({
+  sensor_code: z.string().trim().min(1).max(20),
+  passkey: z.string().trim().min(1).max(120),
+});
+
 export const readingSchema = z.object({
   recorded_at_ms: z.coerce.number().int().positive().optional(),
   value: z.union([z.string(), z.number(), z.boolean()]),

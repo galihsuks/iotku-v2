@@ -1,6 +1,12 @@
 import type { ApiResponse } from "../../interfaces/api";
 import type { ID } from "../../interfaces/common";
-import type { Sensor, SensorPayload, SensorQuery, SensorReading } from "../../interfaces/sensor";
+import type {
+  Sensor,
+  SensorJoinPayload,
+  SensorPayload,
+  SensorQuery,
+  SensorReading,
+} from "../../interfaces/sensor";
 import { toApiError } from "../apiError";
 import api from "../axios";
 
@@ -29,6 +35,14 @@ export const sensorApi = {
       throw toApiError(error);
     }
   },
+  join: async (payload: SensorJoinPayload): Promise<ApiResponse<Sensor>> => {
+    try {
+      const response = await api.post<ApiResponse<Sensor>>("/api/sensor/join", payload);
+      return response.data;
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
   update: async (id: ID, payload: SensorPayload): Promise<ApiResponse<Sensor>> => {
     try {
       const response = await api.put<ApiResponse<Sensor>>(`/api/sensor/${id}`, payload);
@@ -52,4 +66,3 @@ export const sensorApi = {
     }
   },
 };
-

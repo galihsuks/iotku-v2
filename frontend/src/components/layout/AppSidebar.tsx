@@ -213,7 +213,7 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
             )}
           >
             <div className="min-w-0">
-              <p className="truncate text-xs tracking-[0.2em] text-dark-500">WEDDING SUITE</p>
+              <p className="truncate text-xs tracking-[0.2em] text-dark-500">v2.0</p>
               <AppLogo variant="text" className="truncate" />
             </div>
           </div>
@@ -320,7 +320,7 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
               <AppLogo variant="icon" className="h-7 w-auto" />
             </div>
             <div>
-              <p className="text-lg font-semibold text-primary-700">Megah Digital</p>
+              <p className="text-lg font-semibold text-primary-700">Iotku</p>
             </div>
           </a>
           <div

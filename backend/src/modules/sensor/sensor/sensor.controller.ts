@@ -1,7 +1,7 @@
 import { keywordQuerySchema } from "../../system/system.schemas.js";
 import { asyncHandler, success, validate } from "../../../utils/http.js";
 import { param } from "../../../utils/params.js";
-import { sensorSchema } from "../sensor.schemas.js";
+import { sensorJoinSchema, sensorSchema } from "../sensor.schemas.js";
 import * as sensorService from "./sensor.service.js";
 
 export const listSensors = asyncHandler(async (req, res) => {
@@ -23,6 +23,14 @@ export const createSensor = asyncHandler(async (req, res) =>
     res,
     "Sensor created successfully.",
     await sensorService.saveSensor(validate(sensorSchema, req.body), req.user?.id ?? ""),
+  ),
+);
+
+export const joinSensor = asyncHandler(async (req, res) =>
+  success(
+    res,
+    "Sensor joined successfully.",
+    await sensorService.joinSensor(validate(sensorJoinSchema, req.body), req.user?.id ?? ""),
   ),
 );
 

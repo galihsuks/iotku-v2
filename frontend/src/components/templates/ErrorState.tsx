@@ -72,7 +72,7 @@ export const ErrorState = ({
                 <div className="inline-flex h-12 w-12 items-center justify-center">
                   <AppLogo variant="icon" className="h-10 w-10" />
                 </div>
-                <p className="text-sm uppercase tracking-[0.22em] text-white/80">Megah Digital</p>
+                <p className="text-sm uppercase tracking-[0.22em] text-white/80">Iotku</p>
               </div>
               <div>
                 <h2 className="mt-4 text-4xl font-semibold leading-tight max-w-[350px]">

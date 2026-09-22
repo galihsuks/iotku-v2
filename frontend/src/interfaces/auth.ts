@@ -3,6 +3,14 @@ export interface LoginPayload {
   password: string;
 }
 
+export interface SignupPayload {
+  username: string;
+  full_name: string;
+  email: string;
+  password: string;
+  confirm_password: string;
+}
+
 export interface User {
   id: string;
   username: string;

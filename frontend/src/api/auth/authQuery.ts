@@ -1,11 +1,17 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { LoginPayload } from "../../interfaces/auth";
+import type { LoginPayload, SignupPayload } from "../../interfaces/auth";
 import { queryKeys } from "../queryKeys";
 import { authApi } from "./authApi";
 
 export const useAuthLoginMutation = () => {
   return useMutation({
     mutationFn: (payload: LoginPayload) => authApi.login(payload),
+  });
+};
+
+export const useAuthSignupMutation = () => {
+  return useMutation({
+    mutationFn: (payload: SignupPayload) => authApi.signup(payload),
   });
 };
 

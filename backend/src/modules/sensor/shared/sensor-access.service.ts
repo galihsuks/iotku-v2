@@ -14,3 +14,13 @@ export const assertCanReadSensor = async (sensorId: string, userId: string) => {
     throw forbidden("You are not allowed to access this sensor.");
   }
 };
+
+export const assertCanOwnSensor = async (sensorId: string, userId: string) => {
+  const row = await queryOne<{ total: number } & RowDataPacket>(
+    `SELECT COUNT(*) AS total FROM sensors WHERE id = ? AND owner_user_id = ?`,
+    [sensorId, userId],
+  );
+  if (Number(row?.total ?? 0) === 0) {
+    throw forbidden("Only the sensor owner can change this sensor.");
+  }
+};

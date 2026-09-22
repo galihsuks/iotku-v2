@@ -1,7 +1,7 @@
 import { env } from "../../config/env.js";
 import { asyncHandler, success, validate } from "../../utils/http.js";
 import { getBearerToken } from "../../utils/token.js";
-import { changePasswordSchema, loginSchema } from "./auth.schemas.js";
+import { changePasswordSchema, loginSchema, signupSchema } from "./auth.schemas.js";
 import * as authService from "./auth.service.js";
 
 export const login = asyncHandler(async (req, res) => {
@@ -12,6 +12,16 @@ export const login = asyncHandler(async (req, res) => {
     maxAge: 24 * 60 * 60 * 1000,
   });
   return success(res, "Login successfully.", result.user);
+});
+
+export const signup = asyncHandler(async (req, res) => {
+  const body = validate(signupSchema, req.body);
+  const result = await authService.signup(body);
+  res.cookie(env.AUTH_COOKIE_NAME, result.token, {
+    ...authService.getCookieOptions(),
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+  return success(res, "Signup successfully.", result.user);
 });
 
 export const me = asyncHandler(async (req, res) => {

@@ -5,6 +5,19 @@ export const loginSchema = z.object({
   password: z.string().min(6).max(255),
 });
 
+export const signupSchema = z
+  .object({
+    username: z.string().trim().min(3).max(100),
+    full_name: z.string().trim().min(1).max(100),
+    email: z.string().trim().email().max(150),
+    password: z.string().min(6).max(255),
+    confirm_password: z.string().min(6).max(255),
+  })
+  .refine((value) => value.password === value.confirm_password, {
+    message: "Password confirmation does not match.",
+    path: ["confirm_password"],
+  });
+
 export const changePasswordSchema = z
   .object({
     current_password: z.string().min(6).max(255),

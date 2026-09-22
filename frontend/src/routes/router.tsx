@@ -17,6 +17,7 @@ import {
   SensorAddPage,
   SensorDetailPage,
   SensorEditPage,
+  SignupPage,
   UserPage,
   WebSocketLogPage,
 } from "./lazyPages";
@@ -29,7 +30,10 @@ export const appRouter = createBrowserRouter([
       {
         path: "/auth",
         element: <GuestRoute />,
-        children: [{ path: "login", element: withSuspense(<LoginPage />) }, { path: "signup" }],
+        children: [
+          { path: "login", element: withSuspense(<LoginPage />) },
+          { path: "signup", element: withSuspense(<SignupPage />) },
+        ],
       },
       {
         element: <PrivateRoute />,

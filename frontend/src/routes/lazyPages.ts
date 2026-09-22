@@ -4,6 +4,10 @@ export const LoginPage = lazy(() =>
   import("../pages/auth/LoginPage").then((module) => ({ default: module.LoginPage })),
 );
 
+export const SignupPage = lazy(() =>
+  import("../pages/auth/SignupPage").then((module) => ({ default: module.SignupPage })),
+);
+
 export const DashboardPage = lazy(() =>
   import("../pages/main/DashboardPage").then((module) => ({ default: module.DashboardPage })),
 );

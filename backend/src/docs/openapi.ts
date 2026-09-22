@@ -145,6 +145,20 @@ export const openApiDocument = {
         responses: { 200: ok("Login successfully") },
       },
     },
+    "/api/auth/signup": {
+      post: {
+        tags: ["Auth"],
+        summary: "Signup as regular user and set auth cookie",
+        requestBody: jsonBody({
+          username: "demo_user",
+          full_name: "Demo User",
+          email: "demo.user@iotku.test",
+          password: "password123",
+          confirm_password: "password123",
+        }),
+        responses: { 200: ok("Signup successfully") },
+      },
+    },
     "/api/auth/me": {
       get: {
         tags: ["Auth"],
@@ -579,6 +593,18 @@ export const openApiDocument = {
           unit_id: "unit-temperature-celsius",
           owner_user_id: "user-super-admin",
           shared_user_ids: [],
+        }),
+        responses: { 200: ok() },
+      },
+    },
+    "/api/sensor/join": {
+      post: {
+        tags: ["Sensor"],
+        summary: "Join existing shared sensor",
+        security: [{ cookieAuth: [] }],
+        requestBody: jsonBody({
+          sensor_code: "00001",
+          passkey: "device-passkey",
         }),
         responses: { 200: ok() },
       },

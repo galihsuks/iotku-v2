@@ -2,11 +2,11 @@ import type { RowDataPacket } from "mysql2";
 import { v4 as uuidv4 } from "uuid";
 import { withTransaction } from "../../../config/database.js";
 import { execute, queryOne, queryRows } from "../../../repositories/base.repository.js";
-import { notFound } from "../../../utils/app-error.js";
+import { badRequest, notFound } from "../../../utils/app-error.js";
 import { nowSql } from "../../../utils/date.js";
 import { buildPagination, getPagination } from "../../../utils/pagination.js";
 import { like, type SensorKeywordQuery } from "../shared/query.js";
-import { assertCanReadSensor } from "../shared/sensor-access.service.js";
+import { assertCanOwnSensor, assertCanReadSensor } from "../shared/sensor-access.service.js";
 
 export const createSensorCode = async () => {
   const latest = await queryOne<{ code: string } & RowDataPacket>(
@@ -82,6 +82,7 @@ export const saveSensor = async (
   const now = nowSql();
   const ownerId = payload.owner_user_id ?? currentUserId;
   if (id) {
+    await assertCanOwnSensor(id, currentUserId);
     await withTransaction(async (conn) => {
       await execute(
         `UPDATE sensors SET label = ?, passkey = COALESCE(?, passkey), unit_id = ?, owner_user_id = ?, updated_at = ? WHERE id = ?`,
@@ -118,8 +119,45 @@ export const saveSensor = async (
   return getSensorDetail(newId, currentUserId);
 };
 
+export const joinSensor = async (
+  payload: {
+    sensor_code: string;
+    passkey: string;
+  },
+  userId: string,
+) => {
+  const sensor = await queryOne<
+    {
+      id: string;
+      code: string;
+      passkey: string;
+      owner_user_id: string;
+    } & RowDataPacket
+  >(`SELECT id, code, passkey, owner_user_id FROM sensors WHERE code = ? LIMIT 1`, [
+    payload.sensor_code,
+  ]);
+
+  if (!sensor) {
+    throw notFound("Sensor not found.");
+  }
+
+  if (!sensor.passkey || sensor.passkey !== payload.passkey) {
+    throw badRequest("Sensor code or passkey is incorrect.");
+  }
+
+  if (sensor.owner_user_id !== userId) {
+    const now = nowSql();
+    await execute(
+      `INSERT IGNORE INTO sensor_shared_users (id, sensor_id, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
+      [uuidv4(), sensor.id, userId, now, now],
+    );
+  }
+
+  return getSensorDetail(sensor.id, userId);
+};
+
 export const deleteSensor = async (id: string, userId: string) => {
-  await assertCanReadSensor(id, userId);
+  await assertCanOwnSensor(id, userId);
   const row = await getSensorDetail(id, userId);
   await execute(`DELETE FROM sensors WHERE id = ?`, [id]);
   return row;

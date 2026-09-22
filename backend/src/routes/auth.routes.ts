@@ -5,6 +5,7 @@ import * as authController from "../modules/auth/auth.controller.js";
 export const authRouter = Router();
 
 authRouter.post("/login", authController.login);
+authRouter.post("/signup", authController.signup);
 authRouter.get("/me", authenticate, authController.me);
 authRouter.post("/logout", authenticate, authController.logout);
 authRouter.put("/password", authenticate, authController.changePassword);

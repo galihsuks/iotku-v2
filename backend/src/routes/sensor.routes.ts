@@ -14,6 +14,7 @@ sensorRouter.put("/units/:id", sensorUnitController.updateUnit);
 sensorRouter.delete("/units/:id", sensorUnitController.deleteUnit);
 sensorRouter.get("/", sensorController.listSensors);
 sensorRouter.post("/", sensorController.createSensor);
+sensorRouter.post("/join", sensorController.joinSensor);
 sensorRouter.get("/:id", sensorController.getSensor);
 sensorRouter.put("/:id", sensorController.updateSensor);
 sensorRouter.delete("/:id", sensorController.deleteSensor);

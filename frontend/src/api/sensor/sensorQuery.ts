@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { SensorPayload, SensorQuery } from "../../interfaces/sensor";
+import type { SensorJoinPayload, SensorPayload, SensorQuery } from "../../interfaces/sensor";
 import { queryKeys } from "../queryKeys";
 import { sensorApi } from "./sensorApi";
 
@@ -24,6 +24,12 @@ export const useCreateSensorMutation = () => {
   });
 };
 
+export const useJoinSensorMutation = () => {
+  return useMutation({
+    mutationFn: (payload: SensorJoinPayload) => sensorApi.join(payload),
+  });
+};
+
 export const useUpdateSensorMutation = () => {
   return useMutation({
     mutationFn: ({ id, payload }: { id: string; payload: SensorPayload }) =>
@@ -42,4 +48,3 @@ export const useCreateSensorReadingMutation = () => {
     }) => sensorApi.createReading(id, payload),
   });
 };
-

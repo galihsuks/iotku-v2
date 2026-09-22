@@ -47,6 +47,11 @@ export interface SensorPayload {
   shared_user_ids?: ID[];
 }
 
+export interface SensorJoinPayload {
+  sensor_code: string;
+  passkey: string;
+}
+
 export interface SensorUnitPayload {
   name: string;
   unit: string;
@@ -82,4 +87,3 @@ export interface DeviceInfoSocketMessage {
 }
 
 export type SensorSocketMessage = SensorReadingSocketMessage | DeviceInfoSocketMessage;
-

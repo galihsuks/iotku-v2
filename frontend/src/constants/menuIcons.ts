@@ -6,6 +6,7 @@ import {
   ChartColumn,
   Circle,
   ClipboardList,
+  Cpu,
   FilePenLine,
   FileBarChart2,
   FolderKanban,
@@ -20,12 +21,15 @@ import {
   MailOpen,
   MessageSquareHeart,
   PackageSearch,
+  Pencil,
+  Plus,
   ReceiptText,
   Send,
   Settings,
   Shield,
   SlidersHorizontal,
   SquareStack,
+  Unplug,
   UserRound,
   Users,
   UsersRound,
@@ -61,9 +65,13 @@ export const menuIconMap: Record<string, LucideIcon> = {
   CalendarCheck2,
   MessageSquareHeart,
   Send,
+  Plus,
+  Pencil,
+  Unplug,
+  Cpu,
   UserRound,
   UsersRound,
-  };
+};
 
 export const menuIconOptions: DropdownOption[] = Object.keys(menuIconMap)
   .sort((first, second) => first.localeCompare(second))
