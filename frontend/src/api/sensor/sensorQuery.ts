@@ -37,6 +37,12 @@ export const useUpdateSensorMutation = () => {
   });
 };
 
+export const useDeleteSensorMutation = () => {
+  return useMutation({
+    mutationFn: (id: string) => sensorApi.delete(id),
+  });
+};
+
 export const useCreateSensorReadingMutation = () => {
   return useMutation({
     mutationFn: ({

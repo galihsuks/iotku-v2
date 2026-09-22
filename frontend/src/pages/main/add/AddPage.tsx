@@ -3,15 +3,15 @@ import { Cpu, KeyRound, Link2, Plus, RadioTower } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { dropdownApi } from "../../api/dropdown/dropdownApi";
-import { queryKeys } from "../../api/queryKeys";
-import { useCreateSensorMutation, useJoinSensorMutation } from "../../api/sensor/sensorQuery";
-import { PageHeader } from "../../components/layout/PageHeader";
-import { Button, FormInput } from "../../components/ui";
-import type { DropdownOption } from "../../interfaces/dropdown";
-import type { SensorJoinPayload, SensorPayload } from "../../interfaces/sensor";
-import { cn } from "../../utils/cn";
-import { useNotificationStore } from "../../store/notifStore";
+import { dropdownApi } from "../../../api/dropdown/dropdownApi";
+import { queryKeys } from "../../../api/queryKeys";
+import { useCreateSensorMutation, useJoinSensorMutation } from "../../../api/sensor/sensorQuery";
+import { PageHeader } from "../../../components/layout/PageHeader";
+import { Button, FormInput } from "../../../components/ui";
+import type { DropdownOption } from "../../../interfaces/dropdown";
+import type { SensorJoinPayload, SensorPayload } from "../../../interfaces/sensor";
+import { cn } from "../../../utils/cn";
+import { useNotificationStore } from "../../../store/notifStore";
 
 type AddMode = "new" | "shared";
 
@@ -38,7 +38,7 @@ const modeCards: Array<{
   },
 ];
 
-export const SensorAddPage = () => {
+export const AddPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { addToast } = useNotificationStore();
@@ -124,11 +124,11 @@ export const SensorAddPage = () => {
     <>
       <PageHeader
         showGoBack
-        title="Add Sensor"
+        title="Add Device"
         subtitle="Pilih hubungkan perangkat baru atau gabung ke perangkat yang sudah ada."
         breadcrumbs={[
           { label: "Main", route: "/" },
-          { label: "Add Sensor", route: undefined },
+          { label: "Add Device", route: undefined },
         ]}
       />
 
@@ -157,7 +157,10 @@ export const SensorAddPage = () => {
 
       <section className="mt-5 rounded-2xl border border-dark-200 bg-white p-5 shadow-[0_12px_40px_-32px_rgba(15,23,42,0.45)] sm:p-6">
         {mode === "new" ? (
-          <form className="grid gap-4 md:grid-cols-2" onSubmit={handleNewSensorSubmit(onCreateSensor)}>
+          <form
+            className="grid gap-4 md:grid-cols-2"
+            onSubmit={handleNewSensorSubmit(onCreateSensor)}
+          >
             <div className="md:col-span-2">
               <h2 className="text-base font-semibold text-dark-900">Detail Perangkat Baru</h2>
               <p className="mt-1 text-sm text-dark-500">

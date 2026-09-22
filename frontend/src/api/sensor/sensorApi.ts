@@ -51,6 +51,14 @@ export const sensorApi = {
       throw toApiError(error);
     }
   },
+  delete: async (id: ID): Promise<ApiResponse<Sensor>> => {
+    try {
+      const response = await api.delete<ApiResponse<Sensor>>(`/api/sensor/${id}`);
+      return response.data;
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
   createReading: async (
     id: ID,
     payload: { value: string | number | boolean; recorded_at_ms?: number },

@@ -49,9 +49,12 @@ api.interceptors.response.use(
     }
 
     const statusCode = Number(error.response.status ?? 0);
-    if (statusCode === 403) {
+    const method = String(error.config?.method ?? "get").toLowerCase();
+    const shouldShowResourceErrorPage = method === "get";
+
+    if (statusCode === 403 && shouldShowResourceErrorPage) {
       useHttpErrorStore.getState().actions.setError("forbidden", statusCode);
-    } else if (statusCode === 404) {
+    } else if (statusCode === 404 && shouldShowResourceErrorPage) {
       useHttpErrorStore.getState().actions.setError("not_found", statusCode);
     } else if (statusCode >= 500) {
       useHttpErrorStore.getState().actions.setError("internal_server_error", statusCode);

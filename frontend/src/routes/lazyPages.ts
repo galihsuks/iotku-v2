@@ -9,21 +9,23 @@ export const SignupPage = lazy(() =>
 );
 
 export const DashboardPage = lazy(() =>
-  import("../pages/main/DashboardPage").then((module) => ({ default: module.DashboardPage })),
+  import("../pages/main/dashboard/DashboardPage").then((module) => ({
+    default: module.DashboardPage,
+  })),
 );
 
 export const SensorAddPage = lazy(() =>
-  import("../pages/main/SensorAddPage").then((module) => ({ default: module.SensorAddPage })),
+  import("../pages/main/add/AddPage").then((module) => ({ default: module.AddPage })),
 );
 
 export const SensorDetailPage = lazy(() =>
-  import("../pages/main/SensorDetailPage").then((module) => ({
-    default: module.SensorDetailPage,
+  import("../pages/main/detail/DetailPage").then((module) => ({
+    default: module.DetailPage,
   })),
 );
 
 export const SensorEditPage = lazy(() =>
-  import("../pages/main/SensorEditPage").then((module) => ({ default: module.SensorEditPage })),
+  import("../pages/main/edit/EditPage").then((module) => ({ default: module.EditPage })),
 );
 
 export const AdminDashboardPage = lazy(() =>

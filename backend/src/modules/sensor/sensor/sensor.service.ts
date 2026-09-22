@@ -23,18 +23,65 @@ export const listSensors = async (query: SensorKeywordQuery, userId: string) => 
     ? "AND (s.code LIKE ? OR s.label LIKE ? OR u.name LIKE ? OR u.unit LIKE ?)"
     : "";
   const values = keywords ? [like(keywords), like(keywords), like(keywords), like(keywords)] : [];
-  const rows = await queryRows(
+  const rows = await queryRows<
+    {
+      latest_reading_id: string | null;
+      latest_reading_sensor_id: string | null;
+      latest_reading_recorded_at_ms: number | null;
+      latest_reading_value: string | null;
+      latest_reading_created_at: string | null;
+      latest_reading_updated_at: string | null;
+    } & RowDataPacket
+  >(
     `SELECT DISTINCT s.id, s.code, s.label, s.passkey, s.owner_user_id, s.unit_id,
             u.name AS unit_name, u.unit, u.value_type, u.widget_type, owner.full_name AS owner_name,
-            s.created_at, s.updated_at
+            s.created_at, s.updated_at,
+            lr.id AS latest_reading_id,
+            lr.sensor_id AS latest_reading_sensor_id,
+            lr.recorded_at_ms AS latest_reading_recorded_at_ms,
+            lr.value AS latest_reading_value,
+            lr.created_at AS latest_reading_created_at,
+            lr.updated_at AS latest_reading_updated_at
      FROM sensors s
      JOIN sensor_units u ON u.id = s.unit_id
      JOIN app_users owner ON owner.id = s.owner_user_id
      LEFT JOIN sensor_shared_users su ON su.sensor_id = s.id
+     LEFT JOIN sensor_readings lr ON lr.id = (
+       SELECT sr.id
+       FROM sensor_readings sr
+       WHERE sr.sensor_id = s.id
+       ORDER BY sr.recorded_at_ms DESC, sr.created_at DESC
+       LIMIT 1
+     )
      WHERE (s.owner_user_id = ? OR su.user_id = ?) ${keywordWhere}
      ORDER BY s.created_at DESC LIMIT ? OFFSET ?`,
     [userId, userId, ...values, pageSize, offset],
   );
+  const mappedRows = rows.map((row) => {
+    const {
+      latest_reading_id,
+      latest_reading_sensor_id,
+      latest_reading_recorded_at_ms,
+      latest_reading_value,
+      latest_reading_created_at,
+      latest_reading_updated_at,
+      ...sensor
+    } = row;
+
+    return {
+      ...sensor,
+      latest_reading: latest_reading_id
+        ? {
+            id: latest_reading_id,
+            sensor_id: latest_reading_sensor_id,
+            recorded_at_ms: latest_reading_recorded_at_ms,
+            value: latest_reading_value,
+            created_at: latest_reading_created_at,
+            updated_at: latest_reading_updated_at,
+          }
+        : null,
+    };
+  });
   const count = await queryOne<{ total: number } & RowDataPacket>(
     `SELECT COUNT(DISTINCT s.id) AS total
      FROM sensors s
@@ -43,7 +90,7 @@ export const listSensors = async (query: SensorKeywordQuery, userId: string) => 
      WHERE (s.owner_user_id = ? OR su.user_id = ?) ${keywordWhere}`,
     [userId, userId, ...values],
   );
-  return { rows, pagination: buildPagination(page, pageSize, Number(count?.total ?? 0)) };
+  return { rows: mappedRows, pagination: buildPagination(page, pageSize, Number(count?.total ?? 0)) };
 };
 
 export const getSensorDetail = async (id: string, userId: string) => {
@@ -89,13 +136,15 @@ export const saveSensor = async (
         [payload.label, payload.passkey ?? null, payload.unit_id, ownerId, now, id],
         conn,
       );
-      await execute(`DELETE FROM sensor_shared_users WHERE sensor_id = ?`, [id], conn);
-      for (const sharedUserId of payload.shared_user_ids ?? []) {
-        await execute(
-          `INSERT IGNORE INTO sensor_shared_users (id, sensor_id, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
-          [uuidv4(), id, sharedUserId, now, now],
-          conn,
-        );
+      if (payload.shared_user_ids) {
+        await execute(`DELETE FROM sensor_shared_users WHERE sensor_id = ?`, [id], conn);
+        for (const sharedUserId of payload.shared_user_ids) {
+          await execute(
+            `INSERT IGNORE INTO sensor_shared_users (id, sensor_id, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
+            [uuidv4(), id, sharedUserId, now, now],
+            conn,
+          );
+        }
       }
     });
     return getSensorDetail(id, currentUserId);

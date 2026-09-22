@@ -27,6 +27,7 @@ export interface Sensor {
   owner_name: string;
   created_at: string | null;
   updated_at: string | null;
+  latest_reading?: SensorReading | null;
   shared_users?: Array<{ id: ID; email: string; full_name: string }>;
 }
 

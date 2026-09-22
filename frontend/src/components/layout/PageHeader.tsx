@@ -31,7 +31,7 @@ export const PageHeader = ({
   const navigate = useNavigate();
 
   return (
-    <header className={cn("mb-6", className)}>
+    <header className={cn("mb-6 cursor-default", className)}>
       <div
         className={cn(
           "flex items-center mb-4 transition-all duration-300",
@@ -56,13 +56,12 @@ export const PageHeader = ({
                 <div key={`${breadcrumb.label}-${index}`} className="flex items-center gap-2">
                   {index > 0 ? <ChevronRight className="h-3.5 w-3.5 text-dark-300" /> : null}
                   {breadcrumb.route && !isLastItem ? (
-                    <button
-                      type="button"
+                    <span
                       onClick={() => navigate(breadcrumb.route as string)}
-                      className="transition hover:text-primary-600"
+                      className="cursor-pointer transition hover:text-primary-600"
                     >
                       {breadcrumb.label}
-                    </button>
+                    </span>
                   ) : (
                     <span className={cn(isLastItem ? "text-dark-500" : "")}>
                       {breadcrumb.label}
@@ -81,7 +80,7 @@ export const PageHeader = ({
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-primary-100 bg-white text-dark-700 shadow-sm transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-600"
+              className="cursor-pointer inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-primary-100 bg-white text-dark-700 shadow-sm transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-600"
             >
               <ArrowLeft className="h-4 w-4" />
             </button>
