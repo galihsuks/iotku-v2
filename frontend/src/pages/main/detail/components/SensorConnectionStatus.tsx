@@ -1,7 +1,6 @@
 import { Clock3, Globe2, Wifi, WifiOff } from "lucide-react";
-import { Badge } from "../../../../components/ui";
 import type { Sensor } from "../../../../interfaces/sensor";
-import { useDeviceStatusBySensor, useRealtimeConnection } from "../../../../store/realtimeStore";
+import { useDeviceStatusBySensor } from "../../../../store/realtimeStore";
 
 interface SensorConnectionStatusProps {
   sensor: Sensor;
@@ -23,7 +22,6 @@ const formatConnectedAt = (value?: string | null) => {
 };
 
 export const SensorConnectionStatus = ({ sensor }: SensorConnectionStatusProps) => {
-  const isRealtimeConnected = useRealtimeConnection();
   const deviceStatusBySensor = useDeviceStatusBySensor();
   const deviceStatus = deviceStatusBySensor[sensor.code];
   const isOnline = Boolean(deviceStatus?.connection_status);
@@ -36,7 +34,9 @@ export const SensorConnectionStatus = ({ sensor }: SensorConnectionStatusProps) 
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
             Device Status
           </p>
-          <h2 className="mt-3 text-xl font-semibold text-dark-900">
+          <h2
+            className={`mt-3 text-xl font-semibold ${isOnline ? "text-success-600" : "text-dark-900"}`}
+          >
             {isOnline ? "Online" : "Offline"}
           </h2>
           <p className="mt-1 text-sm text-dark-500">
@@ -56,15 +56,6 @@ export const SensorConnectionStatus = ({ sensor }: SensorConnectionStatusProps) 
             <StatusIcon className="h-5 w-5" />
           </div>
         </div>
-      </div>
-
-      <div className="mt-4 flex flex-wrap gap-2">
-        <Badge variant={isOnline ? "success" : "light"}>
-          {isOnline ? "Device Online" : "Device Offline"}
-        </Badge>
-        <Badge variant={isRealtimeConnected ? "primary-outline" : "light"}>
-          {isRealtimeConnected ? "Realtime Connected" : "Realtime Disconnected"}
-        </Badge>
       </div>
 
       <div className="mt-5 grid gap-3">

@@ -10,6 +10,7 @@ interface RealtimeState {
     setConnected: (isConnected: boolean) => void;
     setSubscribedSensorCodes: (sensorCodes: string[]) => void;
     setLatestReading: (sensorCode: string, reading: SensorReading) => void;
+    clearLatestReading: (sensorCode: string) => void;
     setDeviceInfo: (deviceInfo: DeviceInfo[]) => void;
   };
 }
@@ -29,6 +30,13 @@ export const useRealtimeStore = create<RealtimeState>((set) => ({
           [sensorCode]: reading,
         },
       })),
+    clearLatestReading: (sensorCode) =>
+      set((state) => {
+        const next = { ...state.latestReadingsBySensor };
+        delete next[sensorCode];
+
+        return { latestReadingsBySensor: next };
+      }),
     setDeviceInfo: (deviceInfo) =>
       set((state) => ({
         deviceStatusBySensor: deviceInfo.reduce(
@@ -48,4 +56,3 @@ export const useLatestReadingsBySensor = () =>
 export const useDeviceStatusBySensor = () =>
   useRealtimeStore((state) => state.deviceStatusBySensor);
 export const useRealtimeActions = () => useRealtimeStore((state) => state.actions);
-

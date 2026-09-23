@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageHeader } from "../../../components/layout/PageHeader";
@@ -11,6 +11,7 @@ import { useUser } from "../../../store/authStore";
 import { SensorNumberChart } from "./components/SensorNumberChart";
 import { SensorConnectionStatus } from "./components/SensorConnectionStatus";
 import { SensorDeleteModal } from "./components/SensorDeleteModal";
+import { SensorResetReadingsModal } from "./components/SensorResetReadingsModal";
 import { SensorValuePreview } from "./components/SensorValuePreview";
 
 export const DetailPage = () => {
@@ -18,6 +19,8 @@ export const DetailPage = () => {
   const navigate = useNavigate();
   const user = useUser();
   const [deleteTarget, setDeleteTarget] = useState<Sensor | null>(null);
+  const [resetTarget, setResetTarget] = useState<Sensor | null>(null);
+  const [readingsResetVersion, setReadingsResetVersion] = useState(0);
   const { data, isPending, error } = useSensorDetailQuery(id);
   const sensor = data?.data;
   const isOwner = Boolean(sensor && user?.id === sensor.owner_user_id);
@@ -60,6 +63,14 @@ export const DetailPage = () => {
               </Button>
               <Button
                 type="button"
+                variant="warning-outline"
+                icon={RotateCcw}
+                onClick={() => setResetTarget(sensor)}
+              >
+                Reset Data
+              </Button>
+              <Button
+                type="button"
                 variant="danger"
                 icon={Trash2}
                 onClick={() => setDeleteTarget(sensor)}
@@ -94,7 +105,7 @@ export const DetailPage = () => {
             </div>
           </div>
           {sensor.value_type === "number" ? (
-            <SensorNumberChart sensor={sensor} />
+            <SensorNumberChart key={readingsResetVersion} sensor={sensor} />
           ) : (
             <SensorValuePreview sensor={sensor} />
           )}
@@ -106,6 +117,12 @@ export const DetailPage = () => {
         target={deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onDeleted={() => navigate("/", { replace: true })}
+      />
+      <SensorResetReadingsModal
+        open={Boolean(resetTarget)}
+        target={resetTarget}
+        onClose={() => setResetTarget(null)}
+        onReset={() => setReadingsResetVersion((prev) => prev + 1)}
       />
     </>
   );

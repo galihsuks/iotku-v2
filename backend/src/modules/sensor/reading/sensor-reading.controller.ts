@@ -27,6 +27,14 @@ export const createReading = asyncHandler(async (req, res) =>
       : await sensorReadingService.createReading(
           param(req, "id"),
           validate(readingSchema, req.body),
-        ),
+    ),
+  ),
+);
+
+export const resetReadings = asyncHandler(async (req, res) =>
+  success(
+    res,
+    "Data sensor berhasil direset.",
+    await sensorReadingService.resetReadings(param(req, "id"), req.user?.id ?? ""),
   ),
 );

@@ -5,7 +5,7 @@ import { emitSensorReadingCreated } from "../../../events/sensor-reading.events.
 import { badRequest, notFound } from "../../../utils/app-error.js";
 import { nowSql } from "../../../utils/date.js";
 import { buildPagination, getPagination } from "../../../utils/pagination.js";
-import { assertCanReadSensor } from "../shared/sensor-access.service.js";
+import { assertCanOwnSensor, assertCanReadSensor } from "../shared/sensor-access.service.js";
 
 export const validateReadingValue = async (sensorId: string, value: unknown) => {
   const sensor = await queryOne<{ value_type: "number" | "string" } & RowDataPacket>(
@@ -65,4 +65,13 @@ export const listReadings = async (
     [sensorId],
   );
   return { rows, pagination: buildPagination(page, pageSize, Number(count?.total ?? 0)) };
+};
+
+export const resetReadings = async (sensorId: string, userId: string) => {
+  await assertCanOwnSensor(sensorId, userId);
+  const result = await execute(`DELETE FROM sensor_readings WHERE sensor_id = ?`, [sensorId]);
+
+  return {
+    deleted_count: result.affectedRows,
+  };
 };

@@ -659,6 +659,13 @@ export const openApiDocument = {
         requestBody: jsonBody({ recorded_at_ms: 1760000000000, value: "27.5" }),
         responses: { 200: ok() },
       },
+      delete: {
+        tags: ["Sensor Reading"],
+        summary: "Reset all sensor readings",
+        security: [{ cookieAuth: [] }],
+        parameters: [idParam()],
+        responses: { 200: ok() },
+      },
     },
     "/api/sensor/{id}/readings/public": {
       post: {

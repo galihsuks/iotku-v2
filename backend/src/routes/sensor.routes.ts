@@ -20,3 +20,4 @@ sensorRouter.put("/:id", sensorController.updateSensor);
 sensorRouter.delete("/:id", sensorController.deleteSensor);
 sensorRouter.get("/:id/readings", sensorReadingController.listReadings);
 sensorRouter.post("/:id/readings", sensorReadingController.createReading);
+sensorRouter.delete("/:id/readings", sensorReadingController.resetReadings);
