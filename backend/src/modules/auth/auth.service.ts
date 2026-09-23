@@ -58,10 +58,10 @@ export const getUserWithRoleByUsername = (username: string) =>
 
 export const login = async (username: string, password: string) => {
   const user = await getUserWithRoleByUsername(username);
-  if (!user || !user.password) throw unauthorized("Username or password is incorrect.");
+  if (!user || !user.password) throw unauthorized("Username atau password salah.");
 
   const valid = await verifyPassword(password, user.password);
-  if (!valid) throw unauthorized("Username or password is incorrect.");
+  if (!valid) throw unauthorized("Username atau password salah.");
 
   const token = signAuthToken({
     id: user.id,
@@ -91,12 +91,12 @@ export const signup = async (payload: {
     `SELECT id FROM app_users WHERE username = ? OR email = ? LIMIT 1`,
     [payload.username, payload.email],
   );
-  if (existingUser) throw badRequest("Username or email is already registered.");
+  if (existingUser) throw badRequest("Username atau email sudah terdaftar.");
 
   const role = await queryOne<{ id: string } & RowDataPacket>(
     `SELECT id FROM app_roles WHERE code = 'U' LIMIT 1`,
   );
-  if (!role) throw badRequest("Default user role is not available.");
+  if (!role) throw badRequest("Role user default belum tersedia.");
 
   const now = nowSql();
   const userId = uuidv4();
@@ -119,7 +119,7 @@ export const signup = async (payload: {
   });
 
   const createdUser = await getUserWithRoleById(userId);
-  if (!createdUser) throw badRequest("Signup failed.");
+  if (!createdUser) throw badRequest("Pendaftaran gagal. Silakan coba lagi.");
 
   const token = signAuthToken({
     id: createdUser.id,
@@ -141,7 +141,7 @@ export const signup = async (payload: {
 
 export const me = async (userId: string) => {
   const user = await getUserWithRoleById(userId);
-  if (!user) throw unauthorized("User session is no longer valid.");
+  if (!user) throw unauthorized("Sesi login sudah tidak valid. Silakan login ulang.");
   return formatAuthUser(user);
 };
 
@@ -157,10 +157,10 @@ export const changeOwnPassword = async (
   newPassword: string,
 ) => {
   const user = await getUserWithRoleById(userId);
-  if (!user || !user.password) throw notFound("User not found.");
+  if (!user || !user.password) throw notFound("User tidak ditemukan.");
 
   const valid = await verifyPassword(currentPassword, user.password);
-  if (!valid) throw badRequest("Current password is incorrect.");
+  if (!valid) throw badRequest("Password saat ini salah.");
 
   const hashed = await hashPassword(newPassword);
   await execute(`UPDATE app_users SET password = ?, updated_at = ? WHERE id = ?`, [

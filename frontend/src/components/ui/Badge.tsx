@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "../../utils/cn";
 
-type BadgeVariant =
+export type BadgeVariant =
   | "primary"
   | "primary-outline"
   | "secondary"

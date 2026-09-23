@@ -12,10 +12,10 @@ export const validateReadingValue = async (sensorId: string, value: unknown) => 
     `SELECT u.value_type FROM sensors s JOIN sensor_units u ON u.id = s.unit_id WHERE s.id = ? OR s.code = ?`,
     [sensorId, sensorId],
   );
-  if (!sensor) throw notFound("Sensor not found.");
+  if (!sensor) throw notFound("Sensor tidak ditemukan.");
   const normalized = String(value);
   if (sensor.value_type === "number" && Number.isNaN(Number(normalized.replace(",", ".")))) {
-    throw badRequest("Data must be a number.");
+    throw badRequest("Nilai sensor harus berupa angka.");
   }
   return normalized;
 };
@@ -28,7 +28,7 @@ export const createReading = async (
     `SELECT id, code FROM sensors WHERE id = ? OR code = ?`,
     [sensorIdOrCode, sensorIdOrCode],
   );
-  if (!sensor) throw notFound("Sensor not found.");
+  if (!sensor) throw notFound("Sensor tidak ditemukan.");
   const value = await validateReadingValue(sensor.id, payload.value);
   const id = uuidv4();
   await execute(

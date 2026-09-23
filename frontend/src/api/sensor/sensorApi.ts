@@ -6,6 +6,7 @@ import type {
   SensorPayload,
   SensorQuery,
   SensorReading,
+  SensorReadingQuery,
 } from "../../interfaces/sensor";
 import { toApiError } from "../apiError";
 import api from "../axios";
@@ -54,6 +55,19 @@ export const sensorApi = {
   delete: async (id: ID): Promise<ApiResponse<Sensor>> => {
     try {
       const response = await api.delete<ApiResponse<Sensor>>(`/api/sensor/${id}`);
+      return response.data;
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
+  readings: async (
+    id: ID,
+    query?: SensorReadingQuery,
+  ): Promise<ApiResponse<SensorReading[]>> => {
+    try {
+      const response = await api.get<ApiResponse<SensorReading[]>>(`/api/sensor/${id}/readings`, {
+        params: query,
+      });
       return response.data;
     } catch (error) {
       throw toApiError(error);

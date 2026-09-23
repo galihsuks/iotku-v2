@@ -15,17 +15,17 @@ export const authenticate = (req: Request, _res: Response, next: NextFunction) =
     String(req.cookies?.[env.AUTH_COOKIE_NAME] ?? "");
 
   if (!token) {
-    return next(unauthorized("Unauthorized."));
+    return next(unauthorized());
   }
 
   try {
     const user = verifyAuthToken(token);
     if (!user.id) {
-      return next(unauthorized("Unauthorized."));
+      return next(unauthorized());
     }
     req.user = user;
     return next();
   } catch {
-    return next(unauthorized("Unauthorized."));
+    return next(unauthorized());
   }
 };

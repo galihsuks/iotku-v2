@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../utils/cn";
 import { useCollapseDesktopSidebar, useLayoutActions } from "../../store/layoutStore";
+import { Badge, type BadgeVariant } from "../ui";
 
 interface PageHeaderBreadcrumb {
   label: string;
@@ -16,6 +17,10 @@ interface PageHeaderProps {
   breadcrumbs?: PageHeaderBreadcrumb[];
   rightElement?: ReactNode;
   className?: string;
+  badges?: {
+    variant: BadgeVariant;
+    text: string;
+  }[];
 }
 
 export const PageHeader = ({
@@ -25,6 +30,7 @@ export const PageHeader = ({
   breadcrumbs = [],
   rightElement,
   className,
+  badges = [],
 }: PageHeaderProps) => {
   const collapseDesktopSidebar = useCollapseDesktopSidebar();
   const { setCollapseDesktopSidebar } = useLayoutActions();
@@ -95,6 +101,13 @@ export const PageHeader = ({
                 {subtitle}
               </p>
             ) : null}
+            <div className="flex items-center gap-2">
+              {badges.map((badge, ind_badge) => (
+                <Badge key={ind_badge} className="mt-2" variant={badge.variant}>
+                  {badge.text}
+                </Badge>
+              ))}
+            </div>
           </div>
         </div>
 

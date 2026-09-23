@@ -27,7 +27,7 @@ export const getParameter = async (id: string) => {
     `SELECT id, \`key\`, \`value\`, datatype, created_at, updated_at FROM app_parameters WHERE id = ?`,
     [id],
   );
-  if (!row) throw notFound("Parameter not found.");
+  if (!row) throw notFound("Parameter tidak ditemukan.");
   return row;
 };
 

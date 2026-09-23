@@ -11,7 +11,7 @@ export const assertCanReadSensor = async (sensorId: string, userId: string) => {
     [userId, sensorId, userId],
   );
   if (Number(row?.total ?? 0) === 0) {
-    throw forbidden("You are not allowed to access this sensor.");
+    throw forbidden("Kamu tidak punya akses ke sensor ini.");
   }
 };
 
@@ -21,6 +21,6 @@ export const assertCanOwnSensor = async (sensorId: string, userId: string) => {
     [sensorId, userId],
   );
   if (Number(row?.total ?? 0) === 0) {
-    throw forbidden("Only the sensor owner can change this sensor.");
+    throw forbidden("Hanya owner sensor yang bisa mengubah sensor ini.");
   }
 };

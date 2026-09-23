@@ -15,7 +15,7 @@ export const listMenus = async () => {
 
 export const getMenu = async (id: string) => {
   const row = await queryOne(`SELECT * FROM app_menus WHERE id = ?`, [id]);
-  if (!row) throw notFound("Menu not found.");
+  if (!row) throw notFound("Menu tidak ditemukan.");
   return row;
 };
 
@@ -54,7 +54,7 @@ export const deleteMenu = async (id: string, forceDelete = false) => {
   const row = await getMenu(id);
   const children = await queryRows(`SELECT id FROM app_menus WHERE parent_menu_id = ?`, [id]);
   if (children.length > 0 && !forceDelete) {
-    throw badRequest("Menu has children. Use force_delete to delete the branch.");
+    throw badRequest("Menu ini masih memiliki submenu. Aktifkan force delete untuk menghapus seluruh cabang menu.");
   }
   await execute(`DELETE FROM app_menus WHERE id = ?`, [id]);
   return row;

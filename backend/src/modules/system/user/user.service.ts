@@ -49,7 +49,7 @@ export const getUserDetail = async (id: string) => {
      WHERE u.id = ?`,
     [id],
   );
-  if (!row) throw notFound("User not found.");
+  if (!row) throw notFound("User tidak ditemukan.");
   return {
     id: row.id,
     username: row.username,

@@ -11,7 +11,7 @@ export const login = asyncHandler(async (req, res) => {
     ...authService.getCookieOptions(),
     maxAge: 24 * 60 * 60 * 1000,
   });
-  return success(res, "Login successfully.", result.user);
+  return success(res, "Login berhasil.", result.user);
 });
 
 export const signup = asyncHandler(async (req, res) => {
@@ -21,12 +21,12 @@ export const signup = asyncHandler(async (req, res) => {
     ...authService.getCookieOptions(),
     maxAge: 24 * 60 * 60 * 1000,
   });
-  return success(res, "Signup successfully.", result.user);
+  return success(res, "Pendaftaran berhasil.", result.user);
 });
 
 export const me = asyncHandler(async (req, res) => {
   const user = await authService.me(req.user?.id ?? "");
-  return success(res, "Authenticated user loaded.", user);
+  return success(res, "Data user berhasil dimuat.", user);
 });
 
 export const logout = asyncHandler(async (req, res) => {
@@ -35,15 +35,15 @@ export const logout = asyncHandler(async (req, res) => {
     String(req.cookies?.[env.AUTH_COOKIE_NAME] ?? "");
   await authService.logout(token);
   res.clearCookie(env.AUTH_COOKIE_NAME, authService.getCookieOptions());
-  return success(res, "Logout successfully", null);
+  return success(res, "Logout berhasil.", null);
 });
 
 export const changePassword = asyncHandler(async (req, res) => {
   const body = validate(changePasswordSchema, req.body);
   await authService.changeOwnPassword(req.user?.id ?? "", body.current_password, body.new_password);
-  return success(res, "Password updated successfully.", null);
+  return success(res, "Password berhasil diperbarui.", null);
 });
 
 export const impersonate = asyncHandler(async (_req, res) => {
-  return success(res, "Impersonation is not enabled in this app.", null);
+  return success(res, "Fitur impersonation belum diaktifkan di aplikasi ini.", null);
 });

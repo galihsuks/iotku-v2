@@ -2,12 +2,16 @@ import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageHeader } from "../../../components/layout/PageHeader";
-import { Badge, Button } from "../../../components/ui";
+import { Button } from "../../../components/ui";
 import InternalServerError from "../../../components/templates/InternalServerError";
 import { useSensorDetailQuery } from "../../../api/sensor/sensorQuery";
+import { useSensorSocket } from "../../../hooks/useSensorSocket";
 import type { Sensor } from "../../../interfaces/sensor";
 import { useUser } from "../../../store/authStore";
+import { SensorNumberChart } from "./components/SensorNumberChart";
+import { SensorConnectionStatus } from "./components/SensorConnectionStatus";
 import { SensorDeleteModal } from "./components/SensorDeleteModal";
+import { SensorValuePreview } from "./components/SensorValuePreview";
 
 export const DetailPage = () => {
   const { id = "" } = useParams();
@@ -17,6 +21,9 @@ export const DetailPage = () => {
   const { data, isPending, error } = useSensorDetailQuery(id);
   const sensor = data?.data;
   const isOwner = Boolean(sensor && user?.id === sensor.owner_user_id);
+  const sensorCodes = sensor?.code ? [sensor.code] : [];
+
+  useSensorSocket(sensorCodes);
 
   if (error) return <InternalServerError />;
 
@@ -30,10 +37,25 @@ export const DetailPage = () => {
           { label: "Main", route: "/" },
           { label: "Detail", route: undefined },
         ]}
+        badges={[
+          {
+            text: sensor?.unit_name ?? "",
+            variant: "primary-outline",
+          },
+          {
+            text: isOwner ? "Owner" : "Shared",
+            variant: isOwner ? "success" : "light",
+          },
+        ]}
         rightElement={
           isOwner && sensor ? (
             <div className="flex flex-wrap gap-2">
-              <Button type="link" link={`/edit/${sensor.id}`} variant="primary-outline" icon={Pencil}>
+              <Button
+                type="link"
+                link={`/edit/${sensor.id}`}
+                variant="primary-outline"
+                icon={Pencil}
+              >
                 Edit
               </Button>
               <Button
@@ -55,18 +77,11 @@ export const DetailPage = () => {
         </div>
       ) : (
         <section className="grid gap-4 md:grid-cols-2">
+          <SensorConnectionStatus sensor={sensor} />
           <div className="rounded-2xl border border-dark-200 bg-white p-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">Sensor</p>
-            <h2 className="mt-3 text-xl font-semibold text-dark-900">{sensor.label}</h2>
-            <p className="mt-1 text-sm text-dark-500">{sensor.code}</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Badge variant="primary-outline">{sensor.unit_name}</Badge>
-              <Badge variant="secondary-outline">{sensor.widget_type}</Badge>
-              <Badge variant={isOwner ? "success" : "light"}>{isOwner ? "Owner" : "Shared"}</Badge>
-            </div>
-          </div>
-          <div className="rounded-2xl border border-dark-200 bg-white p-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">Access</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
+              Access
+            </p>
             <h2 className="mt-3 text-xl font-semibold text-dark-900">{sensor.owner_name}</h2>
             <p className="mt-1 text-sm text-dark-500">Owner</p>
             <div className="mt-4">
@@ -78,6 +93,11 @@ export const DetailPage = () => {
               </p>
             </div>
           </div>
+          {sensor.value_type === "number" ? (
+            <SensorNumberChart sensor={sensor} />
+          ) : (
+            <SensorValuePreview sensor={sensor} />
+          )}
         </section>
       )}
 

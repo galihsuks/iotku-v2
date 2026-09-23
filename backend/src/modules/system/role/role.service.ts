@@ -27,7 +27,7 @@ export const getRole = async (id: string) => {
     `SELECT id, code, name, description, created_at, updated_at FROM app_roles WHERE id = ?`,
     [id],
   );
-  if (!row) throw notFound("Role not found.");
+  if (!row) throw notFound("Role tidak ditemukan.");
   return row;
 };
 

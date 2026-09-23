@@ -1,4 +1,4 @@
-import type { ID, KeywordPaginationQuery } from "./common";
+import type { ID, KeywordPaginationQuery, PaginationQuery } from "./common";
 
 export type SensorValueType = "number" | "string";
 export type SensorWidgetType = "numeric_card" | "chart" | "gauge" | "switch" | "status";
@@ -62,6 +62,7 @@ export interface SensorUnitPayload {
 
 export type SensorQuery = KeywordPaginationQuery;
 export type SensorUnitQuery = KeywordPaginationQuery;
+export type SensorReadingQuery = PaginationQuery;
 
 export interface DeviceInfo {
   sensor_code: string;

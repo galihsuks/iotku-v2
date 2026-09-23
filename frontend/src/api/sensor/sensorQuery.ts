@@ -1,5 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { SensorJoinPayload, SensorPayload, SensorQuery } from "../../interfaces/sensor";
+import type {
+  SensorJoinPayload,
+  SensorPayload,
+  SensorQuery,
+  SensorReadingQuery,
+} from "../../interfaces/sensor";
 import { queryKeys } from "../queryKeys";
 import { sensorApi } from "./sensorApi";
 
@@ -14,6 +19,14 @@ export const useSensorDetailQuery = (id: string) => {
   return useQuery({
     queryKey: queryKeys.sensor.detail(id),
     queryFn: () => sensorApi.detail(id),
+    enabled: Boolean(id),
+  });
+};
+
+export const useSensorReadingsQuery = (id: string, params?: SensorReadingQuery) => {
+  return useQuery({
+    queryKey: queryKeys.sensor.readings(id, params),
+    queryFn: () => sensorApi.readings(id, params),
     enabled: Boolean(id),
   });
 };
