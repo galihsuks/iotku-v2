@@ -11,6 +11,12 @@ export interface SignupPayload {
   confirm_password: string;
 }
 
+export interface ProfilePayload {
+  username: string;
+  full_name: string;
+  email: string;
+}
+
 export interface User {
   id: string;
   username: string;

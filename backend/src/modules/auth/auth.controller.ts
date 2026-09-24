@@ -1,7 +1,7 @@
 import { env } from "../../config/env.js";
 import { asyncHandler, success, validate } from "../../utils/http.js";
 import { getBearerToken } from "../../utils/token.js";
-import { changePasswordSchema, loginSchema, signupSchema } from "./auth.schemas.js";
+import { changePasswordSchema, loginSchema, profileSchema, signupSchema } from "./auth.schemas.js";
 import * as authService from "./auth.service.js";
 
 export const login = asyncHandler(async (req, res) => {
@@ -27,6 +27,12 @@ export const signup = asyncHandler(async (req, res) => {
 export const me = asyncHandler(async (req, res) => {
   const user = await authService.me(req.user?.id ?? "");
   return success(res, "Data user berhasil dimuat.", user);
+});
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  const body = validate(profileSchema, req.body);
+  const user = await authService.updateProfile(req.user?.id ?? "", body);
+  return success(res, "Profile berhasil diperbarui.", user);
 });
 
 export const logout = asyncHandler(async (req, res) => {

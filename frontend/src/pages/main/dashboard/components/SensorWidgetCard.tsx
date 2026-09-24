@@ -1,4 +1,5 @@
-import { RadioTower, Thermometer, ToggleRight } from "lucide-react";
+import { Check, Copy, RadioTower, Thermometer, ToggleRight } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Badge, Button } from "../../../../components/ui";
 import type { Sensor } from "../../../../interfaces/sensor";
@@ -19,6 +20,7 @@ interface SensorWidgetCardProps {
 
 export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
   const navigate = useNavigate();
+  const [copied, setCopied] = useState(false);
   const latestReadingsBySensor = useLatestReadingsBySensor();
   const deviceStatusBySensor = useDeviceStatusBySensor();
   const latestReading = latestReadingsBySensor[sensor.code] ?? sensor.latest_reading;
@@ -26,6 +28,19 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
   const Icon = getWidgetIcon(sensor.widget_type);
   const detailPath = `/detail/${sensor.id}`;
   const openDetail = () => navigate(detailPath);
+
+  useEffect(() => {
+    if (!copied) return;
+
+    const timeout = window.setTimeout(() => setCopied(false), 1500);
+    return () => window.clearTimeout(timeout);
+  }, [copied]);
+
+  const handleCopyCode = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    await navigator.clipboard.writeText(sensor.code);
+    setCopied(true);
+  };
 
   return (
     <article
@@ -48,8 +63,23 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
             </div>
           </div>
           <div>
-            <p className="font-semibold text-dark-900">{sensor.label}</p>
-            <p className="mt-1 text-xs text-dark-500">{sensor.code}</p>
+            <p className="font-semibold text-dark-900 line-clamp-2">{sensor.label}</p>
+            <button
+              type="button"
+              aria-label={copied ? "Sensor code copied" : "Copy sensor code"}
+              onClick={handleCopyCode}
+              onKeyDown={(event) => event.stopPropagation()}
+              className="mt-1 group flex items-center text-dark-400 transition hover:text-dark-700"
+            >
+              <p className="text-xs text-dark-500">{sensor.code}</p>
+              <span
+                className={
+                  "inline-flex h-6 w-0 transition duration-100 ease-in-out group-hover:w-6 overflow-hidden items-center justify-center opacity-70"
+                }
+              >
+                {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              </span>
+            </button>
           </div>
         </div>
         <Badge variant={deviceStatus?.connection_status ? "success" : "light"}>

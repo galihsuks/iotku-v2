@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { LoginPayload, SignupPayload } from "../../interfaces/auth";
+import type { LoginPayload, ProfilePayload, SignupPayload } from "../../interfaces/auth";
 import { queryKeys } from "../queryKeys";
 import { authApi } from "./authApi";
 
@@ -31,6 +31,12 @@ export const useAuthMeQuery = () => {
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useUpdateProfileMutation = () => {
+  return useMutation({
+    mutationFn: (payload: ProfilePayload) => authApi.updateProfile(payload),
   });
 };
 

@@ -200,7 +200,7 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
         <div
           className={cn(
             "flex-1 flex items-center overflow-hidden transition-all duration-300",
-            collapseDesktopSidebar ? "gap-0" : "gap-3",
+            collapseDesktopSidebar ? "gap-0 justify-center" : "gap-3",
           )}
         >
           <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">

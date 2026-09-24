@@ -47,7 +47,7 @@ export const PageHeader = ({
         <div
           onClick={() => setCollapseDesktopSidebar(false)}
           className={cn(
-            "transition-all duration-300 overflow-hidden hidden rounded-lg text-dark-500 hover:bg-dark-100 hover:text-dark-700 md:inline-flex",
+            "transition-all duration-300 overflow-hidden hidden text-dark-500 hover:bg-dark-100 hover:text-dark-700 md:inline-flex",
             collapseDesktopSidebar ? "w-4" : "w-0",
           )}
         >

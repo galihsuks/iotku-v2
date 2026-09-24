@@ -145,6 +145,34 @@ export const me = async (userId: string) => {
   return formatAuthUser(user);
 };
 
+export const updateProfile = async (
+  userId: string,
+  payload: {
+    username: string;
+    full_name: string;
+    email: string;
+  },
+) => {
+  const currentUser = await getUserWithRoleById(userId);
+  if (!currentUser) throw unauthorized("Sesi login sudah tidak valid. Silakan login ulang.");
+
+  const existingUser = await queryOne<{ id: string } & RowDataPacket>(
+    `SELECT id FROM app_users WHERE (username = ? OR email = ?) AND id <> ? LIMIT 1`,
+    [payload.username, payload.email, userId],
+  );
+  if (existingUser) throw badRequest("Username atau email sudah digunakan user lain.");
+
+  await execute(
+    `UPDATE app_users SET username = ?, full_name = ?, email = ?, updated_at = ? WHERE id = ?`,
+    [payload.username, payload.full_name, payload.email, nowSql(), userId],
+  );
+
+  const updatedUser = await getUserWithRoleById(userId);
+  if (!updatedUser) throw unauthorized("Sesi login sudah tidak valid. Silakan login ulang.");
+
+  return formatAuthUser(updatedUser);
+};
+
 export const logout = async (token: string) => {
   if (token) {
     await execute(`DELETE FROM app_tokens WHERE token = ?`, [token]);

@@ -18,6 +18,12 @@ export const signupSchema = z
     path: ["confirm_password"],
   });
 
+export const profileSchema = z.object({
+  username: z.string().trim().min(3).max(100),
+  full_name: z.string().trim().min(1).max(100),
+  email: z.string().trim().email().max(150),
+});
+
 export const changePasswordSchema = z
   .object({
     current_password: z.string().min(6).max(255),

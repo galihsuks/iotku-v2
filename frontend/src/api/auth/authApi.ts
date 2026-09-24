@@ -1,5 +1,5 @@
 import type { ApiResponse } from "../../interfaces/api";
-import type { LoginPayload, SignupPayload, User } from "../../interfaces/auth";
+import type { LoginPayload, ProfilePayload, SignupPayload, User } from "../../interfaces/auth";
 import type { ID } from "../../interfaces/common";
 import type { ChangeOwnPasswordPayload } from "../../interfaces/user";
 import api from "../axios";
@@ -33,6 +33,14 @@ export const authApi = {
   me: async (): Promise<ApiResponse<User>> => {
     try {
       const response = await api.get<ApiResponse<User>>("/api/auth/me");
+      return response.data;
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
+  updateProfile: async (payload: ProfilePayload): Promise<ApiResponse<User>> => {
+    try {
+      const response = await api.put<ApiResponse<User>>("/api/auth/profile", payload);
       return response.data;
     } catch (error) {
       throw toApiError(error);

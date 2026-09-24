@@ -167,6 +167,19 @@ export const openApiDocument = {
         responses: { 200: ok() },
       },
     },
+    "/api/auth/profile": {
+      put: {
+        tags: ["Auth"],
+        summary: "Update authenticated user profile",
+        security: [{ cookieAuth: [] }],
+        requestBody: jsonBody({
+          username: "superadmin",
+          full_name: "Super Admin",
+          email: "admin@iotku.test",
+        }),
+        responses: { 200: ok() },
+      },
+    },
     "/api/auth/logout": {
       post: {
         tags: ["Auth"],
