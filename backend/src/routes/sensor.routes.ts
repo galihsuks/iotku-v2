@@ -18,6 +18,7 @@ sensorRouter.post("/join", sensorController.joinSensor);
 sensorRouter.get("/:id", sensorController.getSensor);
 sensorRouter.put("/:id", sensorController.updateSensor);
 sensorRouter.delete("/:id", sensorController.deleteSensor);
+sensorRouter.get("/:id/readings/export", sensorReadingController.exportReadings);
 sensorRouter.get("/:id/readings", sensorReadingController.listReadings);
 sensorRouter.post("/:id/readings", sensorReadingController.createReading);
 sensorRouter.delete("/:id/readings", sensorReadingController.resetReadings);

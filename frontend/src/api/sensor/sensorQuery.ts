@@ -62,6 +62,12 @@ export const useResetSensorReadingsMutation = () => {
   });
 };
 
+export const useExportSensorReadingsMutation = () => {
+  return useMutation({
+    mutationFn: (id: string) => sensorApi.exportReadings(id),
+  });
+};
+
 export const useCreateSensorReadingMutation = () => {
   return useMutation({
     mutationFn: ({

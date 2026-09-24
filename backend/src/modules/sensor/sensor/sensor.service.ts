@@ -95,15 +95,46 @@ export const listSensors = async (query: SensorKeywordQuery, userId: string) => 
 
 export const getSensorDetail = async (id: string, userId: string) => {
   await assertCanReadSensor(id, userId);
-  const sensor = await queryOne(
-    `SELECT s.*, u.name AS unit_name, u.unit, u.value_type, u.widget_type, owner.full_name AS owner_name
+  const row = await queryOne<
+    {
+      latest_reading_id: string | null;
+      latest_reading_sensor_id: string | null;
+      latest_reading_recorded_at_ms: number | null;
+      latest_reading_value: string | null;
+      latest_reading_created_at: string | null;
+      latest_reading_updated_at: string | null;
+    } & RowDataPacket
+  >(
+    `SELECT s.*, u.name AS unit_name, u.unit, u.value_type, u.widget_type, owner.full_name AS owner_name,
+            lr.id AS latest_reading_id,
+            lr.sensor_id AS latest_reading_sensor_id,
+            lr.recorded_at_ms AS latest_reading_recorded_at_ms,
+            lr.value AS latest_reading_value,
+            lr.created_at AS latest_reading_created_at,
+            lr.updated_at AS latest_reading_updated_at
      FROM sensors s
      JOIN sensor_units u ON u.id = s.unit_id
      JOIN app_users owner ON owner.id = s.owner_user_id
+     LEFT JOIN sensor_readings lr ON lr.id = (
+       SELECT sr.id
+       FROM sensor_readings sr
+       WHERE sr.sensor_id = s.id
+       ORDER BY sr.recorded_at_ms DESC, sr.created_at DESC
+       LIMIT 1
+     )
      WHERE s.id = ?`,
     [id],
   );
-  if (!sensor) throw notFound("Sensor tidak ditemukan.");
+  if (!row) throw notFound("Sensor tidak ditemukan.");
+  const {
+    latest_reading_id,
+    latest_reading_sensor_id,
+    latest_reading_recorded_at_ms,
+    latest_reading_value,
+    latest_reading_created_at,
+    latest_reading_updated_at,
+    ...sensor
+  } = row;
   const shared_users = await queryRows(
     `SELECT au.id, au.email, au.full_name
      FROM sensor_shared_users su
@@ -112,7 +143,20 @@ export const getSensorDetail = async (id: string, userId: string) => {
      ORDER BY au.full_name`,
     [id],
   );
-  return { ...sensor, shared_users };
+  return {
+    ...sensor,
+    latest_reading: latest_reading_id
+      ? {
+          id: latest_reading_id,
+          sensor_id: latest_reading_sensor_id,
+          recorded_at_ms: latest_reading_recorded_at_ms,
+          value: latest_reading_value,
+          created_at: latest_reading_created_at,
+          updated_at: latest_reading_updated_at,
+        }
+      : null,
+    shared_users,
+  };
 };
 
 export const saveSensor = async (

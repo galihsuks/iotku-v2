@@ -11,6 +11,13 @@ import type {
 import { toApiError } from "../apiError";
 import api from "../axios";
 
+const getFilenameFromDisposition = (disposition?: string) => {
+  if (!disposition) return null;
+
+  const match = disposition.match(/filename="?([^"]+)"?/i);
+  return match?.[1] ?? null;
+};
+
 export const sensorApi = {
   index: async (query?: SensorQuery): Promise<ApiResponse<Sensor[]>> => {
     try {
@@ -69,6 +76,23 @@ export const sensorApi = {
         params: query,
       });
       return response.data;
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
+  exportReadings: async (id: ID): Promise<{ blob: Blob; filename: string }> => {
+    try {
+      const response = await api.get<Blob>(`/api/sensor/${id}/readings/export`, {
+        responseType: "blob",
+      });
+      const filename =
+        getFilenameFromDisposition(response.headers["content-disposition"]) ??
+        `sensor-${id}-readings.xlsx`;
+
+      return {
+        blob: response.data,
+        filename,
+      };
     } catch (error) {
       throw toApiError(error);
     }

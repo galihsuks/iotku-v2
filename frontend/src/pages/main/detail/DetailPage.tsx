@@ -1,13 +1,18 @@
-import { Pencil, RotateCcw, Trash2 } from "lucide-react";
+import { Download, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageHeader } from "../../../components/layout/PageHeader";
 import { Button } from "../../../components/ui";
 import InternalServerError from "../../../components/templates/InternalServerError";
-import { useSensorDetailQuery } from "../../../api/sensor/sensorQuery";
+import {
+  useExportSensorReadingsMutation,
+  useSensorDetailQuery,
+} from "../../../api/sensor/sensorQuery";
+import { getApiErrorMessage } from "../../../api/apiError";
 import { useSensorSocket } from "../../../hooks/useSensorSocket";
 import type { Sensor } from "../../../interfaces/sensor";
 import { useUser } from "../../../store/authStore";
+import { useNotificationStore } from "../../../store/notifStore";
 import { SensorNumberChart } from "./components/SensorNumberChart";
 import { SensorConnectionStatus } from "./components/SensorConnectionStatus";
 import { SensorDeleteModal } from "./components/SensorDeleteModal";
@@ -21,12 +26,34 @@ export const DetailPage = () => {
   const [deleteTarget, setDeleteTarget] = useState<Sensor | null>(null);
   const [resetTarget, setResetTarget] = useState<Sensor | null>(null);
   const [readingsResetVersion, setReadingsResetVersion] = useState(0);
+  const exportReadingsMutation = useExportSensorReadingsMutation();
+  const addToast = useNotificationStore((state) => state.addToast);
   const { data, isPending, error } = useSensorDetailQuery(id);
   const sensor = data?.data;
   const isOwner = Boolean(sensor && user?.id === sensor.owner_user_id);
   const sensorCodes = sensor?.code ? [sensor.code] : [];
 
   useSensorSocket(sensorCodes);
+
+  const handleExportReadings = () => {
+    if (!sensor) return;
+
+    exportReadingsMutation.mutate(sensor.id, {
+      onSuccess: ({ blob, filename }) => {
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = filename;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        window.URL.revokeObjectURL(url);
+      },
+      onError: (exportError) => {
+        addToast(getApiErrorMessage(exportError), "error");
+      },
+    });
+  };
 
   if (error) return <InternalServerError />;
 
@@ -51,32 +78,45 @@ export const DetailPage = () => {
           },
         ]}
         rightElement={
-          isOwner && sensor ? (
+          sensor ? (
             <div className="flex flex-wrap gap-2">
               <Button
-                type="link"
-                link={`/edit/${sensor.id}`}
-                variant="primary-outline"
-                icon={Pencil}
-              >
-                Edit
-              </Button>
-              <Button
                 type="button"
-                variant="warning-outline"
-                icon={RotateCcw}
-                onClick={() => setResetTarget(sensor)}
+                variant="success-outline"
+                icon={Download}
+                loading={exportReadingsMutation.isPending}
+                onClick={handleExportReadings}
               >
-                Reset Data
+                Export Excel
               </Button>
-              <Button
-                type="button"
-                variant="danger"
-                icon={Trash2}
-                onClick={() => setDeleteTarget(sensor)}
-              >
-                Delete
-              </Button>
+              {isOwner ? (
+                <>
+                  <Button
+                    type="link"
+                    link={`/edit/${sensor.id}`}
+                    variant="primary-outline"
+                    icon={Pencil}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="warning-outline"
+                    icon={RotateCcw}
+                    onClick={() => setResetTarget(sensor)}
+                  >
+                    Reset Data
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="danger"
+                    icon={Trash2}
+                    onClick={() => setDeleteTarget(sensor)}
+                  >
+                    Delete
+                  </Button>
+                </>
+              ) : null}
             </div>
           ) : null
         }

@@ -14,6 +14,17 @@ export const listReadings = asyncHandler(async (req, res) => {
   return success(res, "List sensor reading", result.rows, result.pagination);
 });
 
+export const exportReadings = asyncHandler(async (req, res) => {
+  const result = await sensorReadingService.exportReadings(param(req, "id"), req.user?.id ?? "");
+
+  res.setHeader(
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  );
+  res.setHeader("Content-Disposition", `attachment; filename="${result.filename}"`);
+  return res.send(Buffer.from(result.buffer));
+});
+
 export const createReading = asyncHandler(async (req, res) =>
   success(
     res,

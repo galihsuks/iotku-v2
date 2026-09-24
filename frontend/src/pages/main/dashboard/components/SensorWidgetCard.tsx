@@ -66,9 +66,11 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
           </div>
         ) : (
           <div>
-            <p className="text-4xl font-semibold tracking-tight text-dark-900">
+            <p className="text-4xl font-semibold tracking-tight text-dark-900 line-clamp-2">
               {latestReading?.value ?? "-"}
-              <span className="ml-2 text-base font-medium text-dark-400">{sensor.unit}</span>
+              {sensor.unit != "text" && (
+                <span className="ml-2 text-base font-medium text-dark-400">{sensor.unit}</span>
+              )}
             </p>
             <p className="mt-2 text-xs text-dark-500">{sensor.unit_name}</p>
           </div>

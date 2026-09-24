@@ -18,6 +18,7 @@ export const createApp = () => {
     cors({
       origin: env.FRONTEND_ORIGIN,
       credentials: true,
+      exposedHeaders: ["Content-Disposition"],
     }),
   );
   app.use(express.json({ limit: "1mb" }));

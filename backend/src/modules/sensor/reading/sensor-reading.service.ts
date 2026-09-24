@@ -1,4 +1,5 @@
 import type { RowDataPacket } from "mysql2";
+import ExcelJS from "exceljs";
 import { v4 as uuidv4 } from "uuid";
 import { execute, queryOne, queryRows } from "../../../repositories/base.repository.js";
 import { emitSensorReadingCreated } from "../../../events/sensor-reading.events.js";
@@ -65,6 +66,110 @@ export const listReadings = async (
     [sensorId],
   );
   return { rows, pagination: buildPagination(page, pageSize, Number(count?.total ?? 0)) };
+};
+
+export const exportReadings = async (sensorId: string, userId: string) => {
+  await assertCanReadSensor(sensorId, userId);
+  const sensor = await queryOne<
+    {
+      id: string;
+      code: string;
+      label: string;
+      unit_name: string;
+      unit: string;
+      value_type: string;
+      owner_name: string;
+    } & RowDataPacket
+  >(
+    `SELECT s.id, s.code, s.label, u.name AS unit_name, u.unit, u.value_type,
+            owner.full_name AS owner_name
+     FROM sensors s
+     JOIN sensor_units u ON u.id = s.unit_id
+     JOIN app_users owner ON owner.id = s.owner_user_id
+     WHERE s.id = ?`,
+    [sensorId],
+  );
+  if (!sensor) throw notFound("Sensor tidak ditemukan.");
+
+  const readings = await queryRows<
+    {
+      id: string;
+      recorded_at_ms: number;
+      value: string;
+      created_at: string | null;
+      updated_at: string | null;
+    } & RowDataPacket
+  >(
+    `SELECT id, recorded_at_ms, value, created_at, updated_at
+     FROM sensor_readings
+     WHERE sensor_id = ?
+     ORDER BY recorded_at_ms DESC, created_at DESC`,
+    [sensorId],
+  );
+
+  const workbook = new ExcelJS.Workbook();
+  workbook.creator = "Iotku V2";
+  workbook.created = new Date();
+  const worksheet = workbook.addWorksheet("Sensor Readings");
+
+  worksheet.addRows([
+    ["Sensor Code", sensor.code],
+    ["Sensor Label", sensor.label],
+    ["Unit Name", sensor.unit_name],
+    ["Unit", sensor.unit],
+    ["Value Type", sensor.value_type],
+    ["Owner", sensor.owner_name],
+    ["Exported At", new Date()],
+    [],
+  ]);
+
+  worksheet.getColumn(1).width = 18;
+  worksheet.getColumn(2).width = 28;
+  worksheet.getRow(1).font = { bold: true };
+  worksheet.getRow(2).font = { bold: true };
+  worksheet.getRow(3).font = { bold: true };
+  worksheet.getRow(4).font = { bold: true };
+  worksheet.getRow(5).font = { bold: true };
+  worksheet.getRow(6).font = { bold: true };
+  worksheet.getRow(7).font = { bold: true };
+
+  const headerRow = worksheet.addRow(["No", "Recorded At", "Recorded At Ms", "Value", "Unit"]);
+  headerRow.font = { bold: true };
+  headerRow.fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "FFE11D48" },
+  };
+  headerRow.eachCell((cell) => {
+    cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+    cell.alignment = { vertical: "middle" };
+  });
+
+  readings.forEach((reading, index) => {
+    worksheet.addRow([
+      index + 1,
+      new Date(reading.recorded_at_ms),
+      reading.recorded_at_ms,
+      reading.value,
+      sensor.unit,
+    ]);
+  });
+
+  worksheet.columns = [
+    { width: 8 },
+    { width: 24, style: { numFmt: "dd mmm yyyy hh:mm:ss" } },
+    { width: 18 },
+    { width: 24 },
+    { width: 14 },
+  ];
+  worksheet.views = [{ state: "frozen", ySplit: 9 }];
+
+  const buffer = await workbook.xlsx.writeBuffer();
+
+  return {
+    buffer,
+    filename: `sensor-${sensor.code}-readings.xlsx`,
+  };
 };
 
 export const resetReadings = async (sensorId: string, userId: string) => {

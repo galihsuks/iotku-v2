@@ -667,6 +667,27 @@ export const openApiDocument = {
         responses: { 200: ok() },
       },
     },
+    "/api/sensor/{id}/readings/export": {
+      get: {
+        tags: ["Sensor Reading"],
+        summary: "Export all sensor readings to Excel",
+        security: [{ cookieAuth: [] }],
+        parameters: [idParam()],
+        responses: {
+          200: {
+            description: "Excel file",
+            content: {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                schema: {
+                  type: "string",
+                  format: "binary",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     "/api/sensor/{id}/readings/public": {
       post: {
         tags: ["Sensor Reading"],
