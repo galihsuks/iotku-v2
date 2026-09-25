@@ -78,6 +78,12 @@ const handleHandshake = async (
     }
 
     notifyAdminData(state, `[${connectedAt}][INFO][${ip}] Connected to WebSocket server.`);
+    await logWebSocket(
+      "info",
+      "Connected to WebSocket server.",
+      { handshake_sensor: handshakeSensor, is_device: isDevice },
+      ip,
+    );
     return true;
   } catch (error) {
     const message = error instanceof Error ? error.message : "WebSocket handshake failed.";
@@ -107,7 +113,7 @@ const handleMessage = async (
     const info = getClient(socket);
     if (!info) throw new Error("Socket is not registered.");
 
-    if (handleAdminHandshake(state, socket, payload)) return;
+    if (await handleAdminHandshake(state, socket, payload)) return;
 
     if (payload.type === "subscribe") {
       await handleSubscribe(state, socket, payload);
@@ -155,5 +161,11 @@ export const handleConnection = async (
     deleteClient(socket);
     if (state.adminSocket === socket) state.adminSocket = null;
     notifyAdminData(state, `[${nowSql()}][INFO][${info?.ip ?? null}] Socket disconnected.`);
+    void logWebSocket(
+      "info",
+      "Socket disconnected.",
+      { sensor_code: deviceSensorCode ?? null, is_device: info?.isDevice ?? false },
+      info?.ip ?? null,
+    );
   });
 };

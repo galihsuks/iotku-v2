@@ -58,7 +58,7 @@ export const LoginPage = () => {
             name="username"
             label="Username or Email"
             icon={UserRound}
-            placeholder="superadmin"
+            placeholder="username"
             rules={{ required: "Username is required." }}
           />
           <FormInput
@@ -67,7 +67,7 @@ export const LoginPage = () => {
             label="Password"
             type="password"
             icon={KeyRound}
-            placeholder="password123"
+            placeholder="password"
             rules={{ required: "Password is required." }}
           />
           <Button

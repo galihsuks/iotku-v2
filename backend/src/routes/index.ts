@@ -10,6 +10,7 @@ import { roleMenuControlRouter } from "./role-menu-control.routes.js";
 import { roleRouter } from "./role.routes.js";
 import { sensorRouter } from "./sensor.routes.js";
 import { userRouter } from "./user.routes.js";
+import { websocketLogRouter } from "./websocket-log.routes.js";
 
 export const apiRouter = Router();
 
@@ -24,3 +25,4 @@ apiRouter.use("/role", roleRouter);
 apiRouter.use("/role-menu-control", roleMenuControlRouter);
 apiRouter.use("/sensor", sensorRouter);
 apiRouter.use("/user", userRouter);
+apiRouter.use("/websocket-log", websocketLogRouter);

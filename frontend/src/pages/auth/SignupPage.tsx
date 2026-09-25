@@ -50,7 +50,7 @@ export const SignupPage = () => {
           </div>
           <h1 className="text-2xl font-semibold tracking-tight text-dark-900">Create account</h1>
           <p className="mt-2 text-sm leading-6 text-dark-500">
-            Daftar sebagai user untuk mulai menghubungkan sensor IoT kamu.
+            Daftar sebagai user untuk mulai menghubungkan device IoT kamu.
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export const SignupPage = () => {
             name="full_name"
             label="Full Name"
             icon={UserRound}
-            placeholder="Demo User"
+            placeholder="Full name"
             rules={{ required: "Full name is required." }}
           />
           <FormInput
@@ -68,7 +68,7 @@ export const SignupPage = () => {
             name="username"
             label="Username"
             icon={UserRound}
-            placeholder="demo_user"
+            placeholder="username"
             rules={{ required: "Username is required." }}
           />
           <FormInput
@@ -77,7 +77,7 @@ export const SignupPage = () => {
             label="Email"
             type="email"
             icon={Mail}
-            placeholder="demo.user@iotku.test"
+            placeholder="Email"
             rules={{ required: "Email is required." }}
           />
           <FormInput
@@ -86,7 +86,7 @@ export const SignupPage = () => {
             label="Password"
             type="password"
             icon={KeyRound}
-            placeholder="password123"
+            placeholder="password"
             rules={{ required: "Password is required.", minLength: 6 }}
           />
           <FormInput
@@ -95,7 +95,7 @@ export const SignupPage = () => {
             label="Confirm Password"
             type="password"
             icon={KeyRound}
-            placeholder="password123"
+            placeholder="password"
             rules={{
               required: "Password confirmation is required.",
               validate: (value) => value === password || "Password confirmation does not match.",

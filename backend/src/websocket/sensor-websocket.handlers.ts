@@ -2,6 +2,7 @@ import { WebSocket } from "ws";
 import { env } from "../config/env.js";
 import { createReading } from "../modules/sensor/reading/sensor-reading.service.js";
 import { nowSql } from "../utils/date.js";
+import { logWebSocket } from "./sensor-websocket.logger.js";
 import { notifyAdminData, notifyAdminLog } from "./sensor-websocket.notifications.js";
 import { getSensorCodes } from "./sensor-websocket.repository.js";
 import {
@@ -32,6 +33,7 @@ export const handleSubscribe = async (
   }
 
   const subscribedRooms = Array.from(getClient(socket)?.rooms ?? []);
+  const info = getClient(socket);
   sendJson(socket, {
     type: "subscribe",
     success: true,
@@ -39,6 +41,12 @@ export const handleSubscribe = async (
     data: { rooms: subscribedRooms },
   });
   notifyAdminData(state, `[${nowSql()}][INFO] Socket subscribed to ${sensorCodes.join(", ")}.`);
+  await logWebSocket(
+    "info",
+    "Socket subscribed to sensor room.",
+    { sensor_codes: sensorCodes, rooms: subscribedRooms },
+    info?.ip ?? null,
+  );
 };
 
 export const handleUnsubscribe = async (
@@ -58,6 +66,7 @@ export const handleUnsubscribe = async (
   }
 
   const subscribedRooms = Array.from(getClient(socket)?.rooms ?? []);
+  const info = getClient(socket);
   sendJson(socket, {
     type: "unsubscribe",
     success: true,
@@ -65,9 +74,15 @@ export const handleUnsubscribe = async (
     data: { rooms: subscribedRooms },
   });
   notifyAdminData(state, `[${nowSql()}][INFO] Socket unsubscribed from ${sensorCodes.join(", ")}.`);
+  await logWebSocket(
+    "info",
+    "Socket unsubscribed from sensor room.",
+    { sensor_codes: sensorCodes, rooms: subscribedRooms },
+    info?.ip ?? null,
+  );
 };
 
-export const handleAdminHandshake = (
+export const handleAdminHandshake = async (
   state: SensorWebSocketState,
   socket: WebSocket,
   payload: Record<string, unknown>,
@@ -92,6 +107,12 @@ export const handleAdminHandshake = (
     message: "Admin socket connected.",
     data: { clients: clientSnapshot(), rooms: roomSnapshot() },
   });
+  await logWebSocket(
+    "info",
+    "Admin socket connected.",
+    { clients: clientSnapshot(), rooms: roomSnapshot() },
+    info?.ip ?? null,
+  );
   return true;
 };
 
@@ -120,6 +141,7 @@ const getDeviceInfoSensorCodes = async (socket: WebSocket, payload: Record<strin
 export const handleDeviceInfo = async (socket: WebSocket, payload: Record<string, unknown>) => {
   const sensorCodes = await getDeviceInfoSensorCodes(socket, payload);
   const devices = sensorCodes.map((sensorCode) => getActiveDeviceInfo(sensorCode));
+  const info = getClient(socket);
 
   sendJson(socket, {
     type: "device_info",
@@ -127,6 +149,12 @@ export const handleDeviceInfo = async (socket: WebSocket, payload: Record<string
     message: "Device info loaded.",
     data: devices,
   });
+  await logWebSocket(
+    "info",
+    "Device info requested.",
+    { sensor_codes: sensorCodes },
+    info?.ip ?? null,
+  );
 };
 
 export const handleSensorReading = async (

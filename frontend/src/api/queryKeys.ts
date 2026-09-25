@@ -45,4 +45,7 @@ export const queryKeys = {
   log: {
     list: (params?: unknown) => ["log", "list", params ?? {}] as const,
   },
+  websocketLog: {
+    list: (params?: unknown) => ["websocket-log", "list", params ?? {}] as const,
+  },
 };

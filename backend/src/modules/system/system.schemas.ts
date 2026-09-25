@@ -6,6 +6,13 @@ export const keywordQuerySchema = z.object({
   keywords: z.string().trim().optional(),
 });
 
+export const websocketLogQuerySchema = keywordQuerySchema.extend({
+  level: z.enum(["info", "warning", "error"]).or(z.literal("")).optional(),
+  date: z.string().trim().optional(),
+  start_time: z.string().trim().optional(),
+  end_time: z.string().trim().optional(),
+});
+
 export const roleSchema = z.object({
   code: z.string().trim().min(1).max(50),
   name: z.string().trim().min(1).max(100),

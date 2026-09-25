@@ -27,6 +27,11 @@ const trimApiTrailingSlash = (url?: string) => {
   return query ? `${normalizedPath}?${query}` : normalizedPath;
 };
 
+const isPublicAuthRequest = (url?: string) => {
+  const normalizedUrl = trimApiTrailingSlash(url)?.split("?")[0];
+  return normalizedUrl === "/api/auth/login" || normalizedUrl === "/api/auth/signup";
+};
+
 api.interceptors.request.use((config) => {
   const requestId = generateRequestId();
   (config as typeof config & { metadata?: RequestMeta }).metadata = {
@@ -60,7 +65,11 @@ api.interceptors.response.use(
       useHttpErrorStore.getState().actions.setError("internal_server_error", statusCode);
     }
 
-    if (error.response && error.response.status === 401) {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !isPublicAuthRequest(error.config?.url)
+    ) {
       queryClient.clear();
       const { logout } = useAuthStore.getState().actions;
       logout();
