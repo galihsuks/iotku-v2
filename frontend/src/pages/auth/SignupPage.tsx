@@ -50,7 +50,7 @@ export const SignupPage = () => {
           </div>
           <h1 className="text-2xl font-semibold tracking-tight text-dark-900">Create account</h1>
           <p className="mt-2 text-sm leading-6 text-dark-500">
-            Daftar sebagai user untuk mulai menghubungkan device IoT kamu.
+            Sign up to start connecting your IoT devices.
           </p>
         </div>
 
@@ -113,7 +113,7 @@ export const SignupPage = () => {
         </form>
 
         <p className="mt-6 text-center text-sm text-dark-500">
-          Sudah punya akun?{" "}
+          Already have an account?{" "}
           <Link
             to="/auth/login"
             className="font-semibold text-primary-700 transition hover:text-primary-600"

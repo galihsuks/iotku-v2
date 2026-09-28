@@ -31,7 +31,7 @@ export const saveMenuControl = async (
 
 export const deleteMenuControl = async (id: string) => {
   const row = await queryOne(`SELECT * FROM app_menu_controls WHERE id = ?`, [id]);
-  if (!row) throw notFound("Menu control tidak ditemukan.");
+  if (!row) throw notFound("Menu control not found.");
   await execute(`DELETE FROM app_menu_controls WHERE id = ?`, [id]);
   return row;
 };

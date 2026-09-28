@@ -48,7 +48,7 @@ export const LoginPage = () => {
           </div>
           <h1 className="text-2xl font-semibold tracking-tight text-dark-900">Sign in</h1>
           <p className="mt-2 text-sm leading-6 text-dark-500">
-            Masuk untuk memantau sensor dan realtime device kamu.
+            Sign in to monitor your sensors and realtime devices.
           </p>
         </div>
 
@@ -82,12 +82,12 @@ export const LoginPage = () => {
         </form>
 
         <p className="mt-6 text-center text-sm text-dark-500">
-          Belum punya akun?{" "}
+          Don't have an account?{" "}
           <Link
             to="/auth/signup"
             className="font-semibold text-primary-700 transition hover:text-primary-600"
           >
-            Daftar sekarang
+            Create one now
           </Link>
         </p>
       </section>

@@ -45,7 +45,7 @@ export const createReading = asyncHandler(async (req, res) =>
 export const resetReadings = asyncHandler(async (req, res) =>
   success(
     res,
-    "Data sensor berhasil direset.",
+    "Sensor readings reset successfully.",
     await sensorReadingService.resetReadings(param(req, "id"), req.user?.id ?? ""),
   ),
 );

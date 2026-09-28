@@ -26,14 +26,14 @@ const modeCards: Array<{
 }> = [
   {
     mode: "new",
-    title: "Perangkat Baru",
-    description: "Buat sensor baru dengan akunmu sebagai owner perangkat.",
+    title: "New Device",
+    description: "Create a new sensor with your account as the device owner.",
     icon: Plus,
   },
   {
     mode: "shared",
-    title: "Perangkat Shared",
-    description: "Gabung ke sensor yang sudah ada memakai kode sensor dan passkey.",
+    title: "Shared Device",
+    description: "Join an existing sensor using the sensor code and passkey.",
     icon: Link2,
   },
 ];
@@ -125,7 +125,7 @@ export const AddPage = () => {
       <PageHeader
         showGoBack
         title="Add Device"
-        subtitle="Pilih hubungkan perangkat baru atau gabung ke perangkat yang sudah ada."
+        subtitle="Choose whether to connect a new device or join an existing shared device."
         breadcrumbs={[
           { label: "Main", route: "/" },
           { label: "Add Device", route: undefined },
@@ -162,9 +162,9 @@ export const AddPage = () => {
             onSubmit={handleNewSensorSubmit(onCreateSensor)}
           >
             <div className="md:col-span-2">
-              <h2 className="text-base font-semibold text-dark-900">Detail Perangkat Baru</h2>
+              <h2 className="text-base font-semibold text-dark-900">New Device Details</h2>
               <p className="mt-1 text-sm text-dark-500">
-                Sensor akan otomatis terdaftar sebagai milik akun yang sedang login.
+                The sensor will automatically be registered under the signed-in account.
               </p>
             </div>
             <FormInput
@@ -211,9 +211,9 @@ export const AddPage = () => {
             onSubmit={handleSharedSensorSubmit(onJoinSensor)}
           >
             <div className="md:col-span-2">
-              <h2 className="text-base font-semibold text-dark-900">Gabung Perangkat Shared</h2>
+              <h2 className="text-base font-semibold text-dark-900">Join Shared Device</h2>
               <p className="mt-1 text-sm text-dark-500">
-                Masukkan kode sensor dan passkey dari owner untuk menambahkan akses ke akunmu.
+                Enter the sensor code and passkey from the owner to add access to your account.
               </p>
             </div>
             <FormInput

@@ -14,7 +14,7 @@ export const signupSchema = z
     confirm_password: z.string().min(6).max(255),
   })
   .refine((value) => value.password === value.confirm_password, {
-    message: "Konfirmasi password tidak sama.",
+    message: "Password confirmation does not match.",
     path: ["confirm_password"],
   });
 
@@ -31,6 +31,6 @@ export const changePasswordSchema = z
     confirm_password: z.string().min(6).max(255),
   })
   .refine((value) => value.new_password === value.confirm_password, {
-    message: "Konfirmasi password baru tidak sama.",
+    message: "New password confirmation does not match.",
     path: ["confirm_password"],
   });

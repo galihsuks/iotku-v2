@@ -52,9 +52,9 @@ export const deleteUnit = async (id: string) => {
     `SELECT COUNT(*) AS total FROM sensors WHERE unit_id = ?`,
     [id],
   );
-  if (Number(used?.total ?? 0) > 0) throw badRequest("Unit sensor masih digunakan.");
+  if (Number(used?.total ?? 0) > 0) throw badRequest("Sensor unit is still in use.");
   const row = await queryOne(`SELECT * FROM sensor_units WHERE id = ?`, [id]);
-  if (!row) throw notFound("Unit sensor tidak ditemukan.");
+  if (!row) throw notFound("Sensor unit not found.");
   await execute(`DELETE FROM sensor_units WHERE id = ?`, [id]);
   return row;
 };

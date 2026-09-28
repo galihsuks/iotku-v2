@@ -47,15 +47,15 @@ export const formatDate = (
   }
 
   if (preset === "weekday-id") {
-    return new Intl.DateTimeFormat("id-ID", { weekday: "long" }).format(date);
+    return new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(date);
   }
 
   if (preset === "month-id") {
-    return new Intl.DateTimeFormat("id-ID", { month: "long" }).format(date);
+    return new Intl.DateTimeFormat("en-US", { month: "long" }).format(date);
   }
 
   if (preset === "compact-date-id") {
-    const monthLabel = new Intl.DateTimeFormat("id-ID", { month: "short" })
+    const monthLabel = new Intl.DateTimeFormat("en-US", { month: "short" })
       .format(date)
       .replace(".", "")
       .toUpperCase();
@@ -76,7 +76,7 @@ export const formatDate = (
   }
 
   if (preset === "short-month-id") {
-    return new Intl.DateTimeFormat("id-ID", {
+    return new Intl.DateTimeFormat("en-US", {
       day: "2-digit",
       month: "short",
       year: "numeric",
@@ -91,7 +91,7 @@ export const formatDate = (
     }).format(date);
   }
 
-  return new Intl.DateTimeFormat("id-ID", {
+  return new Intl.DateTimeFormat("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",

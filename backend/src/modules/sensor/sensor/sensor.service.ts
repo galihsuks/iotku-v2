@@ -125,7 +125,7 @@ export const getSensorDetail = async (id: string, userId: string) => {
      WHERE s.id = ?`,
     [id],
   );
-  if (!row) throw notFound("Sensor tidak ditemukan.");
+  if (!row) throw notFound("Sensor not found.");
   const {
     latest_reading_id,
     latest_reading_sensor_id,
@@ -231,11 +231,11 @@ export const joinSensor = async (
   ]);
 
   if (!sensor) {
-    throw notFound("Sensor tidak ditemukan.");
+    throw notFound("Sensor not found.");
   }
 
   if (!sensor.passkey || sensor.passkey !== payload.passkey) {
-    throw badRequest("Kode sensor atau passkey salah.");
+    throw badRequest("Sensor code or passkey is incorrect.");
   }
 
   if (sensor.owner_user_id !== userId) {

@@ -62,9 +62,9 @@ export const ProfileInformationCard = ({ user }: ProfileInformationCardProps) =>
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
           Account
         </p>
-        <h2 className="mt-2 text-lg font-semibold text-dark-900">Informasi Profile</h2>
+        <h2 className="mt-2 text-lg font-semibold text-dark-900">Profile Information</h2>
         <p className="mt-1 text-sm text-dark-500">
-          Ubah username, nama lengkap, dan email yang dipakai untuk akun ini.
+          Update the username, full name, and email used by this account.
         </p>
       </div>
 
@@ -81,7 +81,7 @@ export const ProfileInformationCard = ({ user }: ProfileInformationCardProps) =>
           name="full_name"
           label="Full Name"
           icon={UserRound}
-          placeholder="Nama lengkap"
+          placeholder="Full name"
         />
         <FormInput
           control={control}

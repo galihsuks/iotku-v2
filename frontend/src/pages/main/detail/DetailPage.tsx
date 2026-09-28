@@ -62,7 +62,7 @@ export const DetailPage = () => {
       <PageHeader
         showGoBack
         title={sensor?.label ?? "Sensor Detail"}
-        subtitle="Detail sensor, status perangkat, dan data pembacaan akan ditampilkan di sini."
+        subtitle="Sensor details, device status, and reading data are displayed here."
         breadcrumbs={[
           { label: "Main", route: "/" },
           { label: "Detail", route: undefined },

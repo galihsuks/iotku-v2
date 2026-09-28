@@ -143,7 +143,7 @@ export const openApiDocument = {
         tags: ["Auth"],
         summary: "Login and set auth cookie",
         requestBody: jsonBody({ username: "superadmin", password: "password123" }),
-        responses: { 200: ok("Login berhasil") },
+        responses: { 200: ok("Login successful") },
       },
     },
     "/api/auth/signup": {
@@ -157,7 +157,7 @@ export const openApiDocument = {
           password: "password123",
           confirm_password: "password123",
         }),
-        responses: { 200: ok("Pendaftaran berhasil") },
+        responses: { 200: ok("Signup successful") },
       },
     },
     "/api/auth/me": {

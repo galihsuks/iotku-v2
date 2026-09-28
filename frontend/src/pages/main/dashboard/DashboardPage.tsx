@@ -27,7 +27,7 @@ export const DashboardPage = () => {
     <>
       <PageHeader
         title="Dashboard"
-        subtitle="Pantau semua sensor yang kamu miliki atau yang dibagikan ke akunmu."
+        subtitle="Monitor all sensors you own or sensors shared with your account."
         breadcrumbs={[{ label: "Main", route: undefined }]}
         badges={[
           {
@@ -53,7 +53,7 @@ export const DashboardPage = () => {
           <RefreshCw className="mx-auto h-8 w-8 text-dark-300" />
           <p className="mt-4 font-semibold text-dark-900">No sensor connected yet.</p>
           <p className="mt-2 text-sm text-dark-500">
-            Tambahkan sensor pertama untuk mulai memantau.
+            Add your first sensor to start monitoring.
           </p>
         </div>
       ) : (

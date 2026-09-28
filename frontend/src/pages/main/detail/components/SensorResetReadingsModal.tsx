@@ -55,7 +55,7 @@ export const SensorResetReadingsModal = ({
       open={open}
       onClose={onClose}
       title="Reset sensor data"
-      subtitle="Reset akan menghapus seluruh data pembacaan sensor ini."
+      subtitle="Resetting will delete all reading data for this sensor."
       className="max-w-lg"
       footer={
         <div className="flex justify-end gap-3">
@@ -81,8 +81,8 @@ export const SensorResetReadingsModal = ({
           </div>
           <div>
             <p className="text-sm font-semibold text-dark-900">
-              Semua data pembacaan <span className="text-danger-700">{target?.label}</span> akan
-              dihapus.
+              All reading data for <span className="text-danger-700">{target?.label}</span> will
+              be deleted.
             </p>
             <p className="mt-1 text-sm text-dark-600">
               Sensor code: <span className="font-medium">{target?.code}</span>

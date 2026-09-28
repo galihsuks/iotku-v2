@@ -13,10 +13,10 @@ export const validateReadingValue = async (sensorId: string, value: unknown) => 
     `SELECT u.value_type FROM sensors s JOIN sensor_units u ON u.id = s.unit_id WHERE s.id = ? OR s.code = ?`,
     [sensorId, sensorId],
   );
-  if (!sensor) throw notFound("Sensor tidak ditemukan.");
+  if (!sensor) throw notFound("Sensor not found.");
   const normalized = String(value);
   if (sensor.value_type === "number" && Number.isNaN(Number(normalized.replace(",", ".")))) {
-    throw badRequest("Nilai sensor harus berupa angka.");
+    throw badRequest("Sensor value must be numeric.");
   }
   return normalized;
 };
@@ -29,7 +29,7 @@ export const createReading = async (
     `SELECT id, code FROM sensors WHERE id = ? OR code = ?`,
     [sensorIdOrCode, sensorIdOrCode],
   );
-  if (!sensor) throw notFound("Sensor tidak ditemukan.");
+  if (!sensor) throw notFound("Sensor not found.");
   const value = await validateReadingValue(sensor.id, payload.value);
   const id = uuidv4();
   await execute(
@@ -89,7 +89,7 @@ export const exportReadings = async (sensorId: string, userId: string) => {
      WHERE s.id = ?`,
     [sensorId],
   );
-  if (!sensor) throw notFound("Sensor tidak ditemukan.");
+  if (!sensor) throw notFound("Sensor not found.");
 
   const readings = await queryRows<
     {

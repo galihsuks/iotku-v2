@@ -91,7 +91,7 @@ export const EditPage = () => {
       <PageHeader
         showGoBack
         title={sensor?.label ? `Edit ${sensor.label}` : "Edit Sensor"}
-        subtitle="Update nama, tipe unit, dan passkey sensor milikmu."
+        subtitle="Update the name, unit type, and passkey for your sensor."
         breadcrumbs={[
           { label: "Main", route: "/" },
           { label: "Edit Sensor", route: undefined },
@@ -104,9 +104,9 @@ export const EditPage = () => {
         </div>
       ) : !isOwner ? (
         <div className="rounded-2xl border border-warning-200 bg-warning-50 p-6">
-          <p className="font-semibold text-dark-900">Sensor shared tidak bisa diedit.</p>
+          <p className="font-semibold text-dark-900">Shared sensors cannot be edited.</p>
           <p className="mt-2 text-sm text-dark-600">
-            Hanya owner sensor yang bisa mengubah detail perangkat ini.
+            Only the sensor owner can update this device.
           </p>
         </div>
       ) : (

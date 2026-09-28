@@ -104,7 +104,7 @@ const formatDisplayCurrency = (value: string) => {
     return "";
   }
 
-  return new Intl.NumberFormat("id-ID").format(Number(digitsOnly));
+  return new Intl.NumberFormat("en-US").format(Number(digitsOnly));
 };
 
 const parseDateValue = (value: string) => {

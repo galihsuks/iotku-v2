@@ -47,9 +47,9 @@ export const ProfilePasswordCard = () => {
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
           Security
         </p>
-        <h2 className="mt-2 text-lg font-semibold text-dark-900">Ganti Password</h2>
+        <h2 className="mt-2 text-lg font-semibold text-dark-900">Change Password</h2>
         <p className="mt-1 text-sm text-dark-500">
-          Masukkan password saat ini sebelum mengganti ke password baru.
+          Enter your current password before setting a new one.
         </p>
       </div>
 
@@ -60,7 +60,7 @@ export const ProfilePasswordCard = () => {
           type="password"
           label="Current Password"
           icon={KeyRound}
-          placeholder="Password saat ini"
+          placeholder="Current password"
         />
         <FormInput
           control={control}
@@ -68,7 +68,7 @@ export const ProfilePasswordCard = () => {
           type="password"
           label="New Password"
           icon={KeyRound}
-          placeholder="Password baru"
+          placeholder="New password"
         />
         <FormInput
           control={control}
@@ -76,7 +76,7 @@ export const ProfilePasswordCard = () => {
           type="password"
           label="Confirm New Password"
           icon={KeyRound}
-          placeholder="Ulangi password baru"
+          placeholder="Repeat new password"
         />
         <div className="flex justify-end">
           <Button type="button" buttonType="submit" icon={Save} loading={isPending}>

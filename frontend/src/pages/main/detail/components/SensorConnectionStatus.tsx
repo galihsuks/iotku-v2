@@ -12,7 +12,7 @@ const formatConnectedAt = (value?: string | null) => {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
 
-  return date.toLocaleString("id-ID", {
+  return date.toLocaleString("en-US", {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
@@ -41,8 +41,8 @@ export const SensorConnectionStatus = ({ sensor }: SensorConnectionStatusProps) 
           </h2>
           <p className="mt-1 text-sm text-dark-500">
             {isOnline
-              ? "Perangkat sedang terhubung ke WebSocket."
-              : "Belum ada socket device aktif untuk sensor ini."}
+              ? "The device is connected to WebSocket."
+              : "No active device socket is connected to this sensor."}
           </p>
         </div>
         <div>

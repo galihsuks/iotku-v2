@@ -27,13 +27,13 @@ const toNumericValue = (value: string) => {
 };
 
 const formatTime = (timestamp: number) =>
-  new Date(timestamp).toLocaleTimeString("id-ID", {
+  new Date(timestamp).toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
   });
 
 const formatDateTime = (timestamp: number) =>
-  new Date(timestamp).toLocaleString("id-ID", {
+  new Date(timestamp).toLocaleString("en-US", {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
@@ -42,7 +42,7 @@ const formatDateTime = (timestamp: number) =>
   });
 
 const formatValue = (value: number) =>
-  new Intl.NumberFormat("id-ID", {
+  new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 2,
   }).format(value);
 
@@ -163,7 +163,7 @@ export const SensorNumberChart = ({ sensor }: SensorNumberChartProps) => {
           </p>
           <h2 className="mt-2 text-lg font-semibold text-dark-900">{sensor.unit_name}</h2>
           <p className="mt-1 text-sm text-dark-500">
-            Data historis terakhir akan disambung dengan pembacaan realtime.
+            Recent historical data is connected with realtime readings.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:items-end">
@@ -216,7 +216,7 @@ export const SensorNumberChart = ({ sensor }: SensorNumberChartProps) => {
               <Activity className="mx-auto h-8 w-8 text-dark-300" />
               <p className="mt-3 text-sm font-semibold text-dark-800">No numeric readings yet.</p>
               <p className="mt-1 text-sm text-dark-500">
-                Chart akan tampil setelah sensor mengirim data angka.
+                The chart will appear after the sensor sends numeric data.
               </p>
             </div>
           </div>

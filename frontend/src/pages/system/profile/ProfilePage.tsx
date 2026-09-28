@@ -15,7 +15,7 @@ export const ProfilePage = () => {
     <>
       <PageHeader
         title="Profile"
-        subtitle="Kelola informasi akun dan password user login."
+        subtitle="Manage your account information and password."
         breadcrumbs={[
           { label: "System", route: undefined },
           { label: "Profile", route: undefined },
@@ -62,7 +62,7 @@ export const ProfilePage = () => {
               <div>
                 <p className="text-sm font-semibold text-dark-900">Account Security</p>
                 <p className="mt-1 text-sm leading-6 text-dark-500">
-                  Gunakan password yang kuat dan jangan bagikan akses akun ke orang lain.
+                  Use a strong password and never share your account access with anyone else.
                 </p>
               </div>
             </div>

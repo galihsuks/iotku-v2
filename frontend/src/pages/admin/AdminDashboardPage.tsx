@@ -4,7 +4,7 @@ export const AdminDashboardPage = () => {
   return (
     <PageHeader
       title="Admin Dashboard"
-      subtitle="Ringkasan seluruh sensor, device online/offline, readings, dan aktivitas WebSocket."
+        subtitle="Summary of all sensors, online/offline devices, readings, and WebSocket activity."
       breadcrumbs={[
         { label: "Admin", route: undefined },
         { label: "Dashboard", route: undefined },

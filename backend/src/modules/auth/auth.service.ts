@@ -58,10 +58,10 @@ export const getUserWithRoleByUsername = (username: string) =>
 
 export const login = async (username: string, password: string) => {
   const user = await getUserWithRoleByUsername(username);
-  if (!user || !user.password) throw unauthorized("Username atau password salah.");
+  if (!user || !user.password) throw unauthorized("Username or password is incorrect.");
 
   const valid = await verifyPassword(password, user.password);
-  if (!valid) throw unauthorized("Username atau password salah.");
+  if (!valid) throw unauthorized("Username or password is incorrect.");
 
   const token = signAuthToken({
     id: user.id,
@@ -91,12 +91,12 @@ export const signup = async (payload: {
     `SELECT id FROM app_users WHERE username = ? OR email = ? LIMIT 1`,
     [payload.username, payload.email],
   );
-  if (existingUser) throw badRequest("Username atau email sudah terdaftar.");
+  if (existingUser) throw badRequest("Username or email is already registered.");
 
   const role = await queryOne<{ id: string } & RowDataPacket>(
     `SELECT id FROM app_roles WHERE code = 'U' LIMIT 1`,
   );
-  if (!role) throw badRequest("Role user default belum tersedia.");
+  if (!role) throw badRequest("Default user role is not available.");
 
   const now = nowSql();
   const userId = uuidv4();
@@ -119,7 +119,7 @@ export const signup = async (payload: {
   });
 
   const createdUser = await getUserWithRoleById(userId);
-  if (!createdUser) throw badRequest("Pendaftaran gagal. Silakan coba lagi.");
+  if (!createdUser) throw badRequest("Registration failed. Please try again.");
 
   const token = signAuthToken({
     id: createdUser.id,
@@ -141,7 +141,7 @@ export const signup = async (payload: {
 
 export const me = async (userId: string) => {
   const user = await getUserWithRoleById(userId);
-  if (!user) throw unauthorized("Sesi login sudah tidak valid. Silakan login ulang.");
+  if (!user) throw unauthorized("Your login session is no longer valid. Please sign in again.");
   return formatAuthUser(user);
 };
 
@@ -154,13 +154,15 @@ export const updateProfile = async (
   },
 ) => {
   const currentUser = await getUserWithRoleById(userId);
-  if (!currentUser) throw unauthorized("Sesi login sudah tidak valid. Silakan login ulang.");
+  if (!currentUser) {
+    throw unauthorized("Your login session is no longer valid. Please sign in again.");
+  }
 
   const existingUser = await queryOne<{ id: string } & RowDataPacket>(
     `SELECT id FROM app_users WHERE (username = ? OR email = ?) AND id <> ? LIMIT 1`,
     [payload.username, payload.email, userId],
   );
-  if (existingUser) throw badRequest("Username atau email sudah digunakan user lain.");
+  if (existingUser) throw badRequest("Username or email is already used by another user.");
 
   await execute(
     `UPDATE app_users SET username = ?, full_name = ?, email = ?, updated_at = ? WHERE id = ?`,
@@ -168,7 +170,9 @@ export const updateProfile = async (
   );
 
   const updatedUser = await getUserWithRoleById(userId);
-  if (!updatedUser) throw unauthorized("Sesi login sudah tidak valid. Silakan login ulang.");
+  if (!updatedUser) {
+    throw unauthorized("Your login session is no longer valid. Please sign in again.");
+  }
 
   return formatAuthUser(updatedUser);
 };
@@ -185,10 +189,10 @@ export const changeOwnPassword = async (
   newPassword: string,
 ) => {
   const user = await getUserWithRoleById(userId);
-  if (!user || !user.password) throw notFound("User tidak ditemukan.");
+  if (!user || !user.password) throw notFound("User not found.");
 
   const valid = await verifyPassword(currentPassword, user.password);
-  if (!valid) throw badRequest("Password saat ini salah.");
+  if (!valid) throw badRequest("Current password is incorrect.");
 
   const hashed = await hashPassword(newPassword);
   await execute(`UPDATE app_users SET password = ?, updated_at = ? WHERE id = ?`, [

@@ -26,43 +26,43 @@ export const validate = <T>(schema: ZodType<T>, value: unknown): T => {
 
 const fieldLabels: Record<string, string> = {
   code: "Code",
-  confirm_password: "Konfirmasi password",
+  confirm_password: "Password confirmation",
   context: "Context",
-  current_password: "Password saat ini",
+  current_password: "Current password",
   data: "Data",
-  datatype: "Tipe data",
-  description: "Deskripsi",
+  datatype: "Data type",
+  description: "Description",
   display: "Display",
   email: "Email",
-  full_name: "Nama lengkap",
+  full_name: "Full name",
   group: "Group",
   icon: "Icon",
   key: "Key",
-  keywords: "Kata kunci",
-  label: "Nama sensor",
+  keywords: "Keywords",
+  label: "Sensor name",
   level: "Level",
   menu_control_id: "Menu control",
   menu_id: "Menu",
-  message: "Pesan",
-  name: "Nama",
-  new_password: "Password baru",
-  page: "Halaman",
-  page_size: "Jumlah data per halaman",
+  message: "Message",
+  name: "Name",
+  new_password: "New password",
+  page: "Page",
+  page_size: "Rows per page",
   parent_menu_id: "Parent menu",
   passkey: "Passkey",
   password: "Password",
-  recorded_at_ms: "Waktu rekam",
+  recorded_at_ms: "Recorded time",
   role_id: "Role",
-  sensor_code: "Kode sensor",
-  shared_user_ids: "User yang dibagikan",
-  sort: "Urutan",
-  unit: "Satuan",
+  sensor_code: "Sensor code",
+  shared_user_ids: "Shared users",
+  sort: "Sort order",
+  unit: "Unit",
   unit_id: "Unit sensor",
   url: "URL",
   username: "Username",
-  value: "Nilai",
-  value_type: "Tipe nilai",
-  widget_type: "Tipe widget",
+  value: "Value",
+  value_type: "Value type",
+  widget_type: "Widget type",
 };
 
 const humanizeFieldName = (fieldName: string) =>
@@ -84,8 +84,8 @@ const getIssueField = (issue: ZodError["issues"][number]) => {
 
 const translateCustomMessage = (message: string) => {
   const customMessages: Record<string, string> = {
-    "New password confirmation does not match.": "Konfirmasi password baru tidak sama.",
-    "Password confirmation does not match.": "Konfirmasi password tidak sama.",
+    "New password confirmation does not match.": "New password confirmation does not match.",
+    "Password confirmation does not match.": "Password confirmation does not match.",
   };
 
   return customMessages[message] ?? message;
@@ -107,56 +107,56 @@ const formatZodIssue = (issue: ZodError["issues"][number]) => {
   }
 
   if (issue.code === "invalid_type") {
-    return `${field} wajib diisi.`;
+    return `${field} is required.`;
   }
 
   if (issue.code === "invalid_format") {
     if (detail.format === "email") {
-      return `${field} harus berupa email yang valid.`;
+      return `${field} must be a valid email address.`;
     }
 
-    return `${field} memiliki format yang tidak valid.`;
+    return `${field} has an invalid format.`;
   }
 
   if (issue.code === "invalid_value") {
-    return `${field} tidak valid. Silakan pilih nilai yang tersedia.`;
+    return `${field} is invalid. Please choose an available value.`;
   }
 
   if (issue.code === "too_small") {
     if (detail.origin === "string") {
       if (Number(detail.minimum ?? 0) <= 1) {
-        return `${field} wajib diisi.`;
+        return `${field} is required.`;
       }
 
-      return `${field} minimal ${detail.minimum} karakter.`;
+      return `${field} must be at least ${detail.minimum} characters.`;
     }
 
     if (detail.origin === "array") {
-      return `${field} minimal berisi ${detail.minimum} data.`;
+      return `${field} must contain at least ${detail.minimum} item(s).`;
     }
 
-    return `${field} minimal ${detail.minimum}.`;
+    return `${field} must be at least ${detail.minimum}.`;
   }
 
   if (issue.code === "too_big") {
     if (detail.origin === "string") {
-      return `${field} maksimal ${detail.maximum} karakter.`;
+      return `${field} must be at most ${detail.maximum} characters.`;
     }
 
     if (detail.origin === "array") {
-      return `${field} maksimal berisi ${detail.maximum} data.`;
+      return `${field} must contain at most ${detail.maximum} item(s).`;
     }
 
-    return `${field} maksimal ${detail.maximum}.`;
+    return `${field} must be at most ${detail.maximum}.`;
   }
 
-  return translateCustomMessage(issue.message) || `${field} tidak valid.`;
+  return translateCustomMessage(issue.message) || `${field} is invalid.`;
 };
 
 export const errorHandler = (error: unknown, _req: Request, res: Response, _next: NextFunction) => {
   if (error instanceof ZodError) {
     const messages = error.issues.map(formatZodIssue);
-    const message = messages[0] ?? "Input belum sesuai.";
+    const message = messages[0] ?? "Input is invalid.";
 
     return res.status(422).json({
       message,

@@ -4,7 +4,7 @@ export const AdminSensorPage = () => {
   return (
     <PageHeader
       title="Admin Sensor"
-      subtitle="List seluruh sensor di database beserta owner, status, dan info perangkat."
+        subtitle="List all sensors in the database with owner, status, and device information."
       breadcrumbs={[
         { label: "Admin", route: undefined },
         { label: "Sensor", route: undefined },

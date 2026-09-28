@@ -11,7 +11,7 @@ export const login = asyncHandler(async (req, res) => {
     ...authService.getCookieOptions(),
     maxAge: 24 * 60 * 60 * 1000,
   });
-  return success(res, "Login berhasil.", result.user);
+  return success(res, "Login successful.", result.user);
 });
 
 export const signup = asyncHandler(async (req, res) => {
@@ -21,18 +21,18 @@ export const signup = asyncHandler(async (req, res) => {
     ...authService.getCookieOptions(),
     maxAge: 24 * 60 * 60 * 1000,
   });
-  return success(res, "Pendaftaran berhasil.", result.user);
+  return success(res, "Signup successful.", result.user);
 });
 
 export const me = asyncHandler(async (req, res) => {
   const user = await authService.me(req.user?.id ?? "");
-  return success(res, "Data user berhasil dimuat.", user);
+  return success(res, "User data loaded successfully.", user);
 });
 
 export const updateProfile = asyncHandler(async (req, res) => {
   const body = validate(profileSchema, req.body);
   const user = await authService.updateProfile(req.user?.id ?? "", body);
-  return success(res, "Profile berhasil diperbarui.", user);
+  return success(res, "Profile updated successfully.", user);
 });
 
 export const logout = asyncHandler(async (req, res) => {
@@ -41,15 +41,15 @@ export const logout = asyncHandler(async (req, res) => {
     String(req.cookies?.[env.AUTH_COOKIE_NAME] ?? "");
   await authService.logout(token);
   res.clearCookie(env.AUTH_COOKIE_NAME, authService.getCookieOptions());
-  return success(res, "Logout berhasil.", null);
+  return success(res, "Logout successful.", null);
 });
 
 export const changePassword = asyncHandler(async (req, res) => {
   const body = validate(changePasswordSchema, req.body);
   await authService.changeOwnPassword(req.user?.id ?? "", body.current_password, body.new_password);
-  return success(res, "Password berhasil diperbarui.", null);
+  return success(res, "Password updated successfully.", null);
 });
 
 export const impersonate = asyncHandler(async (_req, res) => {
-  return success(res, "Fitur impersonation belum diaktifkan di aplikasi ini.", null);
+  return success(res, "Impersonation is not enabled in this application.", null);
 });
