@@ -160,7 +160,7 @@ export const SensorNumberChart = ({ sensor }: SensorNumberChartProps) => {
         Realtime Chart
       </p>
       <div className="mt-1 flex gap-5 items-start justify-between">
-        <p className="text-xs md:text-sm text-dark-500 max-w-[300px]">
+        <p className="leading-5 md:leading-6 text-xs md:text-sm text-dark-500 max-w-[300px]">
           Recent historical data is connected with realtime readings.
         </p>
         <div className="inline-flex">
@@ -169,7 +169,7 @@ export const SensorNumberChart = ({ sensor }: SensorNumberChartProps) => {
             onClick={() => setViewMode("chart")}
             className={
               viewMode === "chart"
-                ? "inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-primary-700 shadow-sm"
+                ? "inline-flex items-center gap-2 rounded-xl bg-primary-50 px-3 py-2 text-xs font-semibold text-primary-700"
                 : "inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-dark-500 transition hover:text-dark-800"
             }
           >
@@ -181,7 +181,7 @@ export const SensorNumberChart = ({ sensor }: SensorNumberChartProps) => {
             onClick={() => setViewMode("table")}
             className={
               viewMode === "table"
-                ? "inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-primary-700 shadow-sm"
+                ? "inline-flex items-center gap-2 rounded-xl bg-primary-50 px-3 py-2 text-xs font-semibold text-primary-700"
                 : "inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-dark-500 transition hover:text-dark-800"
             }
           >

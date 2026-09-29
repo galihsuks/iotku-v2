@@ -36,11 +36,11 @@ export const DashboardPage = () => {
           },
         ]}
         rightElement={
-          <div className="flex items-center gap-2">
-            <Button type="link" link="/add" variant="primary" icon={Plus}>
-              Add Sensor
-            </Button>
-          </div>
+          <Button type="link" link="/add" variant="primary" icon={Plus}>
+            Add Sensor
+          </Button>
+          // <div>
+          // </div>
         }
       />
 

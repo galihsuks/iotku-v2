@@ -13,12 +13,7 @@ interface SensorDeleteModalProps {
   onDeleted: () => void;
 }
 
-export const SensorDeleteModal = ({
-  open,
-  target,
-  onClose,
-  onDeleted,
-}: SensorDeleteModalProps) => {
+export const SensorDeleteModal = ({ open, target, onClose, onDeleted }: SensorDeleteModalProps) => {
   const queryClient = useQueryClient();
   const { addToast } = useNotificationStore();
   const { mutate: deleteSensorMutation, isPending: isDeleteSensorPending } =
@@ -53,7 +48,7 @@ export const SensorDeleteModal = ({
       subtitle="Please confirm before removing this sensor."
       className="max-w-lg"
       footer={
-        <div className="flex justify-end gap-3">
+        <div className="flex justify-end gap-1 md:gap-3">
           <Button type="button" variant="light-outline" onClick={onClose}>
             Cancel
           </Button>
@@ -65,14 +60,14 @@ export const SensorDeleteModal = ({
     >
       <div className="rounded-2xl border border-warning-200 bg-warning-50 p-4">
         <div className="flex items-start gap-3">
-          <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-warning-100 text-warning-700">
-            <AlertTriangle className="h-5 w-5" />
+          <div className="inline-flex h-8 w-8 md:h-10 md:w-10 shrink-0 items-center justify-center rounded-lg md:rounded-xl bg-warning-100 text-warning-700">
+            <AlertTriangle className="h-4 w-4 md:h-5 md:w-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-dark-900">
+            <p className="text-xs md:text-sm font-semibold text-dark-900">
               You are about to delete <span className="text-danger-700">{target?.label}</span>.
             </p>
-            <p className="mt-1 text-sm text-dark-600">
+            <p className="mt-1 text-xs md:text-sm text-dark-600">
               Sensor code: <span className="font-medium">{target?.code}</span>
             </p>
           </div>

@@ -93,7 +93,7 @@ export const SensorValuePreview = ({ sensor }: SensorValuePreviewProps) => {
       </p>
       <div className="flex flex-col items-center mt-2 rounded-2xl border border-light-200 bg-light-50 px-5 py-4 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">Current</p>
-        <p className="mt-2 text-2xl font-semibold text-dark-900 w-50 truncate">
+        <p className="mt-2 text-2xl font-semibold text-dark-900 w-50 md:w-100 truncate">
           {latestReading ? formatValue(sensor, latestReading.value) : "-"}
         </p>
       </div>

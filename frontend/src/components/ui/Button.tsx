@@ -103,7 +103,7 @@ export const Button = ({
   const classes = cn(
     "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-semibold transition text-nowrap",
     !children ? "px-3" : "",
-    "disabled:cursor-not-allowed disabled:opacity-60",
+    "cursor-pointer disabled:cursor-not-allowed disabled:opacity-60",
     variantClass[variant],
     className,
   );

@@ -5,10 +5,7 @@ import { useChangeOwnPasswordMutation } from "../../../../api/auth/authQuery";
 import { Button, FormInput } from "../../../../components/ui";
 import { useApiFormError } from "../../../../hooks/useApiFormError";
 import { useNotificationStore } from "../../../../store/notifStore";
-import {
-  profilePasswordSchema,
-  type ProfilePasswordSchemaType,
-} from "../schema/ProfileSchema";
+import { profilePasswordSchema, type ProfilePasswordSchemaType } from "../schema/ProfileSchema";
 
 export const ProfilePasswordCard = () => {
   const { addToast } = useNotificationStore();
@@ -44,16 +41,16 @@ export const ProfilePasswordCard = () => {
   return (
     <section className="rounded-2xl border border-dark-200 bg-white p-5 shadow-sm sm:p-6">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
+        <p className="text-[10px] md:text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
           Security
         </p>
-        <h2 className="mt-2 text-lg font-semibold text-dark-900">Change Password</h2>
-        <p className="mt-1 text-sm text-dark-500">
+        <h2 className="mt-2 text-base md:text-lg font-semibold text-dark-900">Change Password</h2>
+        <p className="mt-1 leading-5 text-xs md:text-sm text-dark-500">
           Enter your current password before setting a new one.
         </p>
       </div>
 
-      <form className="mt-5 grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+      <form className="mt-3 md:mt-5 grid gap-3 md:gap-4" onSubmit={handleSubmit(onSubmit)}>
         <FormInput
           control={control}
           name="current_password"

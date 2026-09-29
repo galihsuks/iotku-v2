@@ -56,9 +56,7 @@ export const Modal = ({
         <header className="flex items-start justify-between border-b border-dark-100 px-5 py-4">
           <div>
             <h3 className="text-md sm:text-lg font-semibold text-dark-900">{title}</h3>
-            {subtitle ? (
-              <p className="sm:mt-1 text-xs sm:text-sm text-dark-500">{subtitle}</p>
-            ) : null}
+            {subtitle ? <p className="mt-1 text-xs sm:text-sm text-dark-500">{subtitle}</p> : null}
           </div>
           <button
             type="button"

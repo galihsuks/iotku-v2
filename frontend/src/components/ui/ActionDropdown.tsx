@@ -20,6 +20,7 @@ interface ActionDropdownProps {
   items: ActionDropdownItem[];
   align?: "left" | "right";
   className?: string;
+  wrapperClassName?: string;
   menuClassName?: string;
   disabled?: boolean;
 }
@@ -32,6 +33,7 @@ export const ActionDropdown = ({
   align = "right",
   className,
   menuClassName,
+  wrapperClassName = "inline-flex",
   disabled = false,
 }: ActionDropdownProps) => {
   const [open, setOpen] = useState(false);
@@ -66,7 +68,7 @@ export const ActionDropdown = ({
   }
 
   return (
-    <div ref={dropdownRef} className="relative inline-flex">
+    <div ref={dropdownRef} className={`relative ${wrapperClassName}`}>
       <button
         type="button"
         aria-label={ariaLabel}

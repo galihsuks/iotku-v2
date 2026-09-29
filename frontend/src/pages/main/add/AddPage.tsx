@@ -132,7 +132,7 @@ export const AddPage = () => {
         ]}
       />
 
-      <section className="grid gap-4 md:grid-cols-2">
+      <section className="grid gap-4 grid-cols-2">
         {modeCards.map((item) => {
           const Icon = item.icon;
           const active = mode === item.mode;
@@ -147,9 +147,18 @@ export const AddPage = () => {
                 active ? "border-primary-300 ring-2 ring-primary-100" : "border-dark-200",
               )}
             >
-              <Icon className={cn("h-7 w-7", active ? "text-primary-600" : "text-dark-500")} />
-              <h2 className="mt-4 text-lg font-semibold text-dark-900">{item.title}</h2>
-              <p className="mt-2 text-sm leading-6 text-dark-500">{item.description}</p>
+              <Icon
+                className={cn(
+                  "h-5 w-5 md:h-7 md:w-7",
+                  active ? "text-primary-600" : "text-dark-500",
+                )}
+              />
+              <h2 className="mt-2 md:mt-4 text-base md:text-lg font-semibold text-dark-900">
+                {item.title}
+              </h2>
+              <p className="mt-1 md:mt-2 text-xs md:text-sm leading-5 md:leading-6 text-dark-500">
+                {item.description}
+              </p>
             </button>
           );
         })}
@@ -158,12 +167,14 @@ export const AddPage = () => {
       <section className="mt-5 rounded-2xl border border-dark-200 bg-white p-5 shadow-[0_12px_40px_-32px_rgba(15,23,42,0.45)] sm:p-6">
         {mode === "new" ? (
           <form
-            className="grid gap-4 md:grid-cols-2"
+            className="grid gap-3 md:gap-4 md:grid-cols-2"
             onSubmit={handleNewSensorSubmit(onCreateSensor)}
           >
             <div className="md:col-span-2">
-              <h2 className="text-base font-semibold text-dark-900">New Device Details</h2>
-              <p className="mt-1 text-sm text-dark-500">
+              <h2 className="text-sm md:text-base font-semibold text-dark-900">
+                New Device Details
+              </h2>
+              <p className="mt-1 text-xs md:text-sm text-dark-500">
                 The sensor will automatically be registered under the signed-in account.
               </p>
             </div>

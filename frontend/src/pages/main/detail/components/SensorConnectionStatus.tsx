@@ -31,15 +31,15 @@ export const SensorConnectionStatus = ({ sensor }: SensorConnectionStatusProps) 
     <div className="rounded-2xl border border-dark-200 bg-white p-6">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
+          <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
             Device Status
           </p>
           <h2
-            className={`mt-3 text-xl font-semibold ${isOnline ? "text-success-600" : "text-dark-900"}`}
+            className={`mt-1 md:mt-3 text-lg md:text-xl font-semibold ${isOnline ? "text-success-600" : "text-dark-900"}`}
           >
             {isOnline ? "Online" : "Offline"}
           </h2>
-          <p className="mt-1 text-sm text-dark-500">
+          <p className="mt-1 text-xs md:text-sm text-dark-500">
             {isOnline
               ? "The device is connected to WebSocket."
               : "No active device socket is connected to this sensor."}
@@ -62,10 +62,10 @@ export const SensorConnectionStatus = ({ sensor }: SensorConnectionStatusProps) 
         <div className="flex items-center gap-3 rounded-2xl border border-light-200 bg-light-50 px-4 py-3">
           <Globe2 className="h-4 w-4 text-dark-500" />
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
+            <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
               IP Device
             </p>
-            <p className="mt-1 text-sm font-medium text-dark-800">
+            <p className="mt-1 text-xs md:text-sm font-medium text-dark-800">
               {deviceStatus?.ip_device ?? "-"}
             </p>
           </div>
@@ -73,10 +73,10 @@ export const SensorConnectionStatus = ({ sensor }: SensorConnectionStatusProps) 
         <div className="flex items-center gap-3 rounded-2xl border border-light-200 bg-light-50 px-4 py-3">
           <Clock3 className="h-4 w-4 text-dark-500" />
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
+            <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
               Connected At
             </p>
-            <p className="mt-1 text-sm font-medium text-dark-800">
+            <p className="mt-1 text-xs md:text-sm font-medium text-dark-800">
               {formatConnectedAt(deviceStatus?.connected_at)}
             </p>
           </div>

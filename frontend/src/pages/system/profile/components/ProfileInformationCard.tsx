@@ -59,16 +59,21 @@ export const ProfileInformationCard = ({ user }: ProfileInformationCardProps) =>
   return (
     <section className="rounded-2xl border border-dark-200 bg-white p-5 shadow-sm sm:p-6">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
+        <p className="text-[10px] md:text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
           Account
         </p>
-        <h2 className="mt-2 text-lg font-semibold text-dark-900">Profile Information</h2>
-        <p className="mt-1 text-sm text-dark-500">
+        <h2 className="mt-2 text-base md:text-lg font-semibold text-dark-900">
+          Profile Information
+        </h2>
+        <p className="mt-1 leading-5 text-xs md:text-sm text-dark-500">
           Update the username, full name, and email used by this account.
         </p>
       </div>
 
-      <form className="mt-5 grid gap-4 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="mt-3 md:mt-5 grid gap-3 md:gap-4 md:grid-cols-2"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <FormInput
           control={control}
           name="username"
