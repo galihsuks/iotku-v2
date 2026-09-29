@@ -12,7 +12,8 @@ const SENSITIVE_KEYS = new Set([
 
 const shouldSkipLog = (req: Request) => {
   if (!req.path.startsWith("/api")) return true;
-  if (req.path === "/api/log" && req.method === "POST") return true;
+  if (req.path === "/api/log" && req.method == "GET") return true;
+  if (req.path === "/api/websocket-log") return true;
   return false;
 };
 

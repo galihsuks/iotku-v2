@@ -1,5 +1,5 @@
 import { asyncHandler, success, validate } from "../../../utils/http.js";
-import { keywordQuerySchema, logPayloadSchema } from "../system.schemas.js";
+import { logPayloadSchema, logQuerySchema } from "../system.schemas.js";
 import * as logService from "./log.service.js";
 
 export const createLog = asyncHandler(async (req, res) => {
@@ -9,12 +9,13 @@ export const createLog = asyncHandler(async (req, res) => {
 });
 
 export const listLogs = asyncHandler(async (req, res) => {
-  const query = validate(keywordQuerySchema, req.query);
+  const query = validate(logQuerySchema, req.query);
   const result = await logService.listLogs(query);
   return success(res, "List log", result.rows, result.pagination);
 });
 
-export const clearLogs = asyncHandler(async (_req, res) => {
-  await logService.clearLogs();
+export const clearLogs = asyncHandler(async (req, res) => {
+  const query = validate(logQuerySchema, req.query);
+  await logService.clearLogs(query);
   return success(res, "Logs cleared successfully.", undefined);
 });

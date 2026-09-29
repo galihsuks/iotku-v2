@@ -13,6 +13,8 @@ export const websocketLogQuerySchema = keywordQuerySchema.extend({
   end_time: z.string().trim().optional(),
 });
 
+export const logQuerySchema = websocketLogQuerySchema;
+
 export const roleSchema = z.object({
   code: z.string().trim().min(1).max(50),
   name: z.string().trim().min(1).max(100),
