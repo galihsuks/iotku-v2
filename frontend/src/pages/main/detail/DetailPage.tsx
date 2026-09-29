@@ -1,8 +1,8 @@
-import { Download, Pencil, RotateCcw, Trash2 } from "lucide-react";
+import { Download, EllipsisVertical, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageHeader } from "../../../components/layout/PageHeader";
-import { Button } from "../../../components/ui";
+import { ActionDropdown, Button } from "../../../components/ui";
 import InternalServerError from "../../../components/templates/InternalServerError";
 import {
   useExportSensorReadingsMutation,
@@ -62,7 +62,7 @@ export const DetailPage = () => {
       <PageHeader
         showGoBack
         title={sensor?.label ?? "Sensor Detail"}
-        subtitle="Sensor details, device status, and reading data are displayed here."
+        subtitle={`ID : ${sensor?.code}`}
         breadcrumbs={[
           { label: "Main", route: "/" },
           { label: "Detail", route: undefined },
@@ -79,7 +79,40 @@ export const DetailPage = () => {
         ]}
         rightElement={
           sensor ? (
-            <div className="flex flex-wrap gap-2">
+            isOwner ? (
+              <ActionDropdown
+                icon={EllipsisVertical}
+                ariaLabel="Open sensor actions"
+                items={[
+                  {
+                    key: "export-excel",
+                    label: "Export Excel",
+                    icon: Download,
+                    loading: exportReadingsMutation.isPending,
+                    onClick: handleExportReadings,
+                  },
+                  {
+                    key: "edit",
+                    label: "Edit",
+                    icon: Pencil,
+                    onClick: () => navigate(`/edit/${sensor.id}`),
+                  },
+                  {
+                    key: "reset-data",
+                    label: "Reset Data",
+                    icon: RotateCcw,
+                    onClick: () => setResetTarget(sensor),
+                  },
+                  {
+                    key: "delete",
+                    label: "Delete",
+                    icon: Trash2,
+                    danger: true,
+                    onClick: () => setDeleteTarget(sensor),
+                  },
+                ]}
+              />
+            ) : (
               <Button
                 type="button"
                 variant="success-outline"
@@ -89,35 +122,7 @@ export const DetailPage = () => {
               >
                 Export Excel
               </Button>
-              {isOwner ? (
-                <>
-                  <Button
-                    type="link"
-                    link={`/edit/${sensor.id}`}
-                    variant="primary-outline"
-                    icon={Pencil}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="warning-outline"
-                    icon={RotateCcw}
-                    onClick={() => setResetTarget(sensor)}
-                  >
-                    Reset Data
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="danger"
-                    icon={Trash2}
-                    onClick={() => setDeleteTarget(sensor)}
-                  >
-                    Delete
-                  </Button>
-                </>
-              ) : null}
-            </div>
+            )
           ) : null
         }
       />
@@ -128,6 +133,11 @@ export const DetailPage = () => {
         </div>
       ) : (
         <section className="grid gap-4 md:grid-cols-2">
+          {sensor.value_type === "number" ? (
+            <SensorNumberChart key={readingsResetVersion} sensor={sensor} />
+          ) : (
+            <SensorValuePreview sensor={sensor} />
+          )}
           <SensorConnectionStatus sensor={sensor} />
           <div className="rounded-2xl border border-dark-200 bg-white p-6">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
@@ -144,11 +154,6 @@ export const DetailPage = () => {
               </p>
             </div>
           </div>
-          {sensor.value_type === "number" ? (
-            <SensorNumberChart key={readingsResetVersion} sensor={sensor} />
-          ) : (
-            <SensorValuePreview sensor={sensor} />
-          )}
         </section>
       )}
 

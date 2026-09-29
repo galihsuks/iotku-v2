@@ -52,12 +52,12 @@ export const DashboardPage = () => {
         <div className="rounded-2xl border border-dashed border-dark-200 bg-light-50 p-8 text-center">
           <RefreshCw className="mx-auto h-8 w-8 text-dark-300" />
           <p className="mt-4 font-semibold text-dark-900">No sensor connected yet.</p>
-          <p className="mt-2 text-sm text-dark-500">
+          <p className="mt-2 text-xs md:text-sm text-dark-500">
             Add your first sensor to start monitoring.
           </p>
         </div>
       ) : (
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <section className="grid gap-4 grid-cols-2 md:grid-cols-3">
           {sensors.map((sensor) => (
             <SensorWidgetCard key={sensor.id} sensor={sensor} />
           ))}

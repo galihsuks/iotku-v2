@@ -1,7 +1,7 @@
-import { Check, Copy, RadioTower, Thermometer, ToggleRight } from "lucide-react";
+import { Check, Copy, RadioTower, Thermometer, ToggleRight, Wifi, WifiOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Badge, Button } from "../../../../components/ui";
+import { Button } from "../../../../components/ui";
 import type { Sensor } from "../../../../interfaces/sensor";
 import {
   useDeviceStatusBySensor,
@@ -28,6 +28,7 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
   const Icon = getWidgetIcon(sensor.widget_type);
   const detailPath = `/detail/${sensor.id}`;
   const openDetail = () => navigate(detailPath);
+  const StatusIcon = deviceStatus?.connection_status ? Wifi : WifiOff;
 
   useEffect(() => {
     if (!copied) return;
@@ -53,17 +54,19 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
           openDetail();
         }
       }}
-      className="cursor-pointer rounded-2xl border border-dark-200 bg-white p-5 shadow-sm transition hover:border-primary-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-200"
+      className="cursor-pointer rounded-2xl border border-dark-200 bg-white p-4 md:p-5 shadow-sm transition hover:border-primary-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-200"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-2 md:gap-5">
         <div className="flex gap-3">
-          <div>
+          <div className="hidden md:block">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-50 text-primary-600">
               <Icon className="h-5 w-5" />
             </div>
           </div>
-          <div>
-            <p className="font-semibold text-dark-900 line-clamp-2">{sensor.label}</p>
+          <div className="flex-1">
+            <p className="w-full text-sm md:text-base font-semibold text-dark-900 line-clamp-2">
+              {sensor.label}
+            </p>
             <button
               type="button"
               aria-label={copied ? "Sensor code copied" : "Copy sensor code"}
@@ -74,7 +77,7 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
               <p className="text-xs text-dark-500">{sensor.code}</p>
               <span
                 className={
-                  "inline-flex h-6 w-0 transition duration-100 ease-in-out group-hover:w-6 overflow-hidden items-center justify-center opacity-70"
+                  "inline-flex h-6 w-6 md:w-0 transition duration-100 ease-in-out group-hover:w-6 overflow-hidden items-center justify-center opacity-70"
                 }
               >
                 {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
@@ -82,12 +85,20 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
             </button>
           </div>
         </div>
-        <Badge variant={deviceStatus?.connection_status ? "success" : "light"}>
-          {deviceStatus?.connection_status ? "Online" : "Offline"}
-        </Badge>
+        <div>
+          <div
+            className={
+              deviceStatus?.connection_status
+                ? "flex h-6 w-6 items-center justify-center text-success-500"
+                : "flex h-6 w-6 items-center justify-center text-dark-500"
+            }
+          >
+            <StatusIcon className="h-5 w-5" />
+          </div>
+        </div>
       </div>
 
-      <div className="mt-5">
+      <div className="mt-3 md:mt-5">
         {sensor.widget_type === "switch" ? (
           <div onClick={(event) => event.stopPropagation()}>
             <Button type="button" variant="primary-outline" icon={ToggleRight}>
@@ -96,13 +107,15 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
           </div>
         ) : (
           <div>
-            <p className="text-4xl font-semibold tracking-tight text-dark-900 line-clamp-2">
+            <p className="text-2xl md:text-4xl font-semibold tracking-tight text-dark-900 line-clamp-2">
               {latestReading?.value ?? "-"}
               {sensor.unit != "text" && (
-                <span className="ml-2 text-base font-medium text-dark-400">{sensor.unit}</span>
+                <span className="ml-2 text-sm md:text-base font-medium text-dark-400">
+                  {sensor.unit}
+                </span>
               )}
             </p>
-            <p className="mt-2 text-xs text-dark-500">{sensor.unit_name}</p>
+            <p className="mt-2 text-[11px] md:text-xs text-dark-500">{sensor.unit_name}</p>
           </div>
         )}
       </div>

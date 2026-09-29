@@ -65,13 +65,15 @@ export const SensorValuePreview = ({ sensor }: SensorValuePreviewProps) => {
     {
       key: "recorded_at_ms",
       header: "Time",
-      render: (reading) => formatDateTime(reading.recorded_at_ms),
+      render: (reading) => <p className="w-20 md:w-25">{formatDateTime(reading.recorded_at_ms)}</p>,
     },
     {
       key: "value",
       header: "Value",
       render: (reading) => (
-        <span className="font-semibold text-dark-900">{formatValue(sensor, reading.value)}</span>
+        <span className="block min-w-[200px] font-semibold text-dark-900">
+          {formatValue(sensor, reading.value)}
+        </span>
       ),
     },
     {
@@ -82,26 +84,21 @@ export const SensorValuePreview = ({ sensor }: SensorValuePreviewProps) => {
   ];
 
   return (
-    <section className="rounded-2xl border border-dark-200 bg-white p-5 shadow-sm sm:p-6 md:col-span-2">
-      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
-            Latest Value
-          </p>
-          <h2 className="mt-2 text-lg font-semibold text-dark-900">{sensor.unit_name}</h2>
-          <p className="mt-1 text-sm text-dark-500">
-            Non-number data is displayed as reading history.
-          </p>
-        </div>
-        <div className="rounded-2xl border border-light-200 bg-light-50 px-5 py-4 text-right">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">Current</p>
-          <p className="mt-2 text-2xl font-semibold text-dark-900 max-w-100 truncate">
-            {latestReading ? formatValue(sensor, latestReading.value) : "-"}
-          </p>
-        </div>
+    <section className="md:col-span-2">
+      <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
+        Latest Value
+      </p>
+      <p className="mt-1 text-xs md:text-sm text-dark-500">
+        Non-number data is displayed as reading history.
+      </p>
+      <div className="flex flex-col items-center mt-2 rounded-2xl border border-light-200 bg-light-50 px-5 py-4 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">Current</p>
+        <p className="mt-2 text-2xl font-semibold text-dark-900 w-50 truncate">
+          {latestReading ? formatValue(sensor, latestReading.value) : "-"}
+        </p>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-2xl border border-light-200 bg-light-50 p-3">
+      <div className="mt-6 overflow-hidden">
         {isPending ? (
           <div className="grid h-[260px] place-items-center text-sm text-dark-500">
             Loading readings...
@@ -111,7 +108,7 @@ export const SensorValuePreview = ({ sensor }: SensorValuePreviewProps) => {
             <div>
               <RadioTower className="mx-auto h-8 w-8 text-dark-300" />
               <p className="mt-3 text-sm font-semibold text-dark-800">No readings yet.</p>
-              <p className="mt-1 text-sm text-dark-500">
+              <p className="mt-1 text-xs md:text-sm text-dark-500">
                 The table will appear after the sensor sends data.
               </p>
             </div>

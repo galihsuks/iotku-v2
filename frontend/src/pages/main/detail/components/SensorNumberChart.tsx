@@ -155,57 +155,53 @@ export const SensorNumberChart = ({ sensor }: SensorNumberChartProps) => {
   const pagination = data?.pagination;
 
   return (
-    <section className="rounded-2xl border border-dark-200 bg-white p-5 shadow-sm sm:p-6 md:col-span-2">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
-            Realtime Chart
-          </p>
-          <h2 className="mt-2 text-lg font-semibold text-dark-900">{sensor.unit_name}</h2>
-          <p className="mt-1 text-sm text-dark-500">
-            Recent historical data is connected with realtime readings.
-          </p>
-        </div>
-        <div className="flex flex-col gap-3 sm:items-end">
-          <div className="inline-flex rounded-2xl border border-light-200 bg-light-50 p-1">
-            <button
-              type="button"
-              onClick={() => setViewMode("chart")}
-              className={
-                viewMode === "chart"
-                  ? "inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-primary-700 shadow-sm"
-                  : "inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-dark-500 transition hover:text-dark-800"
-              }
-            >
-              <ChartLine className="h-4 w-4" />
-              Chart
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("table")}
-              className={
-                viewMode === "table"
-                  ? "inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-primary-700 shadow-sm"
-                  : "inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-dark-500 transition hover:text-dark-800"
-              }
-            >
-              <Table2 className="h-4 w-4" />
-              Table
-            </button>
-          </div>
-          <div className="rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3 text-right">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-500">
-              Current
-            </p>
-            <p className="mt-1 text-2xl font-semibold text-primary-700">
-              {currentValue !== null ? formatValue(currentValue) : "-"}
-              <span className="ml-1 text-sm font-medium text-primary-500">{sensor.unit}</span>
-            </p>
-          </div>
+    <section className="md:col-span-2">
+      <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
+        Realtime Chart
+      </p>
+      <div className="mt-1 flex gap-5 items-start justify-between">
+        <p className="text-xs md:text-sm text-dark-500 max-w-[300px]">
+          Recent historical data is connected with realtime readings.
+        </p>
+        <div className="inline-flex">
+          <button
+            type="button"
+            onClick={() => setViewMode("chart")}
+            className={
+              viewMode === "chart"
+                ? "inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-primary-700 shadow-sm"
+                : "inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-dark-500 transition hover:text-dark-800"
+            }
+          >
+            <ChartLine className="h-4 w-4" />
+            <p className="hidden md:block">Chart</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("table")}
+            className={
+              viewMode === "table"
+                ? "inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-primary-700 shadow-sm"
+                : "inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-dark-500 transition hover:text-dark-800"
+            }
+          >
+            <Table2 className="h-4 w-4" />
+            <p className="hidden md:block">Table</p>
+          </button>
         </div>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-2xl border border-light-200 bg-light-50 p-3">
+      <div className="mt-2 rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-500">
+          Current
+        </p>
+        <p className="mt-1 text-2xl font-semibold text-primary-700">
+          {currentValue !== null ? formatValue(currentValue) : "-"}
+          <span className="ml-1 text-sm font-medium text-primary-500">{sensor.unit}</span>
+        </p>
+      </div>
+
+      <div className="mt-6 overflow-hidden">
         {isPending ? (
           <div className="grid h-[260px] place-items-center text-sm text-dark-500">
             Loading chart...

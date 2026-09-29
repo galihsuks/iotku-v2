@@ -1,4 +1,4 @@
-import { ArrowLeft, ChevronRight, PanelRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, PanelRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../utils/cn";
@@ -86,9 +86,9 @@ export const PageHeader = ({
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="cursor-pointer inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-primary-100 bg-white text-dark-700 shadow-sm transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-600"
+              className="cursor-pointer inline-flex h-11 w-6 md:h-11 md:w-11 shrink-0 items-center justify-center rounded-2xl md:border border-primary-100 bg-white text-dark-700 md:shadow-sm transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-600"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" />
             </button>
           ) : null}
 
@@ -97,7 +97,7 @@ export const PageHeader = ({
               {title}
             </h1>
             {subtitle ? (
-              <p className="mt-2 max-w-2xl text-xs leading-5 sm:leading-6 text-dark-500 sm:text-sm">
+              <p className="mt-1 md:mt-2 max-w-2xl text-xs leading-5 sm:leading-6 text-dark-500 sm:text-sm">
                 {subtitle}
               </p>
             ) : null}

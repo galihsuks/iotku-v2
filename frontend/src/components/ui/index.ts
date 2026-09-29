@@ -1,5 +1,6 @@
 export * from "./Badge";
 export * from "./Checkbox";
+export * from "./ActionDropdown";
 export * from "./Button";
 export * from "./FileTriggerInput";
 export * from "./FilterGrid";
