@@ -26,7 +26,13 @@ export const createApp = () => {
   app.use(cookieParser());
   app.use(requestContext);
 
-  app.get("/", (_req, res) => success(res, `API ${env.APP_NAME}`));
+  app.get("/", (_req, res) =>
+    success(res, `API ${env.APP_NAME}`, {
+      app_name: env.APP_NAME,
+      version: env.APP_VERSION,
+      environment: env.NODE_ENV,
+    }),
+  );
   app.get("/openapi.json", (_req, res) => res.json(openApiDocument));
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
   app.use(apiAuditLogger);

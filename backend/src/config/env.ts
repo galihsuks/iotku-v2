@@ -1,8 +1,14 @@
 import "dotenv/config";
 import { z } from "zod";
+import { getPackageVersion } from "./app-version.js";
+
+const packageVersion = getPackageVersion();
+
+const emptyStringToUndefined = (value: unknown) => (value === "" ? undefined : value);
 
 const envSchema = z.object({
   APP_NAME: z.string().default("Iotku V2 API"),
+  APP_VERSION: z.preprocess(emptyStringToUndefined, z.string().trim().min(1).default(packageVersion)),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().positive().default(8082),
   WS_PORT: z.coerce.number().int().positive().default(4002),

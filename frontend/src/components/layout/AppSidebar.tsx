@@ -215,7 +215,7 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
           >
             <div className="min-w-0">
               <p className="text-[10px] md:text-xs tracking-[0.2em] text-dark-500">
-                {envVar.APP_VERSION}
+                v{envVar.APP_VERSION}
               </p>
               <AppLogo variant="text" className="truncate" />
             </div>

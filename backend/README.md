@@ -10,12 +10,36 @@ npm run dev
 npm run build
 ```
 
+## App Version
+
+Backend app version is exposed through Swagger/OpenAPI and the root health endpoint.
+
+Version source priority:
+
+1. `APP_VERSION` from `.env` or deployment environment
+2. `version` from `backend/package.json`
+3. fallback `0.1.0`
+
+For local development, `APP_VERSION` can be left empty in `.env`:
+
+```env
+APP_VERSION=
+```
+
+For CI/CD releases, set `APP_VERSION` from the GitHub Release tag, for example:
+
+```env
+APP_VERSION=1.2.3
+```
+
 ## API Docs
 
 When the backend is running:
 
 - Swagger UI: `http://localhost:8082/docs`
 - OpenAPI JSON: `http://localhost:8082/openapi.json`
+
+Swagger reads the version from `APP_VERSION` when available.
 
 ## Database
 

@@ -40,7 +40,7 @@ export const openApiDocument = {
   openapi: "3.0.3",
   info: {
     title: "Iotku V2 Backend API",
-    version: "0.1.0",
+    version: env.APP_VERSION,
     description: [
       "Express + TypeScript API for Iotku V2.",
       "",

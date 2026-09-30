@@ -55,7 +55,7 @@ export const SignupPage = () => {
             </div>
             <div>
               <p className="text-xl font-semibold text-primary-700 leading-5">Iotku</p>
-              <p className="text-[10px] text-dark-500">{envVar.APP_VERSION}</p>
+              <p className="text-[10px] text-dark-500">v{envVar.APP_VERSION}</p>
             </div>
           </div>
           <hr className="border-dark-200 mb-4" />
