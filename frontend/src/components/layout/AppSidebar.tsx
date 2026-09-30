@@ -19,6 +19,7 @@ import { useAuthActions, useUser } from "../../store/authStore";
 import { useCollapseDesktopSidebar, useLayoutActions } from "../../store/layoutStore";
 import { cn } from "../../utils/cn";
 import type { MenuGroup, MenuTreeNode } from "../../interfaces/menu";
+import envVar from "../../utils/envReader";
 
 interface NavItem {
   id: string;
@@ -213,7 +214,9 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
             )}
           >
             <div className="min-w-0">
-              <p className="truncate text-xs tracking-[0.2em] text-dark-500">v2.0</p>
+              <p className="text-[10px] md:text-xs tracking-[0.2em] text-dark-500">
+                {envVar.APP_VERSION}
+              </p>
               <AppLogo variant="text" className="truncate" />
             </div>
           </div>

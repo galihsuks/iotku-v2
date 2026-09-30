@@ -9,6 +9,7 @@ import { usePageTitle } from "../../hooks/usePageTitle";
 import { queryClient } from "../../lib/queryClient";
 import { useAuthActions } from "../../store/authStore";
 import { useNotificationStore } from "../../store/notifStore";
+import envVar from "../../utils/envReader";
 
 export const LoginPage = () => {
   usePageTitle("Sign in");
@@ -47,11 +48,12 @@ export const LoginPage = () => {
       <section className="w-full max-w-md rounded-3xl border border-primary-100 bg-white p-6 shadow-[0_20px_50px_-35px_rgba(30,41,59,0.32)] sm:p-8">
         <div className="mb-6">
           <div className="mb-4 flex items-center justify-center gap-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-2xl text-xl font-extrabold text-white shadow-glow">
-              <AppLogo variant="icon" className="h-7 w-auto" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-2xl text-xl font-extrabold text-white shadow-glow">
+              <AppLogo variant="icon" className="h-8 w-auto" />
             </div>
             <div>
-              <p className="text-xl font-semibold text-primary-700">Iotku</p>
+              <p className="text-xl font-semibold text-primary-700 leading-5">Iotku</p>
+              <p className="text-[10px] text-dark-500">{envVar.APP_VERSION}</p>
             </div>
           </div>
           <hr className="border-dark-200 mb-4" />
