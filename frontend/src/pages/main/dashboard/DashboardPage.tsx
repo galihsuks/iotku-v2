@@ -60,7 +60,7 @@ export const DashboardPage = () => {
           </p>
         </div>
       ) : (
-        <section className="grid gap-4 grid-cols-2 md:grid-cols-3">
+        <section className="grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3">
           {sensors.map((sensor) => (
             <SensorWidgetCard key={sensor.id} sensor={sensor} />
           ))}

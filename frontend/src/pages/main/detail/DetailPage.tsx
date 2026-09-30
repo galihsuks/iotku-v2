@@ -1,12 +1,15 @@
 import { Download, EllipsisVertical, Pencil, RotateCcw, Trash2, UserRound } from "lucide-react";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageHeader } from "../../../components/layout/PageHeader";
-import { ActionDropdown, Button } from "../../../components/ui";
+import { ActionDropdown, Button, Modal } from "../../../components/ui";
 import InternalServerError from "../../../components/templates/InternalServerError";
+import { queryKeys } from "../../../api/queryKeys";
 import {
   useExportSensorReadingsMutation,
   useSensorDetailQuery,
+  useUpdateSensorMutation,
 } from "../../../api/sensor/sensorQuery";
 import { getApiErrorMessage } from "../../../api/apiError";
 import { usePageTitle } from "../../../hooks/usePageTitle";
@@ -20,14 +23,19 @@ import { SensorDeleteModal } from "./components/SensorDeleteModal";
 import { SensorResetReadingsModal } from "./components/SensorResetReadingsModal";
 import { SensorValuePreview } from "./components/SensorValuePreview";
 
+type SharedUser = NonNullable<Sensor["shared_users"]>[number];
+
 export const DetailPage = () => {
   const { id = "" } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const user = useUser();
   const [deleteTarget, setDeleteTarget] = useState<Sensor | null>(null);
   const [resetTarget, setResetTarget] = useState<Sensor | null>(null);
+  const [sharedUserTarget, setSharedUserTarget] = useState<SharedUser | null>(null);
   const [readingsResetVersion, setReadingsResetVersion] = useState(0);
   const exportReadingsMutation = useExportSensorReadingsMutation();
+  const updateSensorMutation = useUpdateSensorMutation();
   const addToast = useNotificationStore((state) => state.addToast);
   const { data, isPending, error } = useSensorDetailQuery(id);
   const sensor = data?.data;
@@ -55,6 +63,36 @@ export const DetailPage = () => {
         addToast(getApiErrorMessage(exportError), "error");
       },
     });
+  };
+
+  const handleRemoveSharedUser = () => {
+    if (!sensor || !sharedUserTarget) return;
+
+    updateSensorMutation.mutate(
+      {
+        id: sensor.id,
+        payload: {
+          label: sensor.label,
+          unit_id: sensor.unit_id,
+          shared_user_ids:
+            sensor.shared_users
+              ?.filter((item) => item.id !== sharedUserTarget.id)
+              .map((item) => item.id) ?? [],
+        },
+      },
+      {
+        onSuccess: (response) => {
+          addToast(response.message || "Shared user removed successfully.", "success");
+          void queryClient.invalidateQueries({ queryKey: queryKeys.sensor.detail(sensor.id) });
+          void queryClient.invalidateQueries({ queryKey: ["sensor"] });
+          void queryClient.invalidateQueries({ queryKey: ["dropdown", "sensor"] });
+          setSharedUserTarget(null);
+        },
+        onError: (mutationError) => {
+          addToast(getApiErrorMessage(mutationError), "error");
+        },
+      },
+    );
   };
 
   if (error) return <InternalServerError />;
@@ -181,18 +219,34 @@ export const DetailPage = () => {
             <p className="mt-1 text-xs md:text-sm text-dark-500">Owner</p>
             <div className="mt-3 md:mt-4">
               <p className="text-xs md:text-sm font-medium text-dark-700">Shared users</p>
-              <p className="mt-2 text-xs md:text-sm text-dark-500 flex flex-col gap-1">
+              <div className="mt-2 flex flex-col text-xs md:text-sm text-dark-500">
                 {sensor.shared_users?.length
-                  ? sensor.shared_users.map((item) => (
-                      <div className="flex items-center gap-2">
-                        <div>
-                          <UserRound className="h-4 w-4" />
+                  ? sensor.shared_users.map((item, ind_item) => (
+                      <div
+                        key={item.id}
+                        className={`flex items-center justify-between gap-3 border-light-200 py-2 ${ind_item > 0 ? "border-t" : ""}`}
+                      >
+                        <div className="flex min-w-0 items-center gap-2">
+                          <div className="shrink-0">
+                            <UserRound className="h-4 w-4" />
+                          </div>
+                          <div className="min-w-0 w-[30vw]">
+                            <p className="truncate font-medium text-dark-800">{item.full_name}</p>
+                            <p className="truncate text-[10px] text-dark-400">{item.email}</p>
+                          </div>
                         </div>
-                        <p>{item.full_name}</p>
+                        {isOwner ? (
+                          <Button
+                            type="button"
+                            variant="danger-text"
+                            icon={Trash2}
+                            onClick={() => setSharedUserTarget(item)}
+                          />
+                        ) : null}
                       </div>
                     ))
                   : "No shared users yet."}
-              </p>
+              </div>
             </div>
           </div>
         </section>
@@ -210,6 +264,37 @@ export const DetailPage = () => {
         onClose={() => setResetTarget(null)}
         onReset={() => setReadingsResetVersion((prev) => prev + 1)}
       />
+      <Modal
+        open={Boolean(sharedUserTarget)}
+        onClose={() => setSharedUserTarget(null)}
+        title="Remove shared user"
+        subtitle="This user will lose access to this sensor."
+        className="max-w-lg"
+        footer={
+          <div className="flex justify-end gap-1 md:gap-3">
+            <Button type="button" variant="light-outline" onClick={() => setSharedUserTarget(null)}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="danger"
+              loading={updateSensorMutation.isPending}
+              onClick={handleRemoveSharedUser}
+            >
+              Remove Access
+            </Button>
+          </div>
+        }
+      >
+        <div className="rounded-2xl border border-danger-100 bg-danger-50 p-4">
+          <p className="text-xs md:text-sm font-semibold text-dark-900">
+            Remove access for {sharedUserTarget?.full_name}?
+          </p>
+          <p className="mt-1 text-xs md:text-sm text-dark-600">
+            They will no longer be able to view this sensor or receive its realtime data.
+          </p>
+        </div>
+      </Modal>
     </>
   );
 };

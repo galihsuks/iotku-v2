@@ -37,7 +37,7 @@ export const ToastContainer = () => {
   };
 
   return (
-    <div className="fixed top-4 right-4 z-[1000] grid w-[min(340px,calc(100vw-2rem))] gap-2">
+    <div className="fixed top-4 right-4 z-[1000] grid w-[calc(100vw-(var(--spacing)*12))] md:w-[min(340px,calc(100vw-2rem))] gap-2">
       {toasts.map((toast) => {
         const { container, iconWrapper, closeButton, Icon } = getToastStyle(toast.type);
 
@@ -49,28 +49,30 @@ export const ToastContainer = () => {
               container,
             )}
           >
-            <div className="flex min-w-0 items-center gap-3">
+            <div className="flex min-w-0 items-center gap-2 md:gap-3">
               <div
                 className={cn(
-                  "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
+                  "inline-flex h-7 w-7 md:h-9 md:w-9 shrink-0 items-center justify-center rounded-xl",
                   iconWrapper,
                 )}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-3 w-3 md:h-4 md:w-4" />
               </div>
-              <p className="text-sm font-medium leading-5">{toast.message}</p>
+              <p className="text-xs md:text-sm font-medium leading-4 md:leading-5">
+                {toast.message}
+              </p>
             </div>
 
             <button
               type="button"
               className={cn(
-                "inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition",
+                "inline-flex h-8 w-8 md:h-8 md:w-8 shrink-0 items-center justify-center rounded-lg transition",
                 closeButton,
               )}
               onClick={() => removeToast(toast.id)}
               aria-label="Close notification"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3 w-3 md:h-4 md:w-4" />
             </button>
           </div>
         );

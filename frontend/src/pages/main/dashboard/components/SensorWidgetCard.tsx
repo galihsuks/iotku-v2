@@ -87,13 +87,11 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
         </div>
         <div>
           <div
-            className={
-              deviceStatus?.connection_status
-                ? "flex h-6 w-6 items-center justify-center text-success-500"
-                : "flex h-6 w-6 items-center justify-center text-dark-500"
-            }
+            className={`flex h-4 w-4 md:h-6 md:w-6 items-center justify-center ${
+              deviceStatus?.connection_status ? "text-success-500" : "text-dark-500"
+            }`}
           >
-            <StatusIcon className="h-5 w-5" />
+            <StatusIcon className="h-4 w-4 md:h-5 md:w-5" />
           </div>
         </div>
       </div>
