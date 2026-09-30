@@ -35,6 +35,8 @@ const mergeReadings = (base: SensorReading[], live: SensorReading[]) => {
   return Array.from(map.values()).sort((a, b) => b.recorded_at_ms - a.recorded_at_ms);
 };
 
+const limitLatestReadings = (readings: SensorReading[], limit: number) => readings.slice(0, limit);
+
 export const SensorValuePreview = ({ sensor }: SensorValuePreviewProps) => {
   const [page, setPage] = useState(1);
   const { data, isPending } = useSensorReadingsQuery(sensor.id, {
@@ -57,7 +59,11 @@ export const SensorValuePreview = ({ sensor }: SensorValuePreviewProps) => {
   }, [sensor.id]);
 
   const readings = useMemo(
-    () => mergeReadings(data?.data ?? [], page === 1 ? liveReadings : []),
+    () => {
+      const mergedReadings = mergeReadings(data?.data ?? [], page === 1 ? liveReadings : []);
+
+      return page === 1 ? limitLatestReadings(mergedReadings, DEFAULT_PAGE_SIZE) : mergedReadings;
+    },
     [data?.data, liveReadings, page],
   );
 

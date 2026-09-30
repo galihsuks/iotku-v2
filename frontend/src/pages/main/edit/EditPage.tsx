@@ -9,6 +9,7 @@ import { useSensorDetailQuery, useUpdateSensorMutation } from "../../../api/sens
 import { PageHeader } from "../../../components/layout/PageHeader";
 import InternalServerError from "../../../components/templates/InternalServerError";
 import { Button, FormInput } from "../../../components/ui";
+import { usePageTitle } from "../../../hooks/usePageTitle";
 import type { DropdownOption } from "../../../interfaces/dropdown";
 import type { SensorPayload } from "../../../interfaces/sensor";
 import { useUser } from "../../../store/authStore";
@@ -34,6 +35,8 @@ export const EditPage = () => {
   });
 
   const isOwner = Boolean(sensor && user?.id === sensor.owner_user_id);
+
+  usePageTitle(sensor?.label ? `Edit ${sensor.label}` : "Edit Sensor");
 
   useEffect(() => {
     if (!sensor) return;

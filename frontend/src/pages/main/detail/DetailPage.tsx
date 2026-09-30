@@ -9,6 +9,7 @@ import {
   useSensorDetailQuery,
 } from "../../../api/sensor/sensorQuery";
 import { getApiErrorMessage } from "../../../api/apiError";
+import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useSensorSocket } from "../../../hooks/useSensorSocket";
 import type { Sensor } from "../../../interfaces/sensor";
 import { useUser } from "../../../store/authStore";
@@ -33,6 +34,7 @@ export const DetailPage = () => {
   const isOwner = Boolean(sensor && user?.id === sensor.owner_user_id);
   const sensorCodes = sensor?.code ? [sensor.code] : [];
 
+  usePageTitle(sensor?.label ? `${sensor.label} Detail` : "Sensor Detail");
   useSensorSocket(sensorCodes);
 
   const handleExportReadings = () => {

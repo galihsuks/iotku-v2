@@ -4,12 +4,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthSignupMutation } from "../../api/auth/authQuery";
 import { AppLogo } from "../../components/shared/AppLogo";
 import { Button, FormInput } from "../../components/ui";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import type { SignupPayload } from "../../interfaces/auth";
 import { queryClient } from "../../lib/queryClient";
 import { useAuthActions } from "../../store/authStore";
 import { useNotificationStore } from "../../store/notifStore";
 
 export const SignupPage = () => {
+  usePageTitle("Create account");
+
   const navigate = useNavigate();
   const { login } = useAuthActions();
   const { addToast } = useNotificationStore();
@@ -44,17 +47,25 @@ export const SignupPage = () => {
   return (
     <main className="grid min-h-screen place-items-center bg-light-100 px-4 py-10">
       <section className="w-full max-w-md rounded-3xl border border-primary-100 bg-white p-6 shadow-[0_20px_50px_-35px_rgba(30,41,59,0.32)] sm:p-8">
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50">
-            <AppLogo variant="icon" className="h-10 w-10" />
+        <div className="mb-6">
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <div className="flex h-7 w-7 items-center justify-center rounded-2xl text-xl font-extrabold text-white shadow-glow">
+              <AppLogo variant="icon" className="h-7 w-auto" />
+            </div>
+            <div>
+              <p className="text-xl font-semibold text-primary-700">Iotku</p>
+            </div>
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-dark-900">Create account</h1>
-          <p className="mt-2 text-sm leading-6 text-dark-500">
+          <hr className="border-dark-200 mb-4" />
+          <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-dark-900">
+            Create account
+          </h1>
+          <p className="mt-1 md:mt-2 text-xs md:text-sm leading-5 md:leading-6 text-dark-500">
             Sign up to start connecting your IoT devices.
           </p>
         </div>
 
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <form className="space-y-3 md:space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <FormInput
             control={control}
             name="full_name"
@@ -112,7 +123,7 @@ export const SignupPage = () => {
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-dark-500">
+        <p className="mt-4 md:mt-6 text-center text-xs md:text-sm text-dark-500">
           Already have an account?{" "}
           <Link
             to="/auth/login"

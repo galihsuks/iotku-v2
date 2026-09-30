@@ -8,6 +8,7 @@ import { queryKeys } from "../../../api/queryKeys";
 import { useCreateSensorMutation, useJoinSensorMutation } from "../../../api/sensor/sensorQuery";
 import { PageHeader } from "../../../components/layout/PageHeader";
 import { Button, FormInput } from "../../../components/ui";
+import { usePageTitle } from "../../../hooks/usePageTitle";
 import type { DropdownOption } from "../../../interfaces/dropdown";
 import type { SensorJoinPayload, SensorPayload } from "../../../interfaces/sensor";
 import { cn } from "../../../utils/cn";
@@ -39,6 +40,8 @@ const modeCards: Array<{
 ];
 
 export const AddPage = () => {
+  usePageTitle("Add Device");
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { addToast } = useNotificationStore();

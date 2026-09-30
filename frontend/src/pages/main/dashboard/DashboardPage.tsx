@@ -5,11 +5,14 @@ import { Button } from "../../../components/ui";
 import InternalServerError from "../../../components/templates/InternalServerError";
 import { useSensorListQuery } from "../../../api/sensor/sensorQuery";
 import { DEFAULT_PAGE_SIZE } from "../../../constants";
+import { usePageTitle } from "../../../hooks/usePageTitle";
 import { useSensorSocket } from "../../../hooks/useSensorSocket";
 import { useRealtimeConnection } from "../../../store/realtimeStore";
 import { SensorWidgetCard } from "./components/SensorWidgetCard";
 
 export const DashboardPage = () => {
+  usePageTitle("Dashboard");
+
   const isConnected = useRealtimeConnection();
   const {
     data: sensorListData,
