@@ -26,3 +26,15 @@ export const requireSensorArray = (payload: Record<string, unknown>) => {
 
   return Array.from(new Set(sensorIds));
 };
+
+export const requireSingleSensor = (payload: Record<string, unknown>) => {
+  const rawSensor = payload.idsensor ?? payload.sensor_code;
+  const sensorId = Array.isArray(rawSensor) ? rawSensor[0] : rawSensor;
+  const normalized = String(sensorId ?? "").trim();
+
+  if (!normalized) {
+    throw new Error("idsensor is required.");
+  }
+
+  return normalized;
+};

@@ -15,3 +15,16 @@ export const useCreateSensorUnitMutation = () => {
     mutationFn: (payload: SensorUnitPayload) => sensorUnitApi.create(payload),
   });
 };
+
+export const useUpdateSensorUnitMutation = () => {
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: SensorUnitPayload }) =>
+      sensorUnitApi.update(id, payload),
+  });
+};
+
+export const useDeleteSensorUnitMutation = () => {
+  return useMutation({
+    mutationFn: (id: string) => sensorUnitApi.delete(id),
+  });
+};

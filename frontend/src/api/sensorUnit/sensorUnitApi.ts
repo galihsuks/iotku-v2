@@ -22,5 +22,21 @@ export const sensorUnitApi = {
       throw toApiError(error);
     }
   },
+  update: async (id: string, payload: SensorUnitPayload): Promise<ApiResponse<SensorUnit>> => {
+    try {
+      const response = await api.put<ApiResponse<SensorUnit>>(`/api/sensor/units/${id}`, payload);
+      return response.data;
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
+  delete: async (id: string): Promise<ApiResponse<SensorUnit>> => {
+    try {
+      const response = await api.delete<ApiResponse<SensorUnit>>(`/api/sensor/units/${id}`);
+      return response.data;
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
 };
 

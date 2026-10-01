@@ -1,12 +1,14 @@
 import { Check, Copy, RadioTower, Thermometer, ToggleRight, Wifi, WifiOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { sensorSocket } from "../../../../api/websocket/sensorSocket";
 import { Button } from "../../../../components/ui";
 import type { Sensor } from "../../../../interfaces/sensor";
 import {
   useDeviceStatusBySensor,
   useLatestReadingsBySensor,
 } from "../../../../store/realtimeStore";
+import { useNotificationStore } from "../../../../store/notifStore";
 
 const getWidgetIcon = (widgetType: Sensor["widget_type"]) => {
   if (widgetType === "switch") return ToggleRight;
@@ -20,6 +22,7 @@ interface SensorWidgetCardProps {
 
 export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
   const navigate = useNavigate();
+  const addToast = useNotificationStore((state) => state.addToast);
   const [copied, setCopied] = useState(false);
   const latestReadingsBySensor = useLatestReadingsBySensor();
   const deviceStatusBySensor = useDeviceStatusBySensor();
@@ -29,6 +32,15 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
   const detailPath = `/detail/${sensor.id}`;
   const openDetail = () => navigate(detailPath);
   const StatusIcon = deviceStatus?.connection_status ? Wifi : WifiOff;
+  const commandOptions =
+    sensor.value_options?.length && sensor.value_options.length > 0
+      ? sensor.value_options
+      : sensor.widget_type === "switch"
+        ? [
+            { label: "On", value: "on" },
+            { label: "Off", value: "off" },
+          ]
+        : [];
 
   useEffect(() => {
     if (!copied) return;
@@ -41,6 +53,18 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
     event.stopPropagation();
     await navigator.clipboard.writeText(sensor.code);
     setCopied(true);
+  };
+
+  const handleCommand = (value: string) => {
+    if (!deviceStatus?.connection_status) {
+      addToast("Device is offline.", "error");
+      return;
+    }
+
+    const sent = sensorSocket.sendCommand(sensor.code, value);
+    if (!sent) {
+      addToast("Realtime connection is offline.", "error");
+    }
   };
 
   return (
@@ -97,11 +121,24 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
       </div>
 
       <div className="mt-3 md:mt-5">
-        {sensor.widget_type === "switch" ? (
-          <div onClick={(event) => event.stopPropagation()}>
-            <Button type="button" variant="primary-outline" icon={ToggleRight}>
-              {latestReading?.value === "1" || latestReading?.value === "true" ? "On" : "Off"}
-            </Button>
+        {commandOptions.length > 0 ? (
+          <div className="grid grid-cols-2 gap-2" onClick={(event) => event.stopPropagation()}>
+            {commandOptions.map((option) => {
+              const active = latestReading?.value === option.value;
+
+              return (
+                <Button
+                  key={option.value}
+                  type="button"
+                  variant={active ? "primary" : "primary-outline"}
+                  disabled={!deviceStatus?.connection_status}
+                  onClick={() => handleCommand(option.value)}
+                  className="min-w-0 px-2"
+                >
+                  {option.label}
+                </Button>
+              );
+            })}
           </div>
         ) : (
           <div>

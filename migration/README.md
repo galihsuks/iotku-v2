@@ -40,3 +40,5 @@ Migration file memakai format:
 database/migrations/{timestamp}_{name}.up.sql
 database/migrations/{timestamp}_{name}.down.sql
 ```
+
+Latest schema additions include `sensor_units.value_options`, used to store fixed command/value options for switch or enum-like devices.

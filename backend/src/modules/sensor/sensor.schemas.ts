@@ -1,10 +1,16 @@
 import { z } from "zod";
 
+const valueOptionSchema = z.object({
+  label: z.string().trim().min(1).max(100),
+  value: z.string().trim().min(1).max(100),
+});
+
 export const sensorUnitSchema = z.object({
   name: z.string().trim().min(1).max(100),
   unit: z.string().trim().min(1).max(50),
   value_type: z.enum(["number", "string"]),
   widget_type: z.enum(["numeric_card", "chart", "gauge", "switch", "status"]),
+  value_options: z.array(valueOptionSchema).optional().nullable(),
 });
 
 export const sensorSchema = z.object({

@@ -162,6 +162,23 @@ Base app tables keep the `app_*` prefix. IoT domain tables intentionally do not 
 - `sensor_readings`
 - `websocket_logs`
 
+Sensor units can define fixed command/value options through `value_options`. The value is stored as JSON text and returned to the frontend as an array:
+
+```json
+[
+  { "label": "Open", "value": "open" },
+  { "label": "Close", "value": "close" }
+]
+```
+
+When `value_options` is available, sensor readings and WebSocket commands must use one of the configured values.
+
+Sensor unit options can be managed from the frontend admin page:
+
+```text
+/admin/sensor-unit
+```
+
 Default seeded super admin:
 
 ```text
@@ -298,6 +315,59 @@ Subscribers receive realtime reading events:
   }
 }
 ```
+
+### Command Flow
+
+Frontend clients can send realtime commands through WebSocket:
+
+```json
+{
+  "type": "command",
+  "idsensor": "00001",
+  "value": "open"
+}
+```
+
+Server behavior:
+
+1. Validate the sensor.
+2. Ensure the sender socket has subscribed to the target sensor room.
+3. Validate the command value against `value_options` when options are configured.
+4. Check whether the device socket is online.
+5. Forward the command only to the active device socket for that sensor.
+6. Return an acknowledgement to the sender.
+
+Command delivered to the device:
+
+```json
+{
+  "type": "command",
+  "success": true,
+  "message": "Command received.",
+  "data": {
+    "sensor_code": "00001",
+    "value": "open",
+    "requested_at_ms": 1760000000000
+  }
+}
+```
+
+Sender acknowledgement:
+
+```json
+{
+  "type": "command",
+  "success": true,
+  "message": "Command sent to device.",
+  "data": {
+    "sensor_code": "00001",
+    "value": "open",
+    "requested_at_ms": 1760000000000
+  }
+}
+```
+
+The device should execute the command and then publish its actual state back as a normal sensor reading. Other subscribed frontend clients update after that reading is broadcast.
 
 ### Admin Monitor Socket
 

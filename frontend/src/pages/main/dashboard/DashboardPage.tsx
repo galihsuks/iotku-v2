@@ -42,8 +42,6 @@ export const DashboardPage = () => {
           <Button type="link" link="/add" variant="primary" icon={Plus}>
             Add Sensor
           </Button>
-          // <div>
-          // </div>
         }
       />
 

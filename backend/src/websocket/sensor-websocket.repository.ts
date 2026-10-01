@@ -1,5 +1,6 @@
 import type { RowDataPacket } from "mysql2";
 import { queryOne } from "../repositories/base.repository.js";
+import { parseValueOptions } from "../modules/sensor/shared/value-options.js";
 
 type SensorSocketRow = RowDataPacket & {
   id: string;
@@ -27,4 +28,29 @@ export const getSensorCodes = async (sensorIdsOrCodes: string[]) => {
   }
 
   return { sensorCodes: Array.from(new Set(sensorCodes)), missing };
+};
+
+export const getCommandSensor = async (sensorIdOrCode: string) => {
+  const sensor = await queryOne<
+    RowDataPacket & {
+      id: string;
+      code: string;
+      value_type: "number" | "string";
+      value_options: string | null;
+    }
+  >(
+    `SELECT s.id, s.code, u.value_type, u.value_options
+     FROM sensors s
+     JOIN sensor_units u ON u.id = s.unit_id
+     WHERE s.id = ? OR s.code = ?
+     LIMIT 1`,
+    [sensorIdOrCode, sensorIdOrCode],
+  );
+
+  return sensor
+    ? {
+        ...sensor,
+        value_options: parseValueOptions(sensor.value_options),
+      }
+    : null;
 };

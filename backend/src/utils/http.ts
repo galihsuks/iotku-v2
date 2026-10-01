@@ -61,6 +61,7 @@ const fieldLabels: Record<string, string> = {
   url: "URL",
   username: "Username",
   value: "Value",
+  value_options: "Value options",
   value_type: "Value type",
   widget_type: "Widget type",
 };

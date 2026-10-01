@@ -3,6 +3,7 @@ import type { RawData, WebSocket } from "ws";
 import { nowSql } from "../utils/date.js";
 import {
   handleAdminHandshake,
+  handleCommand,
   handleDeviceInfo,
   handleSensorReading,
   handleSubscribe,
@@ -127,6 +128,11 @@ const handleMessage = async (
 
     if (payload.type === "device_info") {
       await handleDeviceInfo(socket, payload);
+      return;
+    }
+
+    if (payload.type === "command") {
+      await handleCommand(state, socket, payload);
       return;
     }
 

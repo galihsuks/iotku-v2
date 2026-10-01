@@ -5,13 +5,27 @@ import { badRequest, notFound } from "../../../utils/app-error.js";
 import { nowSql } from "../../../utils/date.js";
 import { buildPagination, getPagination } from "../../../utils/pagination.js";
 import { like, type SensorKeywordQuery } from "../shared/query.js";
+import {
+  parseValueOptions,
+  stringifyValueOptions,
+  type SensorValueOption,
+} from "../shared/value-options.js";
+
+type SensorUnitRow = RowDataPacket & {
+  value_options?: unknown;
+};
+
+const mapUnitRow = <T extends SensorUnitRow>(row: T) => ({
+  ...row,
+  value_options: parseValueOptions(row.value_options),
+});
 
 export const listUnits = async (query: SensorKeywordQuery) => {
   const { page, pageSize, offset } = getPagination(query);
   const keywords = query.keywords?.trim() ?? "";
   const where = keywords ? "WHERE name LIKE ? OR unit LIKE ? OR value_type LIKE ?" : "";
   const values = keywords ? [like(keywords), like(keywords), like(keywords)] : [];
-  const rows = await queryRows(
+  const rows = await queryRows<SensorUnitRow>(
     `SELECT * FROM sensor_units ${where} ORDER BY name LIMIT ? OFFSET ?`,
     [...values, pageSize, offset],
   );
@@ -19,7 +33,10 @@ export const listUnits = async (query: SensorKeywordQuery) => {
     `SELECT COUNT(*) AS total FROM sensor_units ${where}`,
     values,
   );
-  return { rows, pagination: buildPagination(page, pageSize, Number(count?.total ?? 0)) };
+  return {
+    rows: rows.map(mapUnitRow),
+    pagination: buildPagination(page, pageSize, Number(count?.total ?? 0)),
+  };
 };
 
 export const saveUnit = async (
@@ -28,23 +45,33 @@ export const saveUnit = async (
     unit: string;
     value_type: "number" | "string";
     widget_type: "numeric_card" | "chart" | "gauge" | "switch" | "status";
+    value_options?: SensorValueOption[] | null;
   },
   id?: string,
 ) => {
   const now = nowSql();
+  const valueOptions = stringifyValueOptions(payload.value_options);
   if (id) {
     await execute(
-      `UPDATE sensor_units SET name = ?, unit = ?, value_type = ?, widget_type = ?, updated_at = ? WHERE id = ?`,
-      [payload.name, payload.unit, payload.value_type, payload.widget_type, now, id],
+      `UPDATE sensor_units SET name = ?, unit = ?, value_type = ?, widget_type = ?, value_options = ?, updated_at = ? WHERE id = ?`,
+      [payload.name, payload.unit, payload.value_type, payload.widget_type, valueOptions, now, id],
     );
-    return queryOne(`SELECT * FROM sensor_units WHERE id = ?`, [id]);
+    const row = await queryOne<SensorUnitRow>(
+      `SELECT * FROM sensor_units WHERE id = ?`,
+      [id],
+    );
+    return row ? mapUnitRow(row) : row;
   }
   const newId = uuidv4();
   await execute(
-    `INSERT INTO sensor_units (id, name, unit, value_type, widget_type, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [newId, payload.name, payload.unit, payload.value_type, payload.widget_type, now, now],
+    `INSERT INTO sensor_units (id, name, unit, value_type, widget_type, value_options, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [newId, payload.name, payload.unit, payload.value_type, payload.widget_type, valueOptions, now, now],
   );
-  return queryOne(`SELECT * FROM sensor_units WHERE id = ?`, [newId]);
+  const row = await queryOne<SensorUnitRow>(
+    `SELECT * FROM sensor_units WHERE id = ?`,
+    [newId],
+  );
+  return row ? mapUnitRow(row) : row;
 };
 
 export const deleteUnit = async (id: string) => {
@@ -56,5 +83,5 @@ export const deleteUnit = async (id: string) => {
   const row = await queryOne(`SELECT * FROM sensor_units WHERE id = ?`, [id]);
   if (!row) throw notFound("Sensor unit not found.");
   await execute(`DELETE FROM sensor_units WHERE id = ?`, [id]);
-  return row;
+  return mapUnitRow(row);
 };

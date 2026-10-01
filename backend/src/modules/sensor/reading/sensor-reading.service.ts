@@ -7,16 +7,26 @@ import { badRequest, notFound } from "../../../utils/app-error.js";
 import { nowSql } from "../../../utils/date.js";
 import { buildPagination, getPagination } from "../../../utils/pagination.js";
 import { assertCanOwnSensor, assertCanReadSensor } from "../shared/sensor-access.service.js";
+import { parseValueOptions, normalizeReadingValue } from "../shared/value-options.js";
 
 export const validateReadingValue = async (sensorId: string, value: unknown) => {
-  const sensor = await queryOne<{ value_type: "number" | "string" } & RowDataPacket>(
-    `SELECT u.value_type FROM sensors s JOIN sensor_units u ON u.id = s.unit_id WHERE s.id = ? OR s.code = ?`,
+  const sensor = await queryOne<
+    { value_type: "number" | "string"; value_options: string | null } & RowDataPacket
+  >(
+    `SELECT u.value_type, u.value_options
+     FROM sensors s
+     JOIN sensor_units u ON u.id = s.unit_id
+     WHERE s.id = ? OR s.code = ?`,
     [sensorId, sensorId],
   );
   if (!sensor) throw notFound("Sensor not found.");
-  const normalized = String(value);
+  const normalized = normalizeReadingValue(value);
   if (sensor.value_type === "number" && Number.isNaN(Number(normalized.replace(",", ".")))) {
     throw badRequest("Sensor value must be numeric.");
+  }
+  const valueOptions = parseValueOptions(sensor.value_options);
+  if (valueOptions.length && !valueOptions.some((option) => option.value === normalized)) {
+    throw badRequest(`Sensor value must be one of: ${valueOptions.map((item) => item.value).join(", ")}.`);
   }
   return normalized;
 };

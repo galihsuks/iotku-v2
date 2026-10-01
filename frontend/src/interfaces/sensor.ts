@@ -3,12 +3,18 @@ import type { ID, KeywordPaginationQuery, PaginationQuery } from "./common";
 export type SensorValueType = "number" | "string";
 export type SensorWidgetType = "numeric_card" | "chart" | "gauge" | "switch" | "status";
 
+export interface SensorValueOption {
+  label: string;
+  value: string;
+}
+
 export interface SensorUnit {
   id: ID;
   name: string;
   unit: string;
   value_type: SensorValueType;
   widget_type: SensorWidgetType;
+  value_options?: SensorValueOption[];
   created_at: string | null;
   updated_at: string | null;
 }
@@ -23,6 +29,7 @@ export interface Sensor {
   unit: string;
   value_type: SensorValueType;
   widget_type: SensorWidgetType;
+  value_options?: SensorValueOption[];
   owner_user_id: ID;
   owner_name: string;
   created_at: string | null;
@@ -58,6 +65,7 @@ export interface SensorUnitPayload {
   unit: string;
   value_type: SensorValueType;
   widget_type: SensorWidgetType;
+  value_options?: SensorValueOption[];
 }
 
 export type SensorQuery = KeywordPaginationQuery;
@@ -88,4 +96,18 @@ export interface DeviceInfoSocketMessage {
   data: DeviceInfo[];
 }
 
-export type SensorSocketMessage = SensorReadingSocketMessage | DeviceInfoSocketMessage;
+export interface SensorCommandSocketMessage {
+  type: "command";
+  success: boolean;
+  message: string;
+  data?: {
+    sensor_code: string;
+    value: string;
+    requested_at_ms: number;
+  };
+}
+
+export type SensorSocketMessage =
+  | SensorReadingSocketMessage
+  | DeviceInfoSocketMessage
+  | SensorCommandSocketMessage;

@@ -8,13 +8,15 @@ import { getSensorCodes } from "./sensor-websocket.repository.js";
 import {
   clientSnapshot,
   getActiveDeviceInfo,
+  getActiveDeviceSocket,
   getClient,
   joinRoom,
   leaveRoom,
   roomSnapshot,
 } from "./sensor-websocket.registry.js";
 import type { SensorWebSocketState } from "./sensor-websocket.types.js";
-import { requireSensorArray, sendJson } from "./sensor-websocket.utils.js";
+import { requireSensorArray, requireSingleSensor, sendJson } from "./sensor-websocket.utils.js";
+import { getCommandSensor } from "./sensor-websocket.repository.js";
 
 export const handleSubscribe = async (
   state: SensorWebSocketState,
@@ -179,4 +181,61 @@ export const handleSensorReading = async (
   });
 
   notifyAdminLog(state, true, "INFO", info.ip, `Sensor ${info.writeSensorCode} data updated.`);
+};
+
+export const handleCommand = async (
+  state: SensorWebSocketState,
+  socket: WebSocket,
+  payload: Record<string, unknown>,
+) => {
+  const info = getClient(socket);
+  if (!info) throw new Error("Socket is not registered.");
+  if (info.isDevice) throw new Error("Device sockets cannot send commands.");
+
+  const requestedSensor = requireSingleSensor(payload);
+  const sensor = await getCommandSensor(requestedSensor);
+  if (!sensor) throw new Error("Sensor not found.");
+  if (!info.rooms.has(sensor.code)) {
+    throw new Error("Socket must subscribe to the sensor before sending commands.");
+  }
+
+  const value = String(payload.value ?? "").trim();
+  if (!value) throw new Error("Command value is required.");
+
+  if (sensor.value_type === "number" && Number.isNaN(Number(value.replace(",", ".")))) {
+    throw new Error("Command value must be numeric.");
+  }
+
+  if (sensor.value_options.length && !sensor.value_options.some((option) => option.value === value)) {
+    throw new Error(`Command value must be one of: ${sensor.value_options.map((option) => option.value).join(", ")}.`);
+  }
+
+  const deviceSocket = getActiveDeviceSocket(sensor.code);
+  if (!deviceSocket) throw new Error("Device is offline.");
+
+  const command = {
+    type: "command",
+    success: true,
+    message: "Command received.",
+    data: {
+      sensor_code: sensor.code,
+      value,
+      requested_at_ms: Date.now(),
+    },
+  };
+
+  sendJson(deviceSocket, command);
+  sendJson(socket, {
+    type: "command",
+    success: true,
+    message: "Command sent to device.",
+    data: command.data,
+  });
+  notifyAdminData(state, `[${nowSql()}][INFO] Command sent to sensor ${sensor.code}.`);
+  await logWebSocket(
+    "info",
+    "Command sent to device.",
+    { sensor_code: sensor.code, value },
+    info.ip,
+  );
 };

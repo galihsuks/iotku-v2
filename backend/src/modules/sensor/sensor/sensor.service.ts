@@ -7,6 +7,7 @@ import { nowSql } from "../../../utils/date.js";
 import { buildPagination, getPagination } from "../../../utils/pagination.js";
 import { like, type SensorKeywordQuery } from "../shared/query.js";
 import { assertCanOwnSensor, assertCanReadSensor } from "../shared/sensor-access.service.js";
+import { parseValueOptions } from "../shared/value-options.js";
 
 export const createSensorCode = async () => {
   const latest = await queryOne<{ code: string } & RowDataPacket>(
@@ -34,7 +35,8 @@ export const listSensors = async (query: SensorKeywordQuery, userId: string) => 
     } & RowDataPacket
   >(
     `SELECT DISTINCT s.id, s.code, s.label, s.passkey, s.owner_user_id, s.unit_id,
-            u.name AS unit_name, u.unit, u.value_type, u.widget_type, owner.full_name AS owner_name,
+            u.name AS unit_name, u.unit, u.value_type, u.widget_type, u.value_options,
+            owner.full_name AS owner_name,
             s.created_at, s.updated_at,
             lr.id AS latest_reading_id,
             lr.sensor_id AS latest_reading_sensor_id,
@@ -70,6 +72,7 @@ export const listSensors = async (query: SensorKeywordQuery, userId: string) => 
 
     return {
       ...sensor,
+      value_options: parseValueOptions(sensor.value_options),
       latest_reading: latest_reading_id
         ? {
             id: latest_reading_id,
@@ -105,7 +108,8 @@ export const getSensorDetail = async (id: string, userId: string) => {
       latest_reading_updated_at: string | null;
     } & RowDataPacket
   >(
-    `SELECT s.*, u.name AS unit_name, u.unit, u.value_type, u.widget_type, owner.full_name AS owner_name,
+    `SELECT s.*, u.name AS unit_name, u.unit, u.value_type, u.widget_type, u.value_options,
+            owner.full_name AS owner_name,
             lr.id AS latest_reading_id,
             lr.sensor_id AS latest_reading_sensor_id,
             lr.recorded_at_ms AS latest_reading_recorded_at_ms,
@@ -145,6 +149,7 @@ export const getSensorDetail = async (id: string, userId: string) => {
   );
   return {
     ...sensor,
+    value_options: parseValueOptions(sensor.value_options),
     latest_reading: latest_reading_id
       ? {
           id: latest_reading_id,

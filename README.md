@@ -108,6 +108,7 @@ Default frontend URL:
 - Profile and password management
 - Role, menu, user, parameter, log, and WebSocket log system pages
 - Sensor create, update, delete, share, and join flows
+- Sensor unit management with fixed value options for switch or enum-like devices
 - Sensor reading history with chart/table views
 - Realtime sensor readings through WebSocket
 - Device online/offline status
@@ -133,6 +134,14 @@ Frontend clients can connect once and subscribe or unsubscribe without reconnect
 ```json
 { "type": "unsubscribe", "idsensor": ["00001"] }
 ```
+
+Frontend clients can also send realtime commands to online devices:
+
+```json
+{ "type": "command", "idsensor": "00001", "value": "open" }
+```
+
+The server forwards valid commands to the active device socket. The device should execute the command and publish the actual state back as a normal sensor reading.
 
 Realtime sensor reading event:
 

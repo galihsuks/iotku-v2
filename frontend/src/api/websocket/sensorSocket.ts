@@ -1,5 +1,6 @@
 import type { SensorSocketMessage } from "../../interfaces/sensor";
 import { useRealtimeStore } from "../../store/realtimeStore";
+import { useNotificationStore } from "../../store/notifStore";
 import envVar from "../../utils/envReader";
 
 let socket: WebSocket | null = null;
@@ -14,6 +15,12 @@ const handleMessage = (event: MessageEvent<string>) => {
 
   if (payload.type === "device_info") {
     actions.setDeviceInfo(payload.data);
+  }
+
+  if (payload.type === "command") {
+    useNotificationStore
+      .getState()
+      .addToast(payload.message, payload.success ? "success" : "error");
   }
 };
 
@@ -36,6 +43,11 @@ export const sensorSocket = {
   unsubscribe: (sensorCodes: string[]) => {
     if (!socket || socket.readyState !== WebSocket.OPEN || sensorCodes.length === 0) return;
     socket.send(JSON.stringify({ type: "unsubscribe", idsensor: sensorCodes }));
+  },
+  sendCommand: (sensorCode: string, value: string) => {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return false;
+    socket.send(JSON.stringify({ type: "command", idsensor: sensorCode, value }));
+    return true;
   },
 };
 
