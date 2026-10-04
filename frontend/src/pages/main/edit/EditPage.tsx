@@ -78,7 +78,7 @@ export const EditPage = () => {
           void queryClient.invalidateQueries({ queryKey: ["sensor"] });
           void queryClient.invalidateQueries({ queryKey: ["dropdown", "sensor"] });
           void queryClient.invalidateQueries({ queryKey: queryKeys.sensor.detail(id) });
-          navigate(`/detail/${id}`);
+          navigate(`/u/detail/${id}`);
         },
         onError: (mutationError) => {
           addToast(mutationError.message, "error");
@@ -96,7 +96,7 @@ export const EditPage = () => {
         title={sensor?.label ? `Edit ${sensor.label}` : "Edit Sensor"}
         subtitle="Update the name, unit type, and passkey for your sensor."
         breadcrumbs={[
-          { label: "Main", route: "/" },
+          { label: "Main", route: "/u" },
           { label: "Edit Sensor", route: undefined },
         ]}
       />

@@ -34,10 +34,6 @@ export const AdminDashboardPage = lazy(() =>
   })),
 );
 
-export const AdminSensorPage = lazy(() =>
-  import("../pages/admin/AdminSensorPage").then((module) => ({ default: module.AdminSensorPage })),
-);
-
 export const AdminSensorUnitPage = lazy(() =>
   import("../pages/admin/AdminSensorUnitPage").then((module) => ({
     default: module.AdminSensorUnitPage,

@@ -10,6 +10,7 @@ import { queryClient } from "../../lib/queryClient";
 import { useAuthActions } from "../../store/authStore";
 import { useNotificationStore } from "../../store/notifStore";
 import envVar from "../../utils/envReader";
+import { getDefaultAuthenticatedRoute } from "../../utils/defaultRoute";
 
 export const LoginPage = () => {
   usePageTitle("Sign in");
@@ -35,7 +36,9 @@ export const LoginPage = () => {
         queryClient.invalidateQueries();
         addToast(response.message || "Login successfully.", "success");
         const redirect = searchParams.get("redirect");
-        navigate(redirect && redirect.startsWith("/") ? redirect : "/", { replace: true });
+        navigate(redirect && redirect.startsWith("/") ? redirect : getDefaultAuthenticatedRoute(response.data), {
+          replace: true,
+        });
       },
       onError: (error) => {
         addToast(error.message, "error");
@@ -97,7 +100,7 @@ export const LoginPage = () => {
         <p className="mt-4 md:mt-6 text-center text-xs md:text-sm text-dark-500">
           Don't have an account?{" "}
           <Link
-            to="/auth/signup"
+            to="/signup"
             className="font-semibold text-primary-700 transition hover:text-primary-600"
           >
             Create one now

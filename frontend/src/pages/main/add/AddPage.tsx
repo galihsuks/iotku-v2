@@ -99,7 +99,7 @@ export const AddPage = () => {
           refreshSensorQueries(sensorId);
           resetNewSensorForm();
           addToast(response.message || "Sensor created successfully.", "success");
-          navigate(sensorId ? `/detail/${sensorId}` : "/");
+          navigate(sensorId ? `/u/detail/${sensorId}` : "/u");
         },
         onError: (error) => {
           addToast(error.message, "error");
@@ -115,7 +115,7 @@ export const AddPage = () => {
         refreshSensorQueries(sensorId);
         resetSharedSensorForm();
         addToast(response.message || "Sensor joined successfully.", "success");
-        navigate(sensorId ? `/detail/${sensorId}` : "/");
+        navigate(sensorId ? `/u/detail/${sensorId}` : "/u");
       },
       onError: (error) => {
         addToast(error.message, "error");
@@ -130,7 +130,7 @@ export const AddPage = () => {
         title="Add Device"
         subtitle="Choose whether to connect a new device or join an existing shared device."
         breadcrumbs={[
-          { label: "Main", route: "/" },
+          { label: "Main", route: "/u" },
           { label: "Add Device", route: undefined },
         ]}
       />

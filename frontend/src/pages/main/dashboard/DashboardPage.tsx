@@ -39,7 +39,7 @@ export const DashboardPage = () => {
           },
         ]}
         rightElement={
-          <Button type="link" link="/add" variant="primary" icon={Plus}>
+          <Button type="link" link="/u/add" variant="primary" icon={Plus}>
             Add Sensor
           </Button>
         }

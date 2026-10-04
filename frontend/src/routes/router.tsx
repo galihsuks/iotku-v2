@@ -5,7 +5,6 @@ import NotFound from "../components/templates/NotFound";
 import { AppShell } from "./AppShell";
 import {
   AdminDashboardPage,
-  AdminSensorPage,
   AdminSensorUnitPage,
   DashboardPage,
   LoginPage,
@@ -28,10 +27,10 @@ export const appRouter = createBrowserRouter([
     element: <AppShell />,
     children: [
       {
-        path: "/auth",
+        path: "/",
         element: <GuestRoute />,
         children: [
-          { path: "login", element: withSuspense(<LoginPage />) },
+          { index: true, element: withSuspense(<LoginPage />) },
           { path: "signup", element: withSuspense(<SignupPage />) },
         ],
       },
@@ -40,7 +39,7 @@ export const appRouter = createBrowserRouter([
         children: [
           {
             element: <AppLayout />,
-            path: "/",
+            path: "/u", // u untuk user
             children: [
               { index: true, element: withSuspense(<DashboardPage />) },
               { path: "add", element: withSuspense(<SensorAddPage />) },
@@ -50,7 +49,7 @@ export const appRouter = createBrowserRouter([
           },
           {
             element: <AppLayout />,
-            path: "/system",
+            path: "/s", // s untuk system
             children: [
               { path: "menu", element: withSuspense(<MenuPage />) },
               { path: "role", element: withSuspense(<RolePage />) },
@@ -63,10 +62,9 @@ export const appRouter = createBrowserRouter([
           },
           {
             element: <AppLayout />,
-            path: "/admin",
+            path: "/a", // a untuk admin
             children: [
               { path: "dashboard", element: withSuspense(<AdminDashboardPage />) },
-              { path: "sensor", element: withSuspense(<AdminSensorPage />) },
               { path: "sensor-unit", element: withSuspense(<AdminSensorUnitPage />) },
             ],
           },

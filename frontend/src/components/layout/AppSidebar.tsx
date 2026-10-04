@@ -95,7 +95,7 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
       onSettled: () => {
         queryClient.clear();
         logout();
-        window.location.replace("/auth/login");
+        window.location.replace("/");
       },
     });
   };
@@ -127,7 +127,7 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
 
   const isActiveItem = (item: NavItem) => {
     if (!item.path) return false;
-    return location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
+    return location.pathname === item.path; //|| location.pathname.startsWith(`${item.path}/`);
   };
 
   const renderNavItems = (items: NavItem[], compact: boolean, depth = 0) => {
@@ -318,7 +318,7 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
 
       <div className="fixed left-0 px-4 top-0 z-30 md:hidden h-[65px] w-full bg-white/80 backdrop-blur-xl">
         <div className="relative h-full w-full relative flex items-center justify-center">
-          <a href="/" className="flex items-center gap-2">
+          <a href="/u" className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-2xl text-xl font-extrabold text-white shadow-glow">
               <AppLogo variant="icon" className="h-7 w-auto" />
             </div>

@@ -29,7 +29,7 @@ export const SensorWidgetCard = ({ sensor }: SensorWidgetCardProps) => {
   const latestReading = latestReadingsBySensor[sensor.code] ?? sensor.latest_reading;
   const deviceStatus = deviceStatusBySensor[sensor.code];
   const Icon = getWidgetIcon(sensor.widget_type);
-  const detailPath = `/detail/${sensor.id}`;
+  const detailPath = `/u/detail/${sensor.id}`;
   const openDetail = () => navigate(detailPath);
   const StatusIcon = deviceStatus?.connection_status ? Wifi : WifiOff;
   const commandOptions =

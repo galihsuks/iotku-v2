@@ -369,7 +369,7 @@ export const openApiDocument = {
           parent_menu_id: null,
           name: "User",
           description: "Manage application users.",
-          url: "/system/user",
+              url: "/s/user",
           group: "system",
           icon: "Users",
           display: "1",

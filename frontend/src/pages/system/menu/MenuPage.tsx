@@ -121,7 +121,7 @@ export const MenuPage = () => {
                         onEdit={onOpenEditMenu}
                         onDelete={setDeleteTarget}
                         onManageControls={setMenuControlTarget}
-                        canManageControls={hasAccess("U")}
+                        canManageControls={hasAccess("MC")}
                         canEdit={hasAccess("U")}
                         canDelete={hasAccess("D")}
                       />

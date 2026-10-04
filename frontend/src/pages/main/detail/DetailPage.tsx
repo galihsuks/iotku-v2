@@ -136,7 +136,7 @@ export const DetailPage = () => {
                       key: "edit",
                       label: "Edit",
                       icon: Pencil,
-                      onClick: () => navigate(`/edit/${sensor.id}`),
+                      onClick: () => navigate(`/u/edit/${sensor.id}`),
                     },
                     {
                       key: "reset-data",
@@ -166,7 +166,7 @@ export const DetailPage = () => {
                     type="button"
                     variant="warning"
                     icon={Pencil}
-                    onClick={() => navigate(`/edit/${sensor.id}`)}
+                    onClick={() => navigate(`/u/edit/${sensor.id}`)}
                   />
                   <Button
                     type="button"
@@ -256,7 +256,7 @@ export const DetailPage = () => {
         open={Boolean(deleteTarget)}
         target={deleteTarget}
         onClose={() => setDeleteTarget(null)}
-        onDeleted={() => navigate("/", { replace: true })}
+        onDeleted={() => navigate("/u", { replace: true })}
       />
       <SensorResetReadingsModal
         open={Boolean(resetTarget)}

@@ -9,6 +9,7 @@ import Forbidden from "../templates/Forbidden";
 import InternalServerError from "../templates/InternalServerError";
 import { findMenuByPath } from "../../utils/accessControl";
 import { toLoginRedirectValue } from "../../utils/appRoutes";
+import { getDefaultAuthenticatedRoute } from "../../utils/defaultRoute";
 
 export const PrivateRoute = () => {
   const location = useLocation();
@@ -105,11 +106,12 @@ export const PrivateRoute = () => {
 
 export const GuestRoute = () => {
   const isAuth = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
   const location = useLocation();
 
   if (isAuth) {
     const redirect = new URLSearchParams(location.search).get("redirect");
-    const fallback = "/";
+    const fallback = getDefaultAuthenticatedRoute(user);
     const nextRoute = redirect && redirect.startsWith("/") ? redirect : fallback;
 
     return <Navigate to={nextRoute} replace />;

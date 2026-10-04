@@ -37,7 +37,7 @@ export const SignupPage = () => {
         }
         queryClient.invalidateQueries();
         addToast(response.message || "Signup successfully.", "success");
-        navigate("/", { replace: true });
+        navigate("/u", { replace: true });
       },
       onError: (error) => {
         addToast(error.message, "error");
@@ -128,7 +128,7 @@ export const SignupPage = () => {
         <p className="mt-4 md:mt-6 text-center text-xs md:text-sm text-dark-500">
           Already have an account?{" "}
           <Link
-            to="/auth/login"
+            to="/"
             className="font-semibold text-primary-700 transition hover:text-primary-600"
           >
             Sign in
