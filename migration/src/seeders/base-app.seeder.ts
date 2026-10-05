@@ -74,7 +74,7 @@ export const baseAppSeeder: Seeder = {
       ('ctrl-menu-system-websocket-log-D', 'menu-system-websocket-log', 'D', 'Delete', @now, @now);
 
       INSERT IGNORE INTO app_role_menu_controls (id, role_id, menu_id, menu_control_id, created_at, updated_at)
-      SELECT CONCAT('rmc-super-', mc.id), 'role-super-admin', mc.menu_id, mc.id, @now, @now
+      SELECT CONCAT('rmc-', LEFT(MD5(CONCAT('role-super-admin:', mc.id)), 32)), 'role-super-admin', mc.menu_id, mc.id, @now, @now
       FROM app_menu_controls mc
       WHERE mc.menu_id IN (
         'menu-system-menu',
@@ -88,7 +88,7 @@ export const baseAppSeeder: Seeder = {
       );
 
       INSERT IGNORE INTO app_role_menu_controls (id, role_id, menu_id, menu_control_id, created_at, updated_at)
-      SELECT CONCAT('rmc-admin-', mc.id), 'role-admin', mc.menu_id, mc.id, @now, @now
+      SELECT CONCAT('rmc-', LEFT(MD5(CONCAT('role-admin:', mc.id)), 32)), 'role-admin', mc.menu_id, mc.id, @now, @now
       FROM app_menu_controls mc
       WHERE (mc.menu_id = 'menu-admin-dashboard' AND mc.code IN ('R', 'DT'))
          OR (mc.menu_id = 'menu-admin-sensor-unit' AND mc.code IN ('C', 'R', 'U'))
@@ -97,7 +97,7 @@ export const baseAppSeeder: Seeder = {
          OR (mc.menu_id = 'menu-system-websocket-log' AND mc.code = 'R');
 
       INSERT IGNORE INTO app_role_menu_controls (id, role_id, menu_id, menu_control_id, created_at, updated_at)
-      SELECT CONCAT('rmc-user-', mc.id), 'role-user', mc.menu_id, mc.id, @now, @now
+      SELECT CONCAT('rmc-', LEFT(MD5(CONCAT('role-user:', mc.id)), 32)), 'role-user', mc.menu_id, mc.id, @now, @now
       FROM app_menu_controls mc
       WHERE (mc.menu_id = 'menu-user-dashboard' AND mc.code IN ('C', 'R', 'U', 'D', 'DT'))
          OR (mc.menu_id = 'menu-user-add-device' AND mc.code IN ('C', 'R'))

@@ -31,11 +31,14 @@ export const PrivateRoute = () => {
     [accessMenuData?.data, location.pathname],
   );
   const matchedMenuId = matchedMenu?.id ?? "";
+  const shouldFetchAccessControl = isAuth && Boolean(matchedMenuId);
   const {
     data: accessControlData,
-    isPending: isAccessControlPending,
+    isLoading: isAccessControlLoading,
     error: accessControlError,
-  } = useAccessControlQuery(matchedMenuId, isAuth && Boolean(matchedMenuId));
+  } = useAccessControlQuery(matchedMenuId, shouldFetchAccessControl);
+  const isAccessMenuLoading = isAuth && isAccessMenuPending;
+  const isAccessGuardLoading = isAccessMenuLoading || isAccessControlLoading;
 
   useEffect(() => {
     clearError();
@@ -58,8 +61,19 @@ export const PrivateRoute = () => {
       return;
     }
 
+    if (isAccessControlLoading) {
+      return;
+    }
+
     setAccessContext(matchedMenuId, accessControlData?.data ?? []);
-  }, [accessControlData?.data, clearAccessContext, isAuth, matchedMenuId, setAccessContext]);
+  }, [
+    accessControlData?.data,
+    clearAccessContext,
+    isAccessControlLoading,
+    isAuth,
+    matchedMenuId,
+    setAccessContext,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -92,11 +106,23 @@ export const PrivateRoute = () => {
     return <InternalServerError />;
   }
 
+  if (isAccessGuardLoading) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-slate-100 px-4">
+        <div className="rounded-3xl border border-primary-100 bg-white px-6 py-5 text-center shadow-[0_18px_50px_-32px_rgba(30,41,59,0.28)]">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-primary-600">
+            Loading Access
+          </p>
+          <p className="mt-2 text-sm text-slate-500">Checking your permissions...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (
-    !isAccessMenuPending &&
-    !isAccessControlPending &&
-    matchedMenuId &&
-    !(accessControlData?.data ?? []).includes("R")
+    !isAccessMenuLoading &&
+    !isAccessControlLoading &&
+    (!matchedMenuId || !(accessControlData?.data ?? []).includes("R"))
   ) {
     return <Forbidden />;
   }
@@ -105,16 +131,38 @@ export const PrivateRoute = () => {
 };
 
 export const GuestRoute = () => {
-  const isAuth = useAuthStore((state) => state.isAuthenticated);
-  const user = useAuthStore((state) => state.user);
-  const location = useLocation();
+  const storedUser = useAuthStore((state) => state.user);
+  const { syncUser } = useAuthActions();
+  const { data: meData, isPending: isMePending, error: meError } = useAuthMeQuery();
+  const user = meData?.data ?? storedUser;
+  const isAuth = Boolean(user);
+
+  useEffect(() => {
+    if (meData?.data) {
+      syncUser(meData.data);
+      return;
+    }
+
+    if (!isMePending && meError && !storedUser) {
+      syncUser(null);
+    }
+  }, [isMePending, meData?.data, meError, storedUser, syncUser]);
+
+  if (isMePending && !storedUser) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-slate-100 px-4">
+        <div className="rounded-3xl border border-primary-100 bg-white px-6 py-5 text-center shadow-[0_18px_50px_-32px_rgba(30,41,59,0.28)]">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-primary-600">
+            Authenticating
+          </p>
+          <p className="mt-2 text-sm text-slate-500">Preparing your workspace...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isAuth) {
-    const redirect = new URLSearchParams(location.search).get("redirect");
-    const fallback = getDefaultAuthenticatedRoute(user);
-    const nextRoute = redirect && redirect.startsWith("/") ? redirect : fallback;
-
-    return <Navigate to={nextRoute} replace />;
+    return <Navigate to={getDefaultAuthenticatedRoute(user)} replace />;
   }
 
   return <Outlet />;
