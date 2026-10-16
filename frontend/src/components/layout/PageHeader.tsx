@@ -12,6 +12,7 @@ interface PageHeaderBreadcrumb {
 
 interface PageHeaderProps {
   showGoBack?: boolean;
+  goBackTo?: string;
   title: string;
   subtitle?: string;
   breadcrumbs?: PageHeaderBreadcrumb[];
@@ -25,6 +26,7 @@ interface PageHeaderProps {
 
 export const PageHeader = ({
   showGoBack = false,
+  goBackTo,
   title,
   subtitle,
   breadcrumbs = [],
@@ -85,7 +87,7 @@ export const PageHeader = ({
           {showGoBack ? (
             <button
               type="button"
-              onClick={() => navigate(-1)}
+              onClick={() => (goBackTo ? navigate(goBackTo) : navigate(-1))}
               className="cursor-pointer inline-flex h-11 w-6 md:h-11 md:w-11 shrink-0 items-center justify-center rounded-2xl md:border border-primary-100 bg-white text-dark-700 md:shadow-sm transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-600"
             >
               <ChevronLeft className="h-4 w-4" />

@@ -10,11 +10,25 @@ export const listSensors = asyncHandler(async (req, res) => {
   return success(res, "List sensor", result.rows, result.pagination);
 });
 
+export const listAdminSensors = asyncHandler(async (req, res) => {
+  const query = validate(keywordQuerySchema, req.query);
+  const result = await sensorService.listAdminSensors(
+    query,
+    req.user?.id ?? "",
+    req.user?.role ?? "",
+  );
+  return success(res, "List sensor", result.rows, result.pagination);
+});
+
 export const getSensor = asyncHandler(async (req, res) =>
   success(
     res,
     "Sensor detail",
-    await sensorService.getSensorDetail(param(req, "id"), req.user?.id ?? ""),
+    await sensorService.getSensorDetail(
+      param(req, "id"),
+      req.user?.id ?? "",
+      req.user?.role ?? "",
+    ),
   ),
 );
 

@@ -10,12 +10,17 @@ export const listReadings = asyncHandler(async (req, res) => {
     param(req, "id"),
     query,
     req.user?.id ?? "",
+    req.user?.role ?? "",
   );
   return success(res, "List sensor reading", result.rows, result.pagination);
 });
 
 export const exportReadings = asyncHandler(async (req, res) => {
-  const result = await sensorReadingService.exportReadings(param(req, "id"), req.user?.id ?? "");
+  const result = await sensorReadingService.exportReadings(
+    param(req, "id"),
+    req.user?.id ?? "",
+    req.user?.role ?? "",
+  );
 
   res.setHeader(
     "Content-Type",
@@ -34,6 +39,7 @@ export const createReading = asyncHandler(async (req, res) =>
           param(req, "id"),
           validate(readingSchema, req.body),
           req.user.id,
+          req.user.role,
         )
       : await sensorReadingService.createReading(
           param(req, "id"),

@@ -68,12 +68,20 @@ npm run migrate:up
 npm run seed
 ```
 
-Default seeded super admin:
+Default seeded accounts:
 
 ```text
 username: superadmin
 email: admin@iotku.test
-password: password123
+password: 123456
+
+username: admin
+email: admin.user@iotku.test
+password: 123456
+
+username: user
+email: user@iotku.test
+password: 123456
 ```
 
 ### 4. Run the backend

@@ -2,7 +2,17 @@ import type { RowDataPacket } from "mysql2";
 import { queryOne } from "../../../repositories/base.repository.js";
 import { forbidden } from "../../../utils/app-error.js";
 
-export const assertCanReadSensor = async (sensorId: string, userId: string) => {
+export const canReadAllSensors = (role?: string | null) => role === "S" || role === "A";
+
+export const assertCanReadSensor = async (
+  sensorId: string,
+  userId: string,
+  role?: string | null,
+) => {
+  if (canReadAllSensors(role)) {
+    return;
+  }
+
   const row = await queryOne<{ total: number } & RowDataPacket>(
     `SELECT COUNT(*) AS total
      FROM sensors s

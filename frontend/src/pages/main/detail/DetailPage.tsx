@@ -1,7 +1,7 @@
 import { Download, EllipsisVertical, Pencil, RotateCcw, Trash2, UserRound } from "lucide-react";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PageHeader } from "../../../components/layout/PageHeader";
 import { ActionDropdown, Button, Modal } from "../../../components/ui";
 import InternalServerError from "../../../components/templates/InternalServerError";
@@ -24,9 +24,14 @@ import { SensorResetReadingsModal } from "./components/SensorResetReadingsModal"
 import { SensorValuePreview } from "./components/SensorValuePreview";
 
 type SharedUser = NonNullable<Sensor["shared_users"]>[number];
+type DetailLocationState = {
+  backTo?: string;
+  backLabel?: string;
+};
 
 export const DetailPage = () => {
   const { id = "" } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const user = useUser();
@@ -40,6 +45,11 @@ export const DetailPage = () => {
   const { data, isPending, error } = useSensorDetailQuery(id);
   const sensor = data?.data;
   const isOwner = Boolean(sensor && user?.id === sensor.owner_user_id);
+  const isAdminDetail = location.pathname.startsWith("/a/");
+  const canManageSensor = isOwner && !isAdminDetail;
+  const locationState = location.state as DetailLocationState | null;
+  const backTo = locationState?.backTo ?? (isAdminDetail ? "/a/dashboard" : undefined);
+  const backLabel = locationState?.backLabel ?? (isAdminDetail ? "Admin Dashboard" : "Main");
   const sensorCodes = sensor?.code ? [sensor.code] : [];
 
   usePageTitle(sensor?.label ? `${sensor.label} Detail` : "Sensor Detail");
@@ -101,10 +111,11 @@ export const DetailPage = () => {
     <>
       <PageHeader
         showGoBack
+        goBackTo={backTo}
         title={sensor?.label ?? "Sensor Detail"}
         subtitle={`ID : ${sensor?.code}`}
         breadcrumbs={[
-          { label: "Main", route: "/" },
+          { label: backLabel, route: backTo ?? "/u" },
           { label: "Detail", route: undefined },
         ]}
         badges={[
@@ -113,13 +124,13 @@ export const DetailPage = () => {
             variant: "primary-outline",
           },
           {
-            text: isOwner ? "Owner" : "Shared",
-            variant: isOwner ? "success" : "light",
+            text: isAdminDetail ? "Admin View" : isOwner ? "Owner" : "Shared",
+            variant: isOwner && !isAdminDetail ? "success" : "light",
           },
         ]}
         rightElement={
           sensor ? (
-            isOwner ? (
+            canManageSensor ? (
               <>
                 <ActionDropdown
                   icon={EllipsisVertical}
@@ -235,7 +246,7 @@ export const DetailPage = () => {
                             <p className="truncate text-[10px] text-dark-400">{item.email}</p>
                           </div>
                         </div>
-                        {isOwner ? (
+                        {canManageSensor ? (
                           <Button
                             type="button"
                             variant="danger-text"

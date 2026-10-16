@@ -27,6 +27,16 @@ export const sensorApi = {
       throw toApiError(error);
     }
   },
+  adminIndex: async (query?: SensorQuery): Promise<ApiResponse<Sensor[]>> => {
+    try {
+      const response = await api.get<ApiResponse<Sensor[]>>("/api/sensor/admin", {
+        params: query,
+      });
+      return response.data;
+    } catch (error) {
+      throw toApiError(error);
+    }
+  },
   detail: async (id: ID): Promise<ApiResponse<Sensor>> => {
     try {
       const response = await api.get<ApiResponse<Sensor>>(`/api/sensor/${id}`);

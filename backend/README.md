@@ -59,7 +59,7 @@ JWT_SECRET=change-this-secret
 JWT_EXPIRES_IN=1d
 AUTH_COOKIE_NAME=auth_token
 SUPER_ADMIN_EMAIL=admin@iotku.test
-SUPER_ADMIN_PASSWORD=password123
+SUPER_ADMIN_PASSWORD=123456
 WS_ADMIN_KEY=change-this-ws-key
 ```
 
@@ -179,12 +179,20 @@ Sensor unit options can be managed from the frontend admin page:
 /admin/sensor-unit
 ```
 
-Default seeded super admin:
+Default seeded accounts:
 
 ```text
 username: superadmin
 email: admin@iotku.test
-password: password123
+password: 123456
+
+username: admin
+email: admin.user@iotku.test
+password: 123456
+
+username: user
+email: user@iotku.test
+password: 123456
 ```
 
 ## Authentication Flow

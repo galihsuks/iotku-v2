@@ -55,8 +55,9 @@ export const createReadingForUser = async (
   sensorIdOrCode: string,
   payload: { recorded_at_ms?: number; value: unknown },
   userId: string,
+  role?: string | null,
 ) => {
-  await assertCanReadSensor(sensorIdOrCode, userId);
+  await assertCanReadSensor(sensorIdOrCode, userId, role);
   return createReading(sensorIdOrCode, payload);
 };
 
@@ -64,8 +65,9 @@ export const listReadings = async (
   sensorId: string,
   query: { page?: unknown; page_size?: unknown },
   userId: string,
+  role?: string | null,
 ) => {
-  await assertCanReadSensor(sensorId, userId);
+  await assertCanReadSensor(sensorId, userId, role);
   const { page, pageSize, offset } = getPagination(query);
   const rows = await queryRows(
     `SELECT * FROM sensor_readings WHERE sensor_id = ? ORDER BY recorded_at_ms DESC LIMIT ? OFFSET ?`,
@@ -78,8 +80,8 @@ export const listReadings = async (
   return { rows, pagination: buildPagination(page, pageSize, Number(count?.total ?? 0)) };
 };
 
-export const exportReadings = async (sensorId: string, userId: string) => {
-  await assertCanReadSensor(sensorId, userId);
+export const exportReadings = async (sensorId: string, userId: string, role?: string | null) => {
+  await assertCanReadSensor(sensorId, userId, role);
   const sensor = await queryOne<
     {
       id: string;

@@ -2,11 +2,15 @@ import type { RowDataPacket } from "mysql2";
 import { v4 as uuidv4 } from "uuid";
 import { withTransaction } from "../../../config/database.js";
 import { execute, queryOne, queryRows } from "../../../repositories/base.repository.js";
-import { badRequest, notFound } from "../../../utils/app-error.js";
+import { badRequest, forbidden, notFound } from "../../../utils/app-error.js";
 import { nowSql } from "../../../utils/date.js";
 import { buildPagination, getPagination } from "../../../utils/pagination.js";
 import { like, type SensorKeywordQuery } from "../shared/query.js";
-import { assertCanOwnSensor, assertCanReadSensor } from "../shared/sensor-access.service.js";
+import {
+  assertCanOwnSensor,
+  assertCanReadSensor,
+  canReadAllSensors,
+} from "../shared/sensor-access.service.js";
 import { parseValueOptions } from "../shared/value-options.js";
 
 export const createSensorCode = async () => {
@@ -17,13 +21,19 @@ export const createSensorCode = async () => {
   return `0000${Number(latest.code) + 1}`.slice(-5);
 };
 
-export const listSensors = async (query: SensorKeywordQuery, userId: string) => {
+export const listSensors = async (
+  query: SensorKeywordQuery,
+  userId: string,
+  options: { includeAll?: boolean } = {},
+) => {
   const { page, pageSize, offset } = getPagination(query);
   const keywords = query.keywords?.trim() ?? "";
   const keywordWhere = keywords
     ? "AND (s.code LIKE ? OR s.label LIKE ? OR u.name LIKE ? OR u.unit LIKE ?)"
     : "";
   const values = keywords ? [like(keywords), like(keywords), like(keywords), like(keywords)] : [];
+  const accessWhere = options.includeAll ? "1 = 1" : "(s.owner_user_id = ? OR su.user_id = ?)";
+  const accessValues = options.includeAll ? [] : [userId, userId];
   const rows = await queryRows<
     {
       latest_reading_id: string | null;
@@ -55,9 +65,9 @@ export const listSensors = async (query: SensorKeywordQuery, userId: string) => 
        ORDER BY sr.recorded_at_ms DESC, sr.created_at DESC
        LIMIT 1
      )
-     WHERE (s.owner_user_id = ? OR su.user_id = ?) ${keywordWhere}
+     WHERE ${accessWhere} ${keywordWhere}
      ORDER BY s.created_at DESC LIMIT ? OFFSET ?`,
-    [userId, userId, ...values, pageSize, offset],
+    [...accessValues, ...values, pageSize, offset],
   );
   const mappedRows = rows.map((row) => {
     const {
@@ -90,14 +100,26 @@ export const listSensors = async (query: SensorKeywordQuery, userId: string) => 
      FROM sensors s
      JOIN sensor_units u ON u.id = s.unit_id
      LEFT JOIN sensor_shared_users su ON su.sensor_id = s.id
-     WHERE (s.owner_user_id = ? OR su.user_id = ?) ${keywordWhere}`,
-    [userId, userId, ...values],
+     WHERE ${accessWhere} ${keywordWhere}`,
+    [...accessValues, ...values],
   );
   return { rows: mappedRows, pagination: buildPagination(page, pageSize, Number(count?.total ?? 0)) };
 };
 
-export const getSensorDetail = async (id: string, userId: string) => {
-  await assertCanReadSensor(id, userId);
+export const listAdminSensors = async (
+  query: SensorKeywordQuery,
+  userId: string,
+  role?: string | null,
+) => {
+  if (!canReadAllSensors(role)) {
+    throw forbidden("You do not have access to admin sensor list.");
+  }
+
+  return listSensors(query, userId, { includeAll: true });
+};
+
+export const getSensorDetail = async (id: string, userId: string, role?: string | null) => {
+  await assertCanReadSensor(id, userId, role);
   const row = await queryOne<
     {
       latest_reading_id: string | null;

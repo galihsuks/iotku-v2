@@ -95,7 +95,7 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
       onSettled: () => {
         queryClient.clear();
         logout();
-        window.location.replace("/");
+        navigate("/", { replace: true });
       },
     });
   };

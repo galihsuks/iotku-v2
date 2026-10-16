@@ -29,13 +29,13 @@ export const SensorEditPage = lazy(() =>
 );
 
 export const AdminDashboardPage = lazy(() =>
-  import("../pages/admin/AdminDashboardPage").then((module) => ({
+  import("../pages/admin/dashboard/AdminDashboardPage").then((module) => ({
     default: module.AdminDashboardPage,
   })),
 );
 
 export const AdminSensorUnitPage = lazy(() =>
-  import("../pages/admin/AdminSensorUnitPage").then((module) => ({
+  import("../pages/admin/sensor-unit/AdminSensorUnitPage").then((module) => ({
     default: module.AdminSensorUnitPage,
   })),
 );

@@ -14,6 +14,7 @@ export const queryKeys = {
   },
   sensor: {
     list: (params?: unknown) => ["sensor", "list", params ?? {}] as const,
+    adminList: (params?: unknown) => ["sensor", "admin-list", params ?? {}] as const,
     detail: (id: string) => ["sensor", "detail", id] as const,
     readings: (id: string, params?: unknown) => ["sensor", "readings", id, params ?? {}] as const,
   },

@@ -65,6 +65,7 @@ export const appRouter = createBrowserRouter([
             path: "/a", // a untuk admin
             children: [
               { path: "dashboard", element: withSuspense(<AdminDashboardPage />) },
+              { path: "dashboard/detail/:id", element: withSuspense(<SensorDetailPage />) },
               { path: "sensor-unit", element: withSuspense(<AdminSensorUnitPage />) },
             ],
           },

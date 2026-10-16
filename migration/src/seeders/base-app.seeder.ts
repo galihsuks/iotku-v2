@@ -12,10 +12,14 @@ export const baseAppSeeder: Seeder = {
       ('role-user', 'U', 'User', 'Regular IoT user access.', @now, @now);
 
       INSERT IGNORE INTO app_users (id, username, full_name, email, password, created_at, updated_at) VALUES
-      ('user-super-admin', 'superadmin', 'Super Admin', 'admin@iotku.test', '$2b$10$JYTcVlqqLlO9RoPZP/wWjubFAKotIUG/ijvPbjFh/WYASXtCo4hP6', @now, @now);
+      ('user-super-admin', 'superadmin', 'Super Admin', 'admin@iotku.test', '$2b$10$JglyOcgyWMUNJrbFX8MeyeGNVBN7AgLna9r.adf0xLVGCfod3Btp6', @now, @now),
+      ('user-admin', 'admin', 'Admin', 'admin.user@iotku.test', '$2b$10$JglyOcgyWMUNJrbFX8MeyeGNVBN7AgLna9r.adf0xLVGCfod3Btp6', @now, @now),
+      ('user-regular', 'user', 'User', 'user@iotku.test', '$2b$10$JglyOcgyWMUNJrbFX8MeyeGNVBN7AgLna9r.adf0xLVGCfod3Btp6', @now, @now);
 
       INSERT IGNORE INTO app_user_roles (id, user_id, role_id, created_at, updated_at) VALUES
-      ('user-role-super-admin', 'user-super-admin', 'role-super-admin', @now, @now);
+      ('user-role-super-admin', 'user-super-admin', 'role-super-admin', @now, @now),
+      ('user-role-admin', 'user-admin', 'role-admin', @now, @now),
+      ('user-role-regular', 'user-regular', 'role-user', @now, @now);
 
       INSERT IGNORE INTO app_menus (id, parent_menu_id, name, description, url, \`group\`, icon, display, sort, created_at, updated_at) VALUES
       ('menu-user-dashboard', NULL, 'Dashboard', 'Monitor owned and shared devices.', '/u', 'main', 'LayoutDashboard', 1, 10, @now, @now),
@@ -91,7 +95,7 @@ export const baseAppSeeder: Seeder = {
       SELECT CONCAT('rmc-', LEFT(MD5(CONCAT('role-admin:', mc.id)), 32)), 'role-admin', mc.menu_id, mc.id, @now, @now
       FROM app_menu_controls mc
       WHERE (mc.menu_id = 'menu-admin-dashboard' AND mc.code IN ('R', 'DT'))
-         OR (mc.menu_id = 'menu-admin-sensor-unit' AND mc.code IN ('C', 'R', 'U'))
+         OR (mc.menu_id = 'menu-admin-sensor-unit' AND mc.code IN ('C', 'R', 'U', 'D'))
          OR (mc.menu_id = 'menu-system-profile' AND mc.code IN ('C', 'R', 'U', 'D'))
          OR (mc.menu_id = 'menu-system-log-parent' AND mc.code = 'R')
          OR (mc.menu_id = 'menu-system-websocket-log' AND mc.code = 'R');

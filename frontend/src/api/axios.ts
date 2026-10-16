@@ -27,9 +27,14 @@ const trimApiTrailingSlash = (url?: string) => {
   return query ? `${normalizedPath}?${query}` : normalizedPath;
 };
 
-const isPublicAuthRequest = (url?: string) => {
+const isAuthFlowRequest = (url?: string) => {
   const normalizedUrl = trimApiTrailingSlash(url)?.split("?")[0];
-  return normalizedUrl === "/api/auth/login" || normalizedUrl === "/api/auth/signup";
+  return (
+    normalizedUrl === "/api/auth/login" ||
+    normalizedUrl === "/api/auth/signup" ||
+    normalizedUrl === "/api/auth/logout" ||
+    normalizedUrl === "/api/auth/me"
+  );
 };
 
 api.interceptors.request.use((config) => {
@@ -68,7 +73,7 @@ api.interceptors.response.use(
     if (
       error.response &&
       error.response.status === 401 &&
-      !isPublicAuthRequest(error.config?.url)
+      !isAuthFlowRequest(error.config?.url)
     ) {
       queryClient.clear();
       const { logout } = useAuthStore.getState().actions;

@@ -26,12 +26,20 @@ npm run seed -- --names=baseAppSeeder,sensorUnitSeeder
 
 ## Default Login
 
-Seeder `baseAppSeeder` membuat akun super admin default:
+Seeder `baseAppSeeder` membuat akun default:
 
 ```text
 username: superadmin
 email: admin@iotku.test
-password: password123
+password: 123456
+
+username: admin
+email: admin.user@iotku.test
+password: 123456
+
+username: user
+email: user@iotku.test
+password: 123456
 ```
 
 Migration file memakai format:

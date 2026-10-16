@@ -15,6 +15,13 @@ export const useSensorListQuery = (params?: SensorQuery) => {
   });
 };
 
+export const useAdminSensorListQuery = (params?: SensorQuery) => {
+  return useQuery({
+    queryKey: queryKeys.sensor.adminList(params),
+    queryFn: () => sensorApi.adminIndex(params),
+  });
+};
+
 export const useSensorDetailQuery = (id: string) => {
   return useQuery({
     queryKey: queryKeys.sensor.detail(id),
