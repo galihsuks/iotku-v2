@@ -101,13 +101,33 @@ export interface SensorCommandSocketMessage {
   success: boolean;
   message: string;
   data?: {
+    command_id: string;
     sensor_code: string;
     value: string;
     requested_at_ms: number;
   };
 }
 
+export interface SensorCommandResultSocketMessage {
+  type: "command_result";
+  success: boolean;
+  message: string;
+  data: {
+    command_id: string;
+    sensor_code: string;
+    value: string;
+  };
+}
+
+export interface SensorErrorSocketMessage {
+  type: "error";
+  success: false;
+  message: string;
+}
+
 export type SensorSocketMessage =
   | SensorReadingSocketMessage
   | DeviceInfoSocketMessage
-  | SensorCommandSocketMessage;
+  | SensorCommandSocketMessage
+  | SensorCommandResultSocketMessage
+  | SensorErrorSocketMessage;

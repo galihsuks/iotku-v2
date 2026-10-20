@@ -4,11 +4,13 @@ import { nowSql } from "../utils/date.js";
 import {
   handleAdminHandshake,
   handleCommand,
+  handleCommandResult,
   handleDeviceInfo,
   handleSensorReading,
   handleSubscribe,
   handleUnsubscribe,
 } from "./sensor-websocket.handlers.js";
+import { clearSocketCommands } from "./sensor-websocket.commands.js";
 import { logWebSocket } from "./sensor-websocket.logger.js";
 import {
   broadcastDeviceInfo,
@@ -136,6 +138,11 @@ const handleMessage = async (
       return;
     }
 
+    if (payload.type === "command_result") {
+      await handleCommandResult(socket, payload);
+      return;
+    }
+
     await handleSensorReading(state, socket, payload);
   } catch (error) {
     const info = getClient(socket);
@@ -161,6 +168,7 @@ export const handleConnection = async (
   socket.on("close", () => {
     const info = getClient(socket);
     const deviceSensorCode = info?.writeSensorCode;
+    clearSocketCommands(socket);
     unregisterDeviceSocket(socket);
     if (deviceSensorCode) broadcastDeviceInfo(deviceSensorCode);
     leaveAllRooms(socket);

@@ -149,7 +149,7 @@ Frontend clients can also send realtime commands to online devices:
 { "type": "command", "idsensor": "00001", "value": "open" }
 ```
 
-The server forwards valid commands to the active device socket. The device should execute the command and publish the actual state back as a normal sensor reading.
+The server forwards valid commands to the active device socket with a generated `command_id`. Its immediate acknowledgement confirms delivery only. A matching reading from that device, such as `{ "value": "open" }`, confirms the command and cancels its timeout; including `command_id` in the reading makes correlation more reliable. The device can instead send an explicit `command_result` with `success: true`, or `success: false` and a failure `message`. Only the requesting frontend receives the result; normal readings update every subscriber. One command per sensor can be pending at a time. The sender receives a failure result if the device disconnects or does not respond within 30 seconds.
 
 Realtime sensor reading event:
 

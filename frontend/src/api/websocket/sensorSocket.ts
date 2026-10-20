@@ -17,7 +17,11 @@ const handleMessage = (event: MessageEvent<string>) => {
     actions.setDeviceInfo(payload.data);
   }
 
-  if (payload.type === "command") {
+  if (
+    payload.type === "command_result" ||
+    payload.type === "error" ||
+    (payload.type === "command" && !payload.success)
+  ) {
     useNotificationStore
       .getState()
       .addToast(payload.message, payload.success ? "success" : "error");

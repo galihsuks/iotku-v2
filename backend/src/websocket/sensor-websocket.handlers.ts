@@ -2,6 +2,12 @@ import { WebSocket } from "ws";
 import { env } from "../config/env.js";
 import { createReading } from "../modules/sensor/reading/sensor-reading.service.js";
 import { nowSql } from "../utils/date.js";
+import {
+  completeCommand,
+  completeCommandFromReading,
+  registerCommand,
+  wasCommandCompleted,
+} from "./sensor-websocket.commands.js";
 import { logWebSocket } from "./sensor-websocket.logger.js";
 import { notifyAdminData, notifyAdminLog } from "./sensor-websocket.notifications.js";
 import { getSensorCodes } from "./sensor-websocket.repository.js";
@@ -175,10 +181,25 @@ export const handleSensorReading = async (
     throw new Error("Device can only write to the handshake sensor.");
   }
 
-  await createReading(info.writeSensorCode, {
+  const reading = await createReading(info.writeSensorCode, {
     value: payload.value ?? payload.nilai,
     recorded_at_ms: Number(payload.recorded_at_ms ?? payload.waktu ?? Date.now()),
   });
+
+  const commandId = completeCommandFromReading(
+    socket,
+    info.writeSensorCode,
+    String(reading?.value ?? ""),
+    payload.command_id == null ? undefined : String(payload.command_id),
+  );
+  if (commandId) {
+    await logWebSocket(
+      "info",
+      "Device confirmed command with a sensor reading.",
+      { command_id: commandId, sensor_code: info.writeSensorCode, value: reading?.value },
+      info.ip,
+    );
+  }
 
   notifyAdminLog(state, true, "INFO", info.ip, `Sensor ${info.writeSensorCode} data updated.`);
 };
@@ -206,18 +227,25 @@ export const handleCommand = async (
     throw new Error("Command value must be numeric.");
   }
 
-  if (sensor.value_options.length && !sensor.value_options.some((option) => option.value === value)) {
-    throw new Error(`Command value must be one of: ${sensor.value_options.map((option) => option.value).join(", ")}.`);
+  if (
+    sensor.value_options.length &&
+    !sensor.value_options.some((option) => option.value === value)
+  ) {
+    throw new Error(
+      `Command value must be one of: ${sensor.value_options.map((option) => option.value).join(", ")}.`,
+    );
   }
 
   const deviceSocket = getActiveDeviceSocket(sensor.code);
   if (!deviceSocket) throw new Error("Device is offline.");
 
+  const commandId = registerCommand(socket, deviceSocket, sensor.code, value);
   const command = {
     type: "command",
     success: true,
     message: "Command received.",
     data: {
+      command_id: commandId,
       sensor_code: sensor.code,
       value,
       requested_at_ms: Date.now(),
@@ -235,7 +263,42 @@ export const handleCommand = async (
   await logWebSocket(
     "info",
     "Command sent to device.",
-    { sensor_code: sensor.code, value },
+    { command_id: commandId, sensor_code: sensor.code, value },
+    info.ip,
+  );
+};
+
+export const handleCommandResult = async (socket: WebSocket, payload: Record<string, unknown>) => {
+  const info = getClient(socket);
+  if (
+    !info?.isDevice ||
+    !info.writeSensorCode ||
+    getActiveDeviceSocket(info.writeSensorCode) !== socket
+  ) {
+    throw new Error("Only authenticated device sockets can report command results.");
+  }
+
+  const commandId = String(payload.command_id ?? "").trim();
+  if (!commandId) throw new Error("command_id is required.");
+  if (typeof payload.success !== "boolean") throw new Error("success must be a boolean.");
+
+  const message = String(payload.message ?? "").trim();
+  if (!payload.success && !message) throw new Error("A failure message is required.");
+  if (message.length > 500) throw new Error("Command result message is too long.");
+  if (wasCommandCompleted(socket, commandId)) return;
+
+  const result = completeCommand(
+    socket,
+    commandId,
+    payload.success,
+    message || "Device completed the command.",
+  );
+  if (!result) throw new Error("Command not found, expired, or assigned to another device.");
+
+  await logWebSocket(
+    payload.success ? "info" : "warning",
+    payload.success ? "Device completed the command." : "Device command failed.",
+    { command_id: commandId, sensor_code: result.sensorCode, value: result.value, message },
     info.ip,
   );
 };

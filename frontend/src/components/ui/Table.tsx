@@ -89,13 +89,13 @@ export const Table = <T,>({
             <tbody className="divide-y divide-dark-100">
               {loading ? (
                 <tr>
-                  <td className="px-4 py-6 text-sm text-dark-500" colSpan={columnCount}>
+                  <td className="px-4 py-6 text-xs sm:text-sm text-dark-500" colSpan={columnCount}>
                     Loading...
                   </td>
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td className="px-4 py-6 text-sm text-dark-500" colSpan={columnCount}>
+                  <td className="px-4 py-6 text-xs sm:text-sm text-dark-500" colSpan={columnCount}>
                     {emptyText}
                   </td>
                 </tr>

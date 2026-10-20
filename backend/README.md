@@ -353,6 +353,7 @@ Command delivered to the device:
   "success": true,
   "message": "Command received.",
   "data": {
+    "command_id": "generated-command-uuid",
     "sensor_code": "00001",
     "value": "open",
     "requested_at_ms": 1760000000000
@@ -368,6 +369,7 @@ Sender acknowledgement:
   "success": true,
   "message": "Command sent to device.",
   "data": {
+    "command_id": "generated-command-uuid",
     "sensor_code": "00001",
     "value": "open",
     "requested_at_ms": 1760000000000
@@ -375,7 +377,36 @@ Sender acknowledgement:
 }
 ```
 
-The device should execute the command and then publish its actual state back as a normal sensor reading. Other subscribed frontend clients update after that reading is broadcast.
+This acknowledgement confirms delivery only. After executing the command, the device can report its actual state as a normal reading. A matching value from the same device confirms the pending command and cancels its timeout:
+
+```json
+{ "value": "open", "recorded_at_ms": 1760000000000 }
+```
+
+For reliable correlation when the device sends periodic readings, include the received `command_id` in that reading:
+
+```json
+{ "value": "open", "command_id": "generated-command-uuid" }
+```
+
+Alternatively, the device can explicitly report success with the same `command_id`:
+
+```json
+{ "type": "command_result", "command_id": "generated-command-uuid", "success": true }
+```
+
+On failure, the device sends a reason and must not publish the requested value as a reading:
+
+```json
+{
+  "type": "command_result",
+  "command_id": "generated-command-uuid",
+  "success": false,
+  "message": "Gate motor is blocked."
+}
+```
+
+The server forwards `command_result` only to the frontend socket that sent the command. Normal readings update all subscribers. Only one command per sensor can await a response at a time. If the device disconnects or neither a matching reading nor an explicit result arrives within 30 seconds, the sender receives a failed `command_result`. A duplicate result after a reading confirmation is ignored.
 
 ### Admin Monitor Socket
 
@@ -406,6 +437,7 @@ WebSocket events are logged into `websocket_logs`, including:
 - unsubscribe
 - device info request
 - WebSocket errors
+- command delivery and device results
 
 The API log and WebSocket log pages support keyword, level, date, and time filters.
 
