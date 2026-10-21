@@ -108,6 +108,7 @@ npm run dev
 Default frontend URL:
 
 - `http://localhost:5173`
+- Public developer guides: `http://localhost:5173/docs`
 
 ## Main Features
 

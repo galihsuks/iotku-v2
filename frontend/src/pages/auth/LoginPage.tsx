@@ -1,4 +1,4 @@
-import { KeyRound, LogIn, UserRound } from "lucide-react";
+import { BookOpen, KeyRound, LogIn, UserRound } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthLoginMutation } from "../../api/auth/authQuery";
@@ -36,9 +36,14 @@ export const LoginPage = () => {
         queryClient.invalidateQueries();
         addToast(response.message || "Login successfully.", "success");
         const redirect = searchParams.get("redirect");
-        navigate(redirect && redirect.startsWith("/") ? redirect : getDefaultAuthenticatedRoute(response.data), {
-          replace: true,
-        });
+        navigate(
+          redirect && redirect.startsWith("/")
+            ? redirect
+            : getDefaultAuthenticatedRoute(response.data),
+          {
+            replace: true,
+          },
+        );
       },
       onError: (error) => {
         addToast(error.message, "error");
@@ -106,6 +111,13 @@ export const LoginPage = () => {
             Create one now
           </Link>
         </p>
+        <Link
+          to="/docs"
+          className="mt-4 flex items-center justify-center gap-2 text-xs font-medium text-dark-500 transition hover:text-primary-700"
+        >
+          <BookOpen className="h-4 w-4" />
+          Developer guides
+        </Link>
       </section>
     </main>
   );

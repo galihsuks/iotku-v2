@@ -8,6 +8,7 @@ import {
   X,
   type LucideIcon,
   EllipsisVertical,
+  BookOpen,
 } from "lucide-react";
 import { useAccessMenuQuery } from "../../api/access/accessQuery";
 import { useAuthLogoutMutation } from "../../api/auth/authQuery";
@@ -270,6 +271,28 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
       </div>
 
       <div className="pt-6">
+        <button
+          type="button"
+          onClick={() => {
+            navigate("/docs");
+            setOpenMobileSidebar(false);
+          }}
+          title="Developer guides"
+          className={cn(
+            "mb-2 flex w-full items-center rounded-xl px-3 py-2.5 text-sm font-medium text-dark-600 transition hover:bg-primary-50 hover:text-primary-700",
+            compact ? "justify-center gap-0" : "gap-3",
+          )}
+        >
+          <BookOpen className="h-4 w-4 shrink-0" />
+          <span
+            className={cn(
+              "overflow-hidden whitespace-nowrap transition-all duration-200",
+              compact ? "max-w-0 opacity-0" : "max-w-40 opacity-100",
+            )}
+          >
+            Developer guides
+          </span>
+        </button>
         <div
           className={cn(
             "mb-3 overflow-hidden rounded-xl border border-dark-200 bg-light-50 p-3 transition-all duration-300",

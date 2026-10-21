@@ -7,6 +7,7 @@ import {
   AdminDashboardPage,
   AdminSensorUnitPage,
   DashboardPage,
+  DocsPage,
   LoginPage,
   LogPage,
   MenuPage,
@@ -26,6 +27,7 @@ export const appRouter = createBrowserRouter([
   {
     element: <AppShell />,
     children: [
+      { path: "/docs", element: withSuspense(<DocsPage />) },
       {
         path: "/",
         element: <GuestRoute />,
