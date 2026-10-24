@@ -37,6 +37,9 @@ jobs:
 
       - name: Build and test backend
         working-directory: backend
+        env:
+          NODE_ENV: test
+          JWT_SECRET: ci-only-test-secret-at-least-16-chars
         run: |
           npm ci
           npm test
