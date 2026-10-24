@@ -1,0 +1,95 @@
+name: Deploy
+
+on:
+  release:
+    types: [published]
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_VERSION: ${{ github.event.release.tag_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: |
+            frontend/package-lock.json
+            backend/package-lock.json
+
+      - name: Build frontend
+        working-directory: frontend
+        env:
+          VITE_BASE_URL_API: ${{ vars.VITE_BASE_URL_API }}
+          VITE_WS_URL: ${{ vars.VITE_WS_URL }}
+          VITE_APP_TITLE: ${{ vars.VITE_APP_TITLE }}
+        run: |
+          export VITE_APP_VERSION="${RELEASE_VERSION#v}"
+          : "${VITE_BASE_URL_API:?}" "${VITE_WS_URL:?}" "${VITE_APP_TITLE:?}" "${VITE_APP_VERSION:?}"
+          npm ci
+          npm run build
+
+      - name: Build and test backend
+        working-directory: backend
+        run: |
+          npm ci
+          npm test
+
+      - name: Copy backend to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST_VPS }}
+          username: ${{ secrets.SSH_USER_VPS }}
+          key: ${{ secrets.SSH_KEY_VPS }}
+          fingerprint: ${{ secrets.SSH_FINGERPRINT_VPS }}
+          port: ${{ secrets.SSH_PORT_VPS }}
+          source: "backend/dist/*,backend/package.json,backend/package-lock.json"
+          target: "/mine/iotku-v2/backend"
+          strip_components: 1
+          overwrite: true
+
+      - name: Restart backend with PM2
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          PM2_APP_NAME_VPS: ${{ vars.PM2_APP_NAME_VPS }}
+        with:
+          host: ${{ secrets.SSH_HOST_VPS }}
+          username: ${{ secrets.SSH_USER_VPS }}
+          key: ${{ secrets.SSH_KEY_VPS }}
+          fingerprint: ${{ secrets.SSH_FINGERPRINT_VPS }}
+          port: ${{ secrets.SSH_PORT_VPS }}
+          script_stop: true
+          envs: PM2_APP_NAME_VPS,RELEASE_VERSION
+          script: |
+            set -eu
+            cd /mine/iotku-v2/backend
+            : "${PM2_APP_NAME_VPS:?Set PM2_APP_NAME_VPS in repository variables}"
+            : "${RELEASE_VERSION:?Release tag is required}"
+            export APP_VERSION="${RELEASE_VERSION#v}"
+            test -f .env
+            if ! command -v pm2 >/dev/null 2>&1 && [ -s "$HOME/.nvm/nvm.sh" ]; then
+              set +u
+              . "$HOME/.nvm/nvm.sh"
+              set -u
+            fi
+            npm ci --omit=dev
+            pm2 restart "$PM2_APP_NAME_VPS" --update-env
+            pm2 save
+
+      - name: Copy frontend to Niagahoster
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST_FE }}
+          username: ${{ secrets.SSH_USER_FE }}
+          password: ${{ secrets.SSH_PASSWORD_FE }}
+          port: ${{ secrets.SSH_PORT_FE }}
+          source: "frontend/dist/*"
+          target: "/home/u928249783/domains/v2.iotku.org/public_html"
+          strip_components: 2
+          overwrite: true

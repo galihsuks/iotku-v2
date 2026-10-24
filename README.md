@@ -219,17 +219,71 @@ npm run seed -- --names=baseAppSeeder
 
 For local development, app versions can come from package metadata or environment variables.
 
-For future CI/CD, a recommended release flow is:
+Production versioning follows the GitHub Release tag:
 
 1. Publish a GitHub Release with a tag, for example `v1.2.3`.
-2. Run CI/CD only when the release is not a draft and not a pre-release.
-3. Inject the release tag into backend and frontend build environment variables.
-4. Display the same version in Swagger, frontend UI, and deployment metadata.
+2. CI/CD deploys it when the release is published, including pre-releases.
+3. The workflow sets `VITE_APP_VERSION=1.2.3` for the frontend and `APP_VERSION=1.2.3` for the PM2 backend process.
+4. The frontend UI and backend Swagger display the release version.
 
-Recommended environment names:
+For local development, these variables can still be set manually:
 
 - Backend: `APP_VERSION`
 - Frontend: `VITE_APP_VERSION`
+
+## Deployment
+
+`.github/workflows/deploy.yml` runs whenever a GitHub Release is published, including a pre-release. A draft, push to `main`, or tag push alone does not deploy. The workflow builds the frontend and backend from the release tag, copies the backend build to `/mine/iotku-v2/backend` on the VPS, installs its production dependencies, restarts its existing PM2 process, and then copies `frontend/dist` to Niagahoster. Migration is not part of CI/CD.
+
+The release tag supplies both app versions: `v1.2.3` becomes `1.2.3` in the frontend and backend runtime. Publish the workflow file on the default branch before creating a release.
+
+Configure these GitHub Actions **repository variables**:
+
+| Variable | Value |
+| --- | --- |
+| `VITE_BASE_URL_API` | Public HTTPS URL of the backend API |
+| `VITE_WS_URL` | Public `wss://` URL of the WebSocket server |
+| `VITE_APP_TITLE` | Frontend title |
+| `PM2_APP_NAME_VPS` | Exact name of the existing backend process in `pm2 list` |
+
+Configure these GitHub Actions **repository secrets**:
+
+| Secret | Purpose |
+| --- | --- |
+| `SSH_HOST_FE`, `SSH_USER_FE`, `SSH_PASSWORD_FE`, `SSH_PORT_FE` | Existing Niagahoster SSH connection |
+| `SSH_HOST_VPS`, `SSH_USER_VPS`, `SSH_PORT_VPS` | VPS SSH connection |
+| `SSH_KEY_VPS` | Private SSH key authorized for the VPS user |
+| `SSH_FINGERPRINT_VPS` | SHA256 fingerprint of the VPS SSH host key |
+
+Prepare the VPS once before the first deployment:
+
+1. Install Node.js 24, npm, and PM2. Ensure the SSH user can write to `/mine/iotku-v2/backend`. The SSH user must be the same user that owns the PM2 process (for example, `ubuntu`). Node, npm, and PM2 must be available in a non-interactive SSH session; the workflow also tries to load `~/.nvm/nvm.sh` when PM2 is not on `PATH`.
+2. Create `/mine/iotku-v2/backend/.env` from `backend/.env.example`. It stays on the VPS and is never uploaded by CI. Set production database credentials, `NODE_ENV=production`, a strong `JWT_SECRET`, and the public frontend origin.
+3. Register the backend once in PM2 if it is not already running, from the same SSH user used by CI:
+
+   ```bash
+   cd /mine/iotku-v2/backend
+   pm2 start dist/server.js --name iotku-v2-backend
+   pm2 save
+   pm2 list
+   ```
+
+   Set `PM2_APP_NAME_VPS` to the exact existing process name shown by `pm2 list`. If the backend already has a different name, keep it and use that name; CI does not create a duplicate process. PM2's `restart` briefly interrupts active WebSocket connections, so clients should reconnect.
+4. Manage migrations manually on the VPS. Update the `migration` folder there, keep its `.env` configured for the production database, then run:
+
+   ```bash
+   cd /mine/iotku-v2/migration
+   npm ci
+   npm run migrate:up
+   ```
+
+   Run `npm run seed` only when intentionally initializing data; seeders create default accounts. CI neither copies the migration app nor runs migrations or seeders.
+
+Keep database backups and apply schema changes before deploying backend code that depends on them. The web host must route frontend paths such as `/docs` back to `index.html`.
+
+The VPS reverse proxy must expose the backend HTTP port as HTTPS and the separate WebSocket port as WSS, including the WebSocket upgrade headers. Set `VITE_BASE_URL_API` and `VITE_WS_URL` to those public endpoints, not to `localhost`.
+
+Check the VPS host fingerprint directly on the VPS with `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub`; verify it through a trusted channel before saving the `SHA256:...` value as a GitHub secret. Never copy a private host key into GitHub.
 
 ## More Documentation
 
