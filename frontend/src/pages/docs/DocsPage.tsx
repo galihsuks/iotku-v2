@@ -28,7 +28,7 @@ const GuideSteps = ({ sections }: { sections: GuideSection[] }) => (
         className="scroll-mt-24 border-t border-dark-200 py-7 first:border-t-0 first:pt-0"
       >
         <h2 className="text-base font-semibold text-dark-900 sm:text-lg">{section.title}</h2>
-        <div className="mt-3 space-y-3 text-sm leading-7 text-dark-600">
+        <div className="mt-3 space-y-3 text-xs leading-5 md:text-sm md:leading-7 text-dark-600">
           {section.paragraphs.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
@@ -39,7 +39,7 @@ const GuideSteps = ({ sections }: { sections: GuideSection[] }) => (
           </div>
         ) : null}
         {section.note ? (
-          <p className="mt-4 border-l-2 border-info-500 bg-info-50 px-3 py-2 text-xs leading-6 text-dark-700">
+          <p className="mt-4 border-l-2 border-info-500 bg-info-50 px-3 py-2 text-[10px] leading-5 md:text-xs md:leading-6 text-dark-700">
             {section.note}
           </p>
         ) : null}
@@ -52,12 +52,12 @@ const ProtocolReference = () => (
   <div className="space-y-8">
     <section id="protocol-map" className="scroll-mt-24">
       <h2 className="text-base font-semibold text-dark-900 sm:text-lg">Message map</h2>
-      <p className="mt-2 text-sm leading-7 text-dark-600">
+      <p className="mt-2 text-xs leading-5 md:text-sm md:leading-7 text-dark-600">
         HTTP is used for accounts, sensor setup, and history. WebSocket is used for live readings,
         device status, and commands.
       </p>
       <div className="mt-4 overflow-x-auto border-y border-dark-200">
-        <table className="w-full min-w-[570px] text-left text-xs sm:text-sm">
+        <table className="w-full min-w-[570px] text-left text-[10px] sm:text-xs md:text-sm">
           <thead className="bg-light-100 text-dark-700">
             <tr>
               <th className="px-3 py-3 font-semibold">Type</th>
@@ -80,34 +80,36 @@ const ProtocolReference = () => (
 
     <section id="protocol-identifiers" className="scroll-mt-24 border-t border-dark-200 pt-8">
       <h2 className="text-base font-semibold text-dark-900 sm:text-lg">Identifiers and timing</h2>
-      <dl className="mt-3 divide-y divide-dark-100 text-sm">
+      <dl className="mt-3 divide-y divide-dark-100 text-xs md:text-sm">
         <div className="grid gap-1 py-3 sm:grid-cols-[160px_1fr]">
           <dt className="font-mono font-medium text-dark-900">sensor_code</dt>
-          <dd className="text-dark-600">
+          <dd className="text-dark-600 text-xs md:text-sm leading-5 md:leading-6">
             Human-facing code, such as 00001. Use it in WebSocket handshake, subscribe, and command
             messages.
           </dd>
         </div>
         <div className="grid gap-1 py-3 sm:grid-cols-[160px_1fr]">
           <dt className="font-mono font-medium text-dark-900">sensor_id</dt>
-          <dd className="text-dark-600">
+          <dd className="text-dark-600 text-xs md:text-sm leading-5 md:leading-6">
             Internal database ID of the sensor. HTTP detail and history use this ID.
           </dd>
         </div>
         <div className="grid gap-1 py-3 sm:grid-cols-[160px_1fr]">
           <dt className="font-mono font-medium text-dark-900">reading.id</dt>
-          <dd className="text-dark-600">Unique ID created by the server for each saved reading.</dd>
+          <dd className="text-dark-600 text-xs md:text-sm leading-5 md:leading-6">
+            Unique ID created by the server for each saved reading.
+          </dd>
         </div>
         <div className="grid gap-1 py-3 sm:grid-cols-[160px_1fr]">
           <dt className="font-mono font-medium text-dark-900">command_id</dt>
-          <dd className="text-dark-600">
+          <dd className="text-dark-600 text-xs md:text-sm leading-5 md:leading-6">
             Unique ID created for a command. Return it in a device reading or command_result to link
             the response.
           </dd>
         </div>
         <div className="grid gap-1 py-3 sm:grid-cols-[160px_1fr]">
           <dt className="font-mono font-medium text-dark-900">recorded_at_ms</dt>
-          <dd className="text-dark-600">
+          <dd className="text-dark-600 text-xs md:text-sm leading-5 md:leading-6">
             Unix timestamp in milliseconds, not seconds. Optional when the device publishes a
             reading.
           </dd>
@@ -119,7 +121,7 @@ const ProtocolReference = () => (
       <h2 className="text-base font-semibold text-dark-900 sm:text-lg">
         A complete command exchange
       </h2>
-      <p className="mt-2 text-sm leading-7 text-dark-600">
+      <p className="mt-2 text-xs leading-5 md:text-sm md:leading-7 text-dark-600">
         The server acknowledges delivery first. Only a device response confirms execution.
       </p>
       <div className="mt-4 space-y-3">
@@ -150,7 +152,7 @@ const ProtocolReference = () => (
           }
         />
       </div>
-      <p className="mt-4 text-sm leading-7 text-dark-600">
+      <p className="mt-4 text-xs leading-6 md:text-sm md:leading-7 text-dark-600">
         Every subscriber also receives sensor_reading containing the saved value. On failure, the
         device sends command_result with success=false and a message instead of publishing the
         requested value.
@@ -161,7 +163,7 @@ const ProtocolReference = () => (
       <h2 className="text-base font-semibold text-dark-900 sm:text-lg">
         Access and connection notes
       </h2>
-      <div className="mt-3 space-y-3 text-sm leading-7 text-dark-600">
+      <div className="mt-3 space-y-3 text-xs leading-6 md:text-sm md:leading-7 text-dark-600">
         <p>
           HTTP endpoints require a login cookie. Device WebSocket connections require the sensor
           passkey. App WebSocket subscriptions currently have no user authentication, so a client
@@ -212,9 +214,12 @@ export const DocsPage = () => {
       <header className="border-b border-dark-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Link to="/docs" className="flex min-w-0 items-center gap-2 font-semibold text-dark-900">
-            <AppLogo variant="icon" className="h-8 w-8 shrink-0" />
+            <AppLogo variant="icon" className="h-7 w-auto shrink-0" />
             <span className="truncate">
-              Iotku <span className="font-normal text-dark-500">/ Developer guides</span>
+              Iotku{" "}
+              <span className="font-normal text-dark-500 text-sm md:text-base">
+                / Developer guides
+              </span>
             </span>
           </Link>
           <Link
@@ -276,15 +281,17 @@ export const DocsPage = () => {
         </aside>
 
         <main className="min-w-0 pb-20 pt-7 sm:pt-9">
-          <div className="mb-7 border-b border-dark-200 pb-6">
+          <div className="mb-5 md:mb-7 border-b border-dark-200 pb-6">
             <div className="flex items-center gap-2 text-xs font-medium text-primary-700">
               <RadioTower className="h-4 w-4" /> REALTIME IOT
             </div>
             <h1 className="mt-3 text-2xl font-semibold text-dark-900 sm:text-3xl">{heading}</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-7 text-dark-600">{intro}</p>
+            <p className="mt-2 max-w-2xl text-xs leading-5 md:text-sm md:leading-7 text-dark-600">
+              {intro}
+            </p>
           </div>
 
-          <div className="mb-7 flex items-start gap-2 border-l-2 border-primary-500 bg-primary-50 px-3 py-2 text-xs leading-6 text-dark-700">
+          <div className="mb-5 md:mb-7 flex items-start gap-2 border-l-2 border-primary-500 bg-primary-50 px-3 py-2 text-[11px] leading-5 md:text-xs md:leading-6 text-dark-700">
             <Info className="mt-1 h-4 w-4 shrink-0 text-primary-700" />
             <p>
               Example sensor codes, timestamps, and credentials are placeholders. Use values

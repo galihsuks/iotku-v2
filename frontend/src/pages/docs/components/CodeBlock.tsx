@@ -27,7 +27,7 @@ export const CodeBlock = ({ label, language, value }: CodeBlockProps) => {
 
   return (
     <div className="min-w-0 overflow-hidden rounded-md border border-dark-200 bg-dark-900">
-      <div className="flex min-h-10 items-center justify-between gap-2 border-b border-white/10 px-3 text-xs text-dark-200">
+      <div className="flex min-h-8 md:min-h-10 items-center justify-between gap-2 border-b border-white/10 px-3 text-[10px] md:text-xs text-dark-200">
         <span className="min-w-0 truncate font-medium">{label}</span>
         <div className="flex shrink-0 items-center gap-2">
           <span className="text-dark-400">{language}</span>
@@ -36,13 +36,17 @@ export const CodeBlock = ({ label, language, value }: CodeBlockProps) => {
             onClick={() => void copy()}
             title={copied ? "Copied" : `Copy ${label}`}
             aria-label={copied ? "Copied" : `Copy ${label}`}
-            className="grid h-8 w-8 place-items-center rounded text-dark-200 transition hover:bg-white/10 hover:text-white"
+            className="grid h-6 w-6 md:h-8 md:w-8 place-items-center rounded text-dark-200 transition hover:bg-white/10 hover:text-white"
           >
-            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+            {copied ? (
+              <Check className="h-3 w-3 md:h-4 md:w-4" />
+            ) : (
+              <Copy className="h-3 w-3 md:h-4 md:w-4" />
+            )}
           </button>
         </div>
       </div>
-      <pre className="overflow-x-auto px-4 py-3 text-xs leading-6 text-light-100">
+      <pre className="overflow-x-auto px-4 py-3 text-[10px] leading-5 md:text-xs md:leading-6 text-light-100">
         <code>{value}</code>
       </pre>
     </div>

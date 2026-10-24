@@ -1,5 +1,7 @@
 import { Cable, Play, Send, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { Button, FormCheckbox, FormInput } from "../../../components/ui";
 import envVar from "../../../utils/envReader";
 
 type SimulatorEvent = { id: number; direction: "in" | "out" | "system"; text: string };
@@ -8,12 +10,33 @@ type CommandMessage = {
   data?: { command_id?: string; value?: string };
 };
 
+type SimulatorForm = {
+  url: string;
+  sensorCode: string;
+  passkey: string;
+  value: string;
+  autoReply: string[];
+};
+
+const autoReplyOptions = [
+  { value: "enabled", label: "Automatically publish the requested value when a command arrives" },
+];
+
 export const DeviceSimulator = () => {
-  const [url, setUrl] = useState(String(envVar.WS_URL ?? "ws://localhost:4002"));
-  const [sensorCode, setSensorCode] = useState("");
-  const [passkey, setPasskey] = useState("");
-  const [value, setValue] = useState("off");
-  const [autoReply, setAutoReply] = useState(true);
+  const { control, setValue } = useForm<SimulatorForm>({
+    defaultValues: {
+      url: String(envVar.WS_URL ?? "ws://localhost:4002"),
+      sensorCode: "",
+      passkey: "",
+      value: "off",
+      autoReply: ["enabled"],
+    },
+  });
+  const url = useWatch({ control, name: "url" });
+  const sensorCode = useWatch({ control, name: "sensorCode" });
+  const passkey = useWatch({ control, name: "passkey" });
+  const value = useWatch({ control, name: "value" });
+  const autoReply = useWatch({ control, name: "autoReply" }).includes("enabled");
   const [status, setStatus] = useState<"offline" | "connecting" | "online">("offline");
   const [events, setEvents] = useState<SimulatorEvent[]>([]);
   const socketRef = useRef<WebSocket | null>(null);
@@ -61,7 +84,7 @@ export const DeviceSimulator = () => {
           };
           socket.send(JSON.stringify(reading));
           log("out", JSON.stringify(reading));
-          setValue(message.data.value);
+          setValue("value", message.data.value);
         } catch {
           // Raw server messages remain visible in the event log.
         }
@@ -94,8 +117,10 @@ export const DeviceSimulator = () => {
           <Cable className="h-5 w-5" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-dark-900">Try the device simulator</h2>
-          <p className="mt-1 text-sm leading-6 text-dark-600">
+          <h2 className="text-base md:text-lg font-semibold text-dark-900">
+            Try the device simulator
+          </h2>
+          <p className="mt-1 text-xs leading-5 md:text-sm md:leading-6 text-dark-600">
             Test the protocol in your browser before connecting hardware. Use a test sensor and its
             passkey.
           </p>
@@ -104,55 +129,41 @@ export const DeviceSimulator = () => {
 
       <div className="overflow-hidden rounded-md border border-dark-200 bg-white">
         <div className="grid gap-3 p-4 sm:grid-cols-2">
-          <label className="block text-xs font-medium text-dark-700 sm:col-span-2">
-            WebSocket URL
-            <input
-              value={url}
-              onChange={(event) => setUrl(event.target.value)}
-              disabled={status !== "offline"}
-              className="mt-1 w-full rounded-md border border-dark-200 px-3 py-2 text-sm text-dark-900 disabled:bg-light-100"
-            />
-          </label>
-          <label className="block text-xs font-medium text-dark-700">
-            Sensor code
-            <input
-              value={sensorCode}
-              onChange={(event) => setSensorCode(event.target.value)}
-              placeholder="00001"
-              disabled={status !== "offline"}
-              className="mt-1 w-full rounded-md border border-dark-200 px-3 py-2 text-sm text-dark-900 disabled:bg-light-100"
-            />
-          </label>
-          <label className="block text-xs font-medium text-dark-700">
-            Passkey
-            <input
-              type="password"
-              value={passkey}
-              onChange={(event) => setPasskey(event.target.value)}
-              placeholder="Sensor passkey"
-              autoComplete="off"
-              disabled={status !== "offline"}
-              className="mt-1 w-full rounded-md border border-dark-200 px-3 py-2 text-sm text-dark-900 disabled:bg-light-100"
-            />
-          </label>
+          <FormInput
+            control={control}
+            name="url"
+            label="WebSocket URL"
+            disabled={status !== "offline"}
+            className="sm:col-span-2"
+          />
+          <FormInput
+            control={control}
+            name="sensorCode"
+            label="Sensor code"
+            placeholder="00001"
+            disabled={status !== "offline"}
+          />
+          <FormInput
+            control={control}
+            name="passkey"
+            type="password"
+            label="Passkey"
+            placeholder="Sensor passkey"
+            disabled={status !== "offline"}
+          />
           <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
             {status === "offline" ? (
-              <button
-                type="button"
+              <Button
+                icon={Play}
                 onClick={connect}
                 disabled={!sensorCode.trim() || !passkey || !url.trim()}
-                className="inline-flex items-center gap-2 rounded-md bg-primary-600 px-3 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
               >
-                <Play className="h-4 w-4" /> Connect
-              </button>
+                Connect
+              </Button>
             ) : (
-              <button
-                type="button"
-                onClick={disconnect}
-                className="inline-flex items-center gap-2 rounded-md border border-dark-300 px-3 py-2 text-sm font-medium text-dark-700 hover:bg-light-100"
-              >
-                <Square className="h-4 w-4" /> Disconnect
-              </button>
+              <Button icon={Square} variant="secondary-outline" onClick={disconnect}>
+                Disconnect
+              </Button>
             )}
             <span
               className={`text-xs font-medium ${status === "online" ? "text-success-700" : "text-dark-500"}`}
@@ -168,40 +179,35 @@ export const DeviceSimulator = () => {
 
         <div className="border-t border-dark-200 bg-light-50 p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-            <label className="min-w-0 flex-1 text-xs font-medium text-dark-700">
-              Reading value
-              <input
-                value={value}
-                onChange={(event) => setValue(event.target.value)}
-                placeholder="off or 27.5"
-                className="mt-1 w-full rounded-md border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900"
-              />
-            </label>
-            <button
-              type="button"
+            <FormInput
+              control={control}
+              name="value"
+              label="Reading value"
+              placeholder="off or 27.5"
+              className="min-w-0 flex-1"
+            />
+            <Button
+              icon={Send}
+              variant="dark"
               onClick={publish}
               disabled={status !== "online" || !value.trim()}
-              className="inline-flex items-center justify-center gap-2 rounded-md bg-dark-800 px-3 py-2 text-sm font-medium text-white hover:bg-dark-700 disabled:opacity-50"
             >
-              <Send className="h-4 w-4" /> Send reading
-            </button>
+              Send reading
+            </Button>
           </div>
-          <label className="mt-3 flex items-center gap-2 text-xs text-dark-600">
-            <input
-              type="checkbox"
-              checked={autoReply}
-              onChange={(event) => setAutoReply(event.target.checked)}
-              className="accent-primary-600"
-            />
-            Automatically publish the requested value when a command arrives
-          </label>
+          <FormCheckbox
+            control={control}
+            name="autoReply"
+            options={autoReplyOptions}
+            className="mt-3"
+          />
         </div>
 
         <div className="border-t border-dark-200 p-4">
-          <p className="text-xs font-semibold text-dark-700">Socket activity</p>
+          <p className="text-[10px] md:text-xs font-semibold text-dark-700">Socket activity</p>
           <div
             aria-live="polite"
-            className="mt-2 max-h-48 min-h-16 space-y-1 overflow-auto font-mono text-xs text-dark-600"
+            className="mt-2 max-h-48 min-h-16 space-y-1 overflow-auto font-mono text-[10px] md:text-xs text-dark-600"
           >
             {events.length === 0 ? (
               <p>No messages yet.</p>
@@ -218,7 +224,7 @@ export const DeviceSimulator = () => {
           </div>
         </div>
       </div>
-      <p className="mt-2 text-xs text-dark-500">
+      <p className="mt-2 text-[10px] leading-5 md:text-xs md:leading-6 text-dark-500">
         The simulator does not save your passkey. Disconnect it before connecting a physical device
         to the same sensor.
       </p>

@@ -1,4 +1,10 @@
-import { Controller, type Control, type FieldPath, type FieldValues, type RegisterOptions } from "react-hook-form";
+import {
+  Controller,
+  type Control,
+  type FieldPath,
+  type FieldValues,
+  type RegisterOptions,
+} from "react-hook-form";
 import { cn } from "../../utils/cn";
 
 interface CheckboxOption {
@@ -40,7 +46,10 @@ export const FormCheckbox = <T extends FieldValues>({
               {options.map((option) => {
                 const checked = values.includes(option.value);
                 return (
-                  <label key={option.value} className="flex items-center gap-2 text-sm text-dark-700">
+                  <label
+                    key={option.value}
+                    className="flex items-center gap-3 text-xs md:text-sm text-dark-700"
+                  >
                     <input
                       type="checkbox"
                       disabled={disabled}
@@ -51,7 +60,7 @@ export const FormCheckbox = <T extends FieldValues>({
                           : values.filter((item) => item !== option.value);
                         field.onChange(next);
                       }}
-                      className="h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-400"
+                      className="h-4 w-4 accent-primary-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-400"
                     />
                     <span>{option.label}</span>
                   </label>
