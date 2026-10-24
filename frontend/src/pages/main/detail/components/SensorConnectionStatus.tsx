@@ -1,6 +1,8 @@
 import { Clock3, Globe2, Wifi, WifiOff } from "lucide-react";
 import type { Sensor } from "../../../../interfaces/sensor";
 import { useDeviceStatusBySensor } from "../../../../store/realtimeStore";
+import { useCollapseDesktopSidebar } from "../../../../store/layoutStore";
+import { cn } from "../../../../utils/cn";
 
 interface SensorConnectionStatusProps {
   sensor: Sensor;
@@ -22,6 +24,7 @@ const formatConnectedAt = (value?: string | null) => {
 };
 
 export const SensorConnectionStatus = ({ sensor }: SensorConnectionStatusProps) => {
+  const collapseDesktopSidebar = useCollapseDesktopSidebar();
   const deviceStatusBySensor = useDeviceStatusBySensor();
   const deviceStatus = deviceStatusBySensor[sensor.code];
   const isOnline = Boolean(deviceStatus?.connection_status);
@@ -65,7 +68,15 @@ export const SensorConnectionStatus = ({ sensor }: SensorConnectionStatusProps) 
             <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.16em] text-dark-400">
               IP Device
             </p>
-            <p className="mt-1 text-xs md:text-sm font-medium text-dark-800">
+            <p
+              className={cn(
+                "cursor-default mt-1 text-xs md:text-sm font-medium text-dark-800 truncate w-[calc(100vw-var(--spacing)*49)] max-w-[356px]",
+                collapseDesktopSidebar
+                  ? "md:w-[calc((100vw-var(--spacing)*32-80px)/2-var(--spacing)*33)]"
+                  : "md:w-[calc((100vw-var(--spacing)*32-280px)/2-var(--spacing)*33)]",
+              )}
+              title={deviceStatus?.ip_device ?? "-"}
+            >
               {deviceStatus?.ip_device ?? "-"}
             </p>
           </div>

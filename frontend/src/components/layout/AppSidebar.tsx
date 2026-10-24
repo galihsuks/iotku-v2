@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Circle,
   ChevronDown,
@@ -101,29 +101,13 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
     });
   };
 
-  const onClickNav = (item: NavItem, depth: number) => {
-    const hasChildren = Boolean(item.children && item.children.length > 0);
-
-    if (hasChildren) {
-      if (collapseDesktopSidebar) {
-        setCollapseDesktopSidebar(false);
-        setExpandedMenuId(item.id);
-        return;
-      }
-      setExpandedMenuId((prev) => (prev === item.id ? null : item.id));
+  const toggleMenu = (item: NavItem) => {
+    if (collapseDesktopSidebar) {
+      setCollapseDesktopSidebar(false);
+      setExpandedMenuId(item.id);
       return;
     }
-
-    if (depth === 0) {
-      setExpandedMenuId(null);
-    }
-
-    if (!item.path) {
-      addToast("This menu will be available soon.", "info");
-      return;
-    }
-    navigate(item.path);
-    setOpenMobileSidebar(false);
+    setExpandedMenuId((prev) => (prev === item.id ? null : item.id));
   };
 
   const isActiveItem = (item: NavItem) => {
@@ -146,18 +130,16 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
           {(() => {
             const hasChildren = Boolean(item.children && item.children.length > 0);
             const isExpanded = expandedMenuId === item.id;
-            return (
-              <div
-                onClick={() => onClickNav(item, depth)}
-                className={cn(
-                  "select-none cursor-default group flex w-full items-center px-3 py-2.5 text-left text-sm transition-all duration-200 rounded-xl",
-                  active
-                    ? "bg-primary-600 text-white"
-                    : "text-dark-600 hover:bg-primary-50 hover:text-primary-700",
-                  compact ? "justify-center gap-0" : "gap-3",
-                  depth > 0 && !compact ? "ml-3 max-w-[calc(100%-var(--spacing)*3)] pl-4" : "",
-                )}
-              >
+            const className = cn(
+              "select-none group flex w-full items-center px-3 py-2.5 text-left text-sm transition-all duration-200 rounded-xl",
+              active
+                ? "bg-primary-600 text-white"
+                : "text-dark-600 hover:bg-primary-50 hover:text-primary-700",
+              compact ? "justify-center gap-0" : "gap-3",
+              depth > 0 && !compact ? "ml-3 max-w-[calc(100%-var(--spacing)*3)] pl-4" : "",
+            );
+            const content = (
+              <>
                 <Icon className="h-4 w-4 shrink-0" />
                 <span
                   className={cn(
@@ -175,7 +157,46 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
                     )}
                   />
                 ) : null}
-              </div>
+              </>
+            );
+
+            if (hasChildren) {
+              return (
+                <button
+                  type="button"
+                  onClick={() => toggleMenu(item)}
+                  aria-expanded={isExpanded}
+                  className={className}
+                >
+                  {content}
+                </button>
+              );
+            }
+
+            if (item.path) {
+              return (
+                <Link
+                  to={item.path}
+                  onClick={() => {
+                    if (depth === 0) setExpandedMenuId(null);
+                    setOpenMobileSidebar(false);
+                  }}
+                  title={compact ? item.label : undefined}
+                  className={className}
+                >
+                  {content}
+                </Link>
+              );
+            }
+
+            return (
+              <button
+                type="button"
+                onClick={() => addToast("This menu will be available soon.", "info")}
+                className={className}
+              >
+                {content}
+              </button>
             );
           })()}
 
@@ -271,12 +292,9 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
       </div>
 
       <div className="pt-6">
-        <button
-          type="button"
-          onClick={() => {
-            navigate("/docs");
-            setOpenMobileSidebar(false);
-          }}
+        <Link
+          to="/docs"
+          onClick={() => setOpenMobileSidebar(false)}
           title="Developer guides"
           className={cn(
             "mb-2 flex w-full items-center rounded-xl px-3 py-2.5 text-sm font-medium text-dark-600 transition hover:bg-primary-50 hover:text-primary-700",
@@ -292,7 +310,7 @@ export const AppSidebar = ({ isCustomer }: AppSidebarProps) => {
           >
             Developer guides
           </span>
-        </button>
+        </Link>
         <div
           className={cn(
             "mb-3 overflow-hidden rounded-xl border border-dark-200 bg-light-50 p-3 transition-all duration-300",
